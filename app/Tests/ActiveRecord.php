@@ -382,8 +382,8 @@ class Tests_ActiveRecord extends PHPUnit_Framework_TestCase
 		{
 			$this->_table->insert(array('id' => 1, 'first_name' => 'Igor'));
 
-			$name = $this->_table->where('id', 1)->getValue('first_name');
-			$empty = $this->_table->where('id', 1)->getValue('no_field', 'empty');
+			$name = $this->_table->where('id', 1)->createResultFormat()->getValue('first_name');
+			$empty = $this->_table->where('id', 1)->createResultFormat()->getValue('no_field', 'empty');
 
 			$this->assertTrue($name == 'Igor');
 			$this->assertTrue($empty == 'empty');

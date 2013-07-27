@@ -410,48 +410,13 @@ abstract class Libs_ActiveRecord
 		return $this->_db()->affected_rows;
 	}
 
-	public function getValue($key, $default = false)
+	/**
+	 * Получить объект для получения результата запроса в спец. формате
+	 * @return Libs_ActiveRecord_ResultFormats
+	 */
+	public function createResultFormat()
 	{
-		$res = $this->fetchOne();
-
-		return always_set($res, $key, $default);
-	}
-
-	public function getHash($key, $value, $default = array())
-	{
-		$return = array();
-
-		if (!$res = $this->fetchAll())
-		{
-			return $default;
-		}
-
-		foreach ($res as $values)
-		{
-			$return[$values[$key]] = $values[$value];
-		}
-
-		return $return;
-	}
-
-	public function getVector($field, $offset = 0, $default = array())
-	{
-		$return = array();
-
-		if (!$res = $this->fetchAll())
-		{
-			return $default;
-		}
-
-		$count = $offset;
-
-		foreach ($res as $value)
-		{
-			$return[$count] = $value[$field];
-			$count ++;
-		}
-
-		return $return;
+		return new Libs_ActiveRecord_ResultFormats($this);
 	}
 
 	/**

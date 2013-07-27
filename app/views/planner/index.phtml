@@ -1,0 +1,93 @@
+<?php
+foreach ($this->groups as $group):
+?>
+<div id="count">
+	 <table class="count_tb count_tb_ex">
+		<tr class="group-title">
+			<th>
+				<span class="tab-menu group-item" data-field="name"><?=$group['name']?></span>
+			</th>
+			<th><?=_t('/money_flow/sum')?></th>
+		</tr>
+		<?php
+			if ($categories = always_set($this->categories, $group['id'])):
+				foreach ($categories as $category):
+		?>
+		<tr class="group-categories">
+			<td>
+				 <span class="tab-menu cat-item" data-field="title"><?=$this-escape($category['title'])?></span>
+			</td>
+			<td class="tdrg" data-field="amount"><?=$category['amount']?></td>
+		</tr>
+		<?php
+				endforeach;
+			endif;
+		?>
+		<tr>
+			<td colspan="2" class="tdbg"></td>
+		</tr>
+	</table>
+</div>
+<?php endforeach;?>
+<script type="text/template" id="groups-context-menu">
+	<div class="info-menu">
+		<a href="#" action="add-category"><?=_t('/context_menu/add_category')?></a>
+		<br/>
+ 		<a href="#" action="edit-group"><?=_t('/context_menu/edit')?></a>
+		<br/>
+		<a href="#" action="delete-group"><?=_t('/context_menu/delete')?></a>
+	</div>
+</script>
+<script type="text/template" id="categories-context-menu">
+	<div class="info-menu">
+		<a href="#" action="edit-category"><?=_t('/context_menu/edit')?></a>
+		<br/>
+		<a href="#" action="delete-category"><?=_t('/context_menu/delete')?></a>
+	</div>
+</script>
+
+<script id="add-category-dialog" type="text/template">
+<div class="form" id="dialog-content">
+<table>
+	<tr>
+		<td>
+			Название:*
+		</td>
+		<td>
+			<input type="text" name="title" data-submit="allowed" />
+		</td>
+	</tr>
+	<tr>
+		<td>
+			Сумма:
+		</td>
+		<td>
+			<input type="text" name="amount" data-submit="allowed" />
+		</td>
+	</tr>
+	<tr>
+		<td>
+			Группа:
+		</td>
+		<td><select id="groups-select" name="group_id" data-submit="allowed"></select>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			Прикрепить:
+		</td>
+		<td>
+			<input type="checkbox" name="pin" value="1" data-submit="allowed" />
+		</td>
+	</tr>
+</table>
+</div>
+</script>
+
+<script>
+$(function(){
+	$('.count_tb').each(function(){
+		new Views.Group($(this));
+	});
+});
+</script>

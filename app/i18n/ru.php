@@ -17,10 +17,17 @@ $i18n = array(
 	'/auth/validator/user_exists' => 'Пользователь уже зарегестрирован',
 	'/auth/validator/cannot_register' => 'Не удалось зарегестрироваться',
 
-	'/menu/settings' => 'Настройки',
-
 	'/sections/money_flow' => 'Денежный поток',
 	'/sections/planner' => 'Планировщик',
 	'/sections/logs' => 'Логи',
-	'/sections/archive' => 'Архив'
+	'/sections/archive' => 'Архив',
+	'/sections/settings' => 'Настройки',
+
+	'/money_flow/sum' => 'Сумма',
+
+	'/context_menu/withdrawal' => 'Снять сумму',
+	'/context_menu/return_amount' => 'Сделать возврат',
+	'/context_menu/edit' => 'Редактировать',
+	'/context_menu/delete' => 'Удалить',
+	'/context_menu/add_category' => 'Добавить категорию',
 );

@@ -25,7 +25,7 @@ function pred(data){
  * Создает синглтон для класа
  * @param class_name
  */
-function create_signleton(class_name){
+function create_singleton(class_name){
 	class_name._INSTANCE = null;
 	
 	class_name.getInstance = function(){
@@ -47,6 +47,10 @@ Views.Abstract = Class.extend({
 	_el: null,
 	
 	initialize: function(){
+		this._render();
+	},
+	
+	_render: function(){
 		if (_.isString(this._id)){
 			this._el = $('#' + this._id);
 		}else if(_.isString(this._tag)){
@@ -162,14 +166,13 @@ Views.SigninForm = Views.AutoRedirectForm.extend({
  */
 Views.AbstractContextMenu = Views.Abstract.extend({
 	
-	_id: "context-menu",
+	_template: "context-menu",
 	_is_shown: false,
 	_coor: {},
 	_context: null,
 	
 	initialize: function(){	
 		this._super();
-		this.render();
 		
 		this._el.find('a').click($.proxy(this._onItemClick, this));
 		
@@ -202,8 +205,9 @@ Views.AbstractContextMenu = Views.Abstract.extend({
 		return false;
 	},
 	
-	render: function(){
-		this._el = $(this._el.html());
+	_render: function(){
+		var template = $('#' + this._template).html();
+		this._el = $(template);
 		$('body').append(this._el);
 	},
 	
@@ -245,7 +249,7 @@ Views.CategoryMenu = Views.AbstractContextMenu.extend({
 		
 	}
 });
-create_signleton(Views.CategoryMenu);
+create_singleton(Views.CategoryMenu);
 
 /**
  * Класс вьюшка для бади.
@@ -253,7 +257,7 @@ create_signleton(Views.CategoryMenu);
 Views.Body = Views.Abstract.extend({
 	_tag: "body",
 });
-create_signleton(Views.Body);
+create_singleton(Views.Body);
 
 /**
  * Вьюшка для таблицы с категориями
@@ -283,3 +287,116 @@ Views.Category = Views.Abstract.extend({
 		}, this));
 	}
 });
+
+Views.Group = Views.Abstract.extend({
+	initialize: function(el){
+		this._super();
+		this._el = el;
+		
+		this._el.find('.group-title .tab-menu').click($.proxy(function(e){
+			Views.GroupMenu.getInstance().setContext(this).show({x: e.pageX, y: e.pageY});
+			return false;
+		}, this));
+	}
+});
+
+Views.GroupMenu = Views.AbstractContextMenu.extend({
+	_template: 'groups-context-menu',
+	
+	addCategory: function(context){
+		Views.AddCategoryDialog.getInstance().show();
+	},
+	
+	editGroup: function(context){
+		
+	},
+	
+	deleteGroup: function(context){
+		
+	}
+});
+
+create_singleton(Views.GroupMenu);
+
+Views.AbstractDialog = Views.Abstract.extend({
+	
+	_template: null,
+	
+	initialize: function(){
+		this._super();
+		
+		this._el.find('.dlg-close').click($.proxy(function(){
+			this.hide();
+			return false;
+		}, this));
+		
+		this._el.find('.submit-button').click($.proxy(this._onPositiveClick, this));
+		this._el.find('.cancel-button').click($.proxy(this._onNegativeClick, this));
+	},
+	
+	_render: function(){
+		
+		var layout_labels = this._getLayoutLabels();
+		
+		var layout_html = $('#dialog-layout').html()
+			.replace("{{title}}", layout_labels.title)
+			.replace("{{submit}}", layout_labels.submit)
+			.replace("{{cancel}}", layout_labels.cancel);
+		
+		this._el = $(layout_html);
+		
+		if (_.isNull(this._template)) throw "The template for the dialog is undefined";
+		
+		this._el.find('#dialog-content').html($('#' + this._template).html());
+		$('body').append(this._el);
+	},
+	
+	_adjustWindow: function(){
+		
+		var dlg = this._el.find('.dlg');
+		
+		var top = Math.round(dlg.height() / 2);
+		
+		dlg.css('margin-top', '-'+top+'px');
+	},
+	
+	show: function(){
+		this._el.show();
+		this._adjustWindow();
+	},
+	
+	hide: function(){
+		this._el.hide();
+	},
+	
+	_onPositiveClick: function(){
+		
+	},
+	
+	_onNegativeClick: function(){
+		
+	},
+	
+	_getLayoutLabels: function(){
+		return {
+			title: "",
+			submit: "",
+			cancel: "",
+		};
+	}
+});
+
+Views.AddCategoryDialog = Views.AbstractDialog.extend({
+	
+	_template: "add-category-dialog",
+		
+	_onPositiveClick: function(){
+		this._el.hide();
+	},
+	
+	_onNegativeClick: function(){
+		this._el.hide();
+	}
+});
+
+create_singleton(Views.AddCategoryDialog);

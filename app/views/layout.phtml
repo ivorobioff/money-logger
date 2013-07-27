@@ -15,7 +15,7 @@
 	            <div id="tp-right">
 	                <b>Бюджет:</b> 300000.00 &nbsp;&nbsp;
 	                <b>Расходы:</b> 23300.00
-	                (<a href="#"><?=_t('/menu/settings')?></a> - <a href="<?=_url('/AuthProcessor/signout/');?>"><?=_t('/auth/exit')?></a>)
+	                (<a href="<?=_url('/AuthProcessor/signout/');?>"><?=_t('/auth/exit')?></a>)
 	            </div>
 	            <br class="clr" />
         	</div>
@@ -36,6 +36,10 @@
                 	elseif(is_location('/Archive/*/'))
                 	{
                 		echo _t('/sections/archive');
+                	}
+                	elseif(is_location('/Settings/*/'))
+                	{
+                		echo _t('/sections/settings');
                 	}
                 	else
                 	{
@@ -63,6 +67,9 @@
                     <li <?=is_location('/Archive/*/')? 'class="select"' : ''?>>
                         <a href="<?=_url('/Archive/');?>"><?=_t('/sections/archive');?></a>
                     </li>
+                    <li <?=is_location('/Settings/*/')? 'class="select"' : ''?>>
+                        <a href="<?=_url('/Settings/');?>"><?=_t('/sections/settings');?></a>
+                    </li>
                 </ul>
             </div>
             <div id="right">
@@ -72,5 +79,27 @@
                 Kisya &amp; Solnyshko Co. All rights reserved. 2012
             </div>
         </div>
+<script type="text/template" id="dialog-layout">
+<div class="dlg-cont">
+<div class="bg"></div>
+<div class="cont">
+<div class="dlg">
+<div class="dlg-head">
+     <span class="dlg-title">{{title}}</span>
+     <a href="#" class="dlg-close"></a>
+</div>
+<div class="dlg-c">
+		<div id="dialog-content">
+		</div>
+		<div id="butt">
+			<button class="form submit-button">{{submit}}</button>&nbsp;&nbsp;
+    		<button class="form cancel-button">{{cancel}}</button>
+		</div>
+     <br class="clr"/>
+</div>
+</div>
+</div>
+</div>
+</script>
     </body>
 </html>

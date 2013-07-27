@@ -88,6 +88,12 @@ class Controllers_AuthProcessor extends Libs_Controllers_Processor
 			return $this->ajaxError(array('message' => _t('/auth/validator/cannot_register')));
 		}
 
+		$budget_model = new Models_Budgets();
+		$budget_model->addDefault($user_id);
+
+		$group_model = new Models_Groups();
+		$group_model->addDefault($user_id);
+
 		Models_CurrentUser::getInstance()->login($model->getUserById($user_id));
 
 		return $this->ajaxSuccess();
