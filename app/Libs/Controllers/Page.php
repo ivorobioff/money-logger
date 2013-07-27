@@ -5,7 +5,7 @@ abstract class Libs_Controllers_Page extends Libs_Controllers
 	 * @var Libs_Views
 	 */
 	protected $_layout;
-	protected $_title = 'Calc 1.0';
+	protected $_title = 'MoneyLogger 1.0';
 
 	public function __construct()
 	{

@@ -18,4 +18,9 @@ $i18n = array(
 	'/auth/validator/cannot_register' => 'Не удалось зарегестрироваться',
 
 	'/menu/settings' => 'Настройки',
+
+	'/sections/money_flow' => 'Денежный поток',
+	'/sections/planner' => 'Планировщик',
+	'/sections/logs' => 'Логи',
+	'/sections/archive' => 'Архив'
 );

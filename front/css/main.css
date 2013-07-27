@@ -130,11 +130,16 @@
     text-decoration:none;
 }
 
-.select
+#left ul li.select
 {
     background:#D7D7E3;
     border: 1px solid #999999;
 
+}
+
+#left ul li
+{
+	border: 1px solid transparent;
 }
 
 #right

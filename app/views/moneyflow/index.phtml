@@ -1,0 +1,61 @@
+<div id="count">
+	<table class="count_tb count_tb_ex" id="categories-container">
+	<tr>
+		<th>
+			<span class="group-item">Описание</span>
+		</th>
+		<th>
+			 Сумма
+		</th>
+	</tr>
+	<tr>
+		<td>
+			<span class="tab-menu">Кисина поездка к родным</span>
+		</td>
+		<td class="tdrg">
+			 6
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<span class="tab-menu">Кисин обед</span>
+		</td>
+		<td class="tdrg">
+			 200
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<span class="tab-menu">Поезка на работу</span>
+		</td>
+		<td class="tdrg">
+			 400
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<span class="tab-menu">Киичкина прическа</span>
+		</td>
+		<td class="tdrg">
+			 1000
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2" class="tdbg">
+		</td>
+	</tr>
+	</table>
+</div>
+<script type="text/template" id="context-menu">
+	<div class="info-menu">
+		<a href="#" action="withdrawal">Снять сумму</a>
+		<br/>
+		<a href="#" action="return-amount">Сделать возврат</a>
+	</div>
+</script>
+
+<script>
+$(function(){
+	new Views.Categories();
+});
+</script>

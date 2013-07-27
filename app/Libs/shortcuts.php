@@ -30,9 +30,19 @@ function always_set($array, $key, $default = null)
 	return isset($array[$key]) ? $array[$key] : $default;
 }
 
-function is_location($controller, $action = 'index')
+function is_location($url)
 {
-	return $controller == $_GET['controller'] && $action == $_GET['action'];
+	$url = trim($url, '/');
+	$url = explode('/', $url);
+
+	if (!isset($url[0]) || !isset($url[1])) return false;
+
+	if ($url[1] == '*')
+	{
+		return $url[0] == $_GET['controller'];
+	}
+
+	return $url[0] == $_GET['controller'] && $url[1] == $_GET['action'];
 }
 
 function redirect($path)
