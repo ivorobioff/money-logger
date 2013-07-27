@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+   <?php
+   		Libs_Views::create('header.phtml')
+   			->assign('title', $this->title)
+   			->render();
+   ?>
+    <body>
+    	 <div id="mt-14">
+    	 <div id="mf-10">
+    	 	<form action="/AuthProcessor/signin/" id="signin-form">
+				<div id="mf-9">
+					<table>
+						<tr>
+							<td><?=_t('/auth/email')?>:</td>
+							<td><?=_t('/auth/pass')?>:</td>
+							<td rowspan="3"><input type="submit" value="<?=_t('/auth/enter')?>"/></td>
+						</tr>
+						<tr>
+							<td><input type="text" name="email" /></td>
+							<td><input type="password" type="password" name="pass" /></td>
+							<td></td>
+						</tr>
+						<tr>
+							<td><label><input type="checkbox" name="remember_me" value="1" id="remember_me" /> <?=_t('/auth/remember_me');?></label></td>
+							<td></td>
+							<td></td>
+						</tr>
+					</table>
+				</div>
+				<br class="clr"/>
+			</form>
+			<div id="mf-11">
+				<form action="/AuthProcessor/signup/" id="signup-form">
+					<table>
+						<tr>
+							<td colspan="2" class="mf-13"><h2><?=_t('/auth/registration')?>:</h2><br/></td>
+						</tr>
+						<tr>
+							<td  class="mf-13"><?=_t('/auth/fio');?>:</td>
+							<td> <input class="mf-12" type="text" name="fio" /></td>
+						</tr>
+						<tr>
+							<td  class="mf-13"><?=_t('/auth/email')?>:</td>
+							<td><input class="mf-12" type="text" name="email" /></td>
+						</tr>
+						<tr>
+							<td  class="mf-13"><?=_t('/auth/pass')?>:</td>
+							<td><input class="mf-12" type="password" type="password" name="pass" /></td>
+						</tr>
+						<tr>
+							<td  class="mf-13"><?=_t('/auth/conf_pass')?>:</td>
+							<td><input class="mf-12" type="password" type="password" name="conf_pass" /></td>
+						</tr>
+						<tr>
+							<td colspan="2"><br/><br/><input type="submit" value="<?=_t('/auth/register')?>" /></td>
+						</tr>
+					</table>
+				</form>
+			</div>
+    	 </div>
+		</div>
+		<script type="text/javascript">
+			$(function(){
+				new Views.SignupForm('<?=_url('/MoneyFlow/');?>');
+				new Views.SigninForm('<?=_url('/MoneyFlow/');?>');
+			})
+		</script>
+    </body>
+</html>

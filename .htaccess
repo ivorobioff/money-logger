@@ -1,0 +1,11 @@
+RewriteEngine On
+AddDefaultCharset utf-8
+
+RewriteCond %{HTTP_HOST} !^www.money-logger.dev
+RewriteRule ^(.*)$ http://www.money-logger.dev/$1 [R=301,L]
+
+RewriteRule ^(.)*\.(png|bmp|gif|jpeg|jpg|swf|pdf|doc)$ - [L]
+RewriteCond %{REQUEST_URI} !\.(css|js|jpg|gif)$
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !^(.*)app\/logs(.*)$
+RewriteRule ^(.*)$ /index.php?$1 [L,QSA]
