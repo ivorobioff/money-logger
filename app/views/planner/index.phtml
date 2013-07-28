@@ -1,34 +1,38 @@
-<?php
-foreach ($this->groups as $group):
-?>
-<div id="count">
-	 <table class="count_tb count_tb_ex">
-		<tr class="group-title">
-			<th>
-				<span class="tab-menu group-item" data-field="name"><?=$group['name']?></span>
-			</th>
-			<th><?=_t('/money_flow/sum')?></th>
-		</tr>
-		<?php
-			if ($categories = always_set($this->categories, $group['id'])):
-				foreach ($categories as $category):
-		?>
-		<tr class="group-categories">
-			<td>
-				 <span class="tab-menu cat-item" data-field="title"><?=$this-escape($category['title'])?></span>
-			</td>
-			<td class="tdrg" data-field="amount"><?=$category['amount']?></td>
-		</tr>
-		<?php
-				endforeach;
-			endif;
-		?>
-		<tr>
-			<td colspan="2" class="tdbg"></td>
-		</tr>
-	</table>
-</div>
-<?php endforeach;?>
+<div id="count"></div>
+<script>
+$(function(){
+	Collections.Groups.getInstance().addBunch(<?=json_encode($this->groups)?>);
+	Collections.Categories.getInstance().addBunch(<?=json_encode($this->categories)?>);
+
+	Collections.Groups.getInstance().each(function(model){
+		new Views.Group(model);
+	});
+});
+</script>
+
+<script type="text/template" id="category-template">
+<tr class="group-categories">
+<td>
+	 <span class="tab-menu cat-item" data-field="title">{{title}}</span>
+</td>
+<td class="tdrg" data-field="amount">{{amount}}</td>
+</tr>
+</script>
+
+<script type="text/template" id="group-template">
+<table class="count_tb count_tb_ex">
+<tr class="group-title">
+	<th>
+		<span class="tab-menu group-item" data-field="name">{{name}}</span>
+	</th>
+	<th><?=_t('/money_flow/sum')?></th>
+</tr>
+<tr id="categories-hook">
+	<td colspan="2" class="tdbg"></td>
+</tr>
+</table>
+</script>
+
 <script type="text/template" id="groups-context-menu">
 	<div class="info-menu">
 		<a href="#" action="add-category"><?=_t('/context_menu/add_category')?></a>
@@ -48,13 +52,14 @@ foreach ($this->groups as $group):
 
 <script id="add-category-dialog" type="text/template">
 <div class="form" id="dialog-content">
+<form action="<?=_url('/PlannerProcessor/addCategory/')?>">
 <table>
 	<tr>
 		<td>
 			Название:*
 		</td>
 		<td>
-			<input type="text" name="title" data-submit="allowed" />
+			<input type="text" name="title" />
 		</td>
 	</tr>
 	<tr>
@@ -62,14 +67,22 @@ foreach ($this->groups as $group):
 			Сумма:
 		</td>
 		<td>
-			<input type="text" name="amount" data-submit="allowed" />
+			<input type="text" name="amount" />
 		</td>
 	</tr>
 	<tr>
 		<td>
 			Группа:
 		</td>
-		<td><select id="groups-select" name="group_id" data-submit="allowed"></select>
+		<td>
+			<select id="groups-select" name="group">
+			<?php
+				foreach($this->groups as $item)
+				{
+					echo '<option value="'.$item['id'].'">'.$this->escape($item['name']).'</option>';
+				}
+			?>
+			</select>
 		</td>
 	</tr>
 	<tr>
@@ -77,17 +90,10 @@ foreach ($this->groups as $group):
 			Прикрепить:
 		</td>
 		<td>
-			<input type="checkbox" name="pin" value="1" data-submit="allowed" />
+			<input type="checkbox" name="pin" value="1" />
 		</td>
 	</tr>
 </table>
+</form>
 </div>
-</script>
-
-<script>
-$(function(){
-	$('.count_tb').each(function(){
-		new Views.Group($(this));
-	});
-});
 </script>

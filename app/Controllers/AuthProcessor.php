@@ -47,9 +47,11 @@ class Controllers_AuthProcessor extends Libs_Controllers_Processor
 
 		if ($missing_fields)
 		{
+			$errors = array();
+
 			foreach ($missing_fields as $item)
 			{
-				$errors[$item] = 'Не задано поле';
+				$errors[$item] = _t('/auth/validator/missing_field');
 			}
 
 			return $this->ajaxError($errors);

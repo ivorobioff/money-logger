@@ -8,7 +8,7 @@
     <body>
     	 <div id="mt-14">
     	 <div id="mf-10">
-    	 	<form action="/AuthProcessor/signin/" id="signin-form">
+    	 	<form action="<?=_url('/AuthProcessor/signin/')?>" id="signin-form">
 				<div id="mf-9">
 					<table>
 						<tr>
@@ -31,7 +31,7 @@
 				<br class="clr"/>
 			</form>
 			<div id="mf-11">
-				<form action="/AuthProcessor/signup/" id="signup-form">
+				<form action="<?=_url('/AuthProcessor/signup/')?>" id="signup-form">
 					<table>
 						<tr>
 							<td colspan="2" class="mf-13"><h2><?=_t('/auth/registration')?>:</h2><br/></td>

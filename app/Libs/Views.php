@@ -38,13 +38,13 @@ class Libs_Views
 		echo $output;
 	}
 
+	public function escape($string)
+	{
+		return htmlspecialchars($string);
+	}
+
 	public function __get($var_name)
 	{
 		return $this->_vars[$var_name];
-	}
-
-	protected function escape($string)
-	{
-		return htmlspecialchars($string);
 	}
 }

@@ -45,7 +45,9 @@ class Libs_Validators_Plugins_Setness extends Libs_Validators_Plugins
 
 	private function _isEmpty($item)
 	{
+		if (!isset($this->_fields[$item])) return true;
+
 		$item = trim($this->_fields[$item]);
-		return empty($item);
+		return $item == '';
 	}
 }
