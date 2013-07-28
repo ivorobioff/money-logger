@@ -34,8 +34,17 @@ $i18n = array(
 
 	'/planner/validator/missing_field' => 'Не задано поле',
 	'/planner/validator/wrong_amount' => 'Сумма должно быть больше 0.00',
+	'/planner/add_group' => 'Добавить группу',
+
+	'/dialogs/add_categories/title' => 'Название',
+	'/dialogs/add_categories/sum' => 'Сумма',
+	'/dialogs/add_categories/group' => 'Группа',
+	'/dialogs/add_categories/pin' => 'Прикрепить',
+
+	'/dialogs/add_group/name' => 'Название',
 
 	'/js/dialogs/submit' => 'Применить',
 	'/js/dialogs/cancel' => 'Отмена',
-	'/js/dialogs/titles/add_category' => 'Создать новую категорию'
+	'/js/dialogs/titles/add_category' => 'Создать новую категорию',
+	'/js/dialogs/titles/add_group' => ' Создать новую группу'
 );

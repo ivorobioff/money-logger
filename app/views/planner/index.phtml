@@ -7,7 +7,26 @@ $(function(){
 	Collections.Groups.getInstance().each(function(model){
 		new Views.Group(model);
 	});
+
+	new Views.AddGroupInitiator();
 });
+</script>
+
+<script id="add-group-dialog" type="text/template">
+<div class="form">
+	<form action="<?=_url('/PlannerProcessor/addGroup/');?>">
+	<table>
+		<tr>
+			<td>
+				<?=_t('/dialogs/add_group/name')?>:
+			</td>
+			<td>
+				<input type="text" name="name" />
+			</td>
+		</tr>
+	</table>
+	</form>
+	</div>
 </script>
 
 <script type="text/template" id="category-template">
@@ -56,7 +75,7 @@ $(function(){
 <table>
 	<tr>
 		<td>
-			Название:*
+			<?=_t('/dialogs/add_categories/title')?>:*
 		</td>
 		<td>
 			<input type="text" name="title" />
@@ -64,7 +83,7 @@ $(function(){
 	</tr>
 	<tr>
 		<td>
-			Сумма:
+			<?=_t('/dialogs/add_categories/sum')?>:
 		</td>
 		<td>
 			<input type="text" name="amount" />
@@ -72,22 +91,15 @@ $(function(){
 	</tr>
 	<tr>
 		<td>
-			Группа:
+			<?=_t('/dialogs/add_categories/group')?>:
 		</td>
 		<td>
-			<select id="groups-select" name="group">
-			<?php
-				foreach($this->groups as $item)
-				{
-					echo '<option value="'.$item['id'].'">'.$this->escape($item['name']).'</option>';
-				}
-			?>
-			</select>
+			<select id="groups-select" name="group"></select>
 		</td>
 	</tr>
 	<tr>
 		<td>
-			Прикрепить:
+			<?=_t('/dialogs/add_categories/pin')?>:
 		</td>
 		<td>
 			<input type="checkbox" name="pin" value="1" />

@@ -71,6 +71,11 @@
                         <a href="<?=_url('/Settings/');?>"><?=_t('/sections/settings');?></a>
                     </li>
                 </ul>
+               <?php if (is_location('/Planner/index/')){?>
+                <div id="new-gr">
+                    	<a href="#"><b><?=_t('/planner/add_group')?></b></a>
+                	</div>
+               <?php }?>
             </div>
             <div id="right">
             	<?=$this->view->render()?>
