@@ -232,6 +232,25 @@ Views.Category = Views.Abstract.extend({
 	}
 });
 
+
+Views.GroupsCollection = Class.extend({
+	_views: null,
+	
+	initialize: function(){
+		this._views = {};
+	},
+	
+	add: function(id, view){
+		this._views[id] = view;
+	},
+	
+	get: function(id){
+		return this._views[id];
+	}
+});
+
+create_singleton(Views.GroupsCollection);
+
 /**
  * Класс для отрисвоки группы
  */
@@ -447,7 +466,8 @@ Views.AddCategoryDialog = Views.AbstractDialogForm.extend({
 
 	_success: function(data){
 		var model = Collections.Categories.getInstance().add(data);
-		this._context.attachCategory(new Views.Category(model));
+		var view = Views.GroupsCollection.getInstance().get(model.get("group_id"));
+		view.attachCategory(new Views.Category(model));
 	},
 	
 	_onShow: function(){

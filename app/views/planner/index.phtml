@@ -5,7 +5,7 @@ $(function(){
 	Collections.Categories.getInstance().addBunch(<?=json_encode($this->categories)?>);
 
 	Collections.Groups.getInstance().each(function(model){
-		new Views.Group(model);
+		Views.GroupsCollection.getInstance().add(model.get("id"), new Views.Group(model));
 	});
 
 	new Views.AddGroupInitiator();
