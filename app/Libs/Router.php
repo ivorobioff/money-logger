@@ -79,6 +79,11 @@ class Libs_Router
 		{
 			throw new Libs_Exceptions_Error404();
 		}
+
+		if (!$reflection->getMethod($this->_action_method)->isPublic())
+		{
+			throw new Libs_Exceptions_Error404();
+		}
 	}
 
 	public function getControllerClass()

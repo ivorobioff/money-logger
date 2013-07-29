@@ -46,5 +46,7 @@ $i18n = array(
 	'/js/dialogs/submit' => 'Применить',
 	'/js/dialogs/cancel' => 'Отмена',
 	'/js/dialogs/titles/add_category' => 'Создать новую категорию',
-	'/js/dialogs/titles/add_group' => ' Создать новую группу'
+	'/js/dialogs/titles/edit_category' => 'Редактировать категорию',
+	'/js/dialogs/titles/add_group' => 'Создать новую группу',
+	'/js/dialogs/titles/edit_group' => 'Редактировать группу'
 );

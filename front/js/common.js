@@ -67,6 +67,9 @@
 var Views = {};
 var Models = {};
 var Collections = {};
+var Helpers = {};
+var i18n = {};
+
 
 //Добавил метод в объект String
 String.prototype.toCamelCase = function(){

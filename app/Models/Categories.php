@@ -28,6 +28,25 @@ class Models_Categories
 		return $this->_table->insert($data);
 	}
 
+	public function edit(array $data)
+	{
+		$id = $data['id'];
+
+		unset($data['id']);
+		$data = array(
+			'title' => $data['title'],
+			'amount' => round($data['amount'], 2),
+			'current_amount' => $data['amount'],
+			'group_id' => $data['group'],
+			'pin' => isset($data['pin']) ? 1 : 0,
+		);
+
+		$this->_table
+			->where('user_id', Models_CurrentUser::getInstance()->id)
+			->where('id', $id)
+			->update($data);
+	}
+
 	public function getById($id)
 	{
 		return $this->_table->fetchOne('id', $id);

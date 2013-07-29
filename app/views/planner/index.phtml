@@ -1,5 +1,10 @@
 <div id="count"></div>
 <script>
+i18n["/dialogs/titles/add_group"] = "<?=_t('/js/dialogs/titles/add_group')?>";
+i18n["/dialogs/titles/add_category"] = "<?=_t('/js/dialogs/titles/add_category')?>";
+i18n["/dialogs/titles/edit_category"] = "<?=_t('/js/dialogs/titles/edit_category')?>";
+i18n["/dialogs/titles/edit_group"] = "<?=_t('/js/dialogs/titles/edit_group')?>";
+
 $(function(){
 	Collections.Groups.getInstance().addBunch(<?=json_encode($this->groups)?>);
 	Collections.Categories.getInstance().addBunch(<?=json_encode($this->categories)?>);
@@ -15,16 +20,15 @@ $(function(){
 <script id="add-group-dialog" type="text/template">
 <div class="form">
 	<form action="<?=_url('/PlannerProcessor/addGroup/');?>">
-	<table>
-		<tr>
-			<td>
-				<?=_t('/dialogs/add_group/name')?>:
-			</td>
-			<td>
-				<input type="text" name="name" />
-			</td>
-		</tr>
-	</table>
+	<?php Libs_Views::create('planner/group_fields.phtml')->render()?>
+	</form>
+	</div>
+</script>
+
+<script id="edit-group-dialog" type="text/template">
+<div class="form">
+	<form action="<?=_url('/PlannerProcessor/editGroup/');?>">
+	<?php Libs_Views::create('planner/group_fields.phtml')->render()?>
 	</form>
 	</div>
 </script>
@@ -72,40 +76,15 @@ $(function(){
 <script id="add-category-dialog" type="text/template">
 <div class="form" id="dialog-content">
 <form action="<?=_url('/PlannerProcessor/addCategory/')?>">
-<table>
-	<tr>
-		<td>
-			<?=_t('/dialogs/add_categories/title')?>:*
-		</td>
-		<td>
-			<input type="text" name="title" />
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<?=_t('/dialogs/add_categories/sum')?>:
-		</td>
-		<td>
-			<input type="text" name="amount" />
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<?=_t('/dialogs/add_categories/group')?>:
-		</td>
-		<td>
-			<select id="groups-select" name="group"></select>
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<?=_t('/dialogs/add_categories/pin')?>:
-		</td>
-		<td>
-			<input type="checkbox" name="pin" value="1" />
-		</td>
-	</tr>
-</table>
+<?php Libs_Views::create('planner/category_fields.phtml')->render()?>
+</form>
+</div>
+</script>
+
+<script id="edit-category-dialog" type="text/template">
+<div class="form" id="dialog-content">
+<form action="<?=_url('/PlannerProcessor/editCategory/')?>">
+<?php Libs_Views::create('planner/category_fields.phtml')->render()?>
 </form>
 </div>
 </script>

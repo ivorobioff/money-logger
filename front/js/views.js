@@ -229,6 +229,15 @@ Views.Category = Views.Abstract.extend({
 		});
 		
 		this._el = $(template);
+	},
+	
+	getModel: function(){
+		return this._model;
+	},
+	
+	refresh: function(){
+		this._el.find("[data-field=title]").html(_.escape(this._model.get("title")));
+		this._el.find("[data-field=amount]").html(_.escape(this._model.get("amount")));
 	}
 });
 
@@ -285,6 +294,10 @@ Views.Group = Views.Abstract.extend({
 	
 	attachCategory: function(view){
 		view.getElement().insertBefore(this._el.find('#categories-hook'));
+	},
+	
+	refresh: function(){
+		this._el.find("[data-field=name]").html(_.escape(this._model.get("name")));
 	}
 });
 
@@ -296,7 +309,7 @@ Views.GroupMenu = Views.AbstractContextMenu.extend({
 	},
 	
 	editGroup: function(context){
-		
+		Views.EditGroupDialog.getInstance().setContext(context).show();
 	},
 	
 	deleteGroup: function(context){
@@ -313,16 +326,8 @@ Views.CategoryMenu = Views.AbstractContextMenu.extend({
 	
 	_template: "categories-context-menu",
 	
-	withdrawal: function(context){
-		
-	},
-	
-	returnAmount: function(context){
-		
-	},
-	
-	editCategory: function(){
-		
+	editCategory: function(context){
+		Views.EditCategoryDialog.getInstance().setContext(context).show();
 	},
 	
 	deleteCategory: function(){
@@ -409,12 +414,12 @@ Views.AbstractDialogForm = Views.AbstractDialog.extend({
 		
 	_onPositiveClick: function(){
 		
-		var url = this._el.find("form").attr('action');
+		var url = this._el.find("form").attr('action');		
 		var data = this._el.find("form").serialize();
 		
 		this._disableUI();
-		
-		post(url, data, {
+
+		post(url, this._modifyData(data), {
 			callback: $.proxy(function(result){
 				this._enableUI();
 			}, this),
@@ -434,6 +439,10 @@ Views.AbstractDialogForm = Views.AbstractDialog.extend({
 				alert(errors);
 			}, this)
 		});
+	},
+	
+	_modifyData: function(data){
+		return data;
 	},
 	
 	_success: function(data){
@@ -460,6 +469,7 @@ Views.AbstractDialogForm = Views.AbstractDialog.extend({
 
 });
 
+
 Views.AddCategoryDialog = Views.AbstractDialogForm.extend({
 	
 	_template: "add-category-dialog",
@@ -482,7 +492,6 @@ Views.AddCategoryDialog = Views.AbstractDialogForm.extend({
 	
 	_clearAll: function(){
 		this._el.find('input[name=title], input[name=amount]').val("");
-		this._el.find('select[name=group]').val(this._context.getModel().get('id'));
 		this._el.find('input[name=pin]').removeAttr('checked');
 	},
 	
@@ -492,6 +501,59 @@ Views.AddCategoryDialog = Views.AbstractDialogForm.extend({
 });
 
 create_singleton(Views.AddCategoryDialog);
+
+
+Views.EditCategoryDialog = Views.AbstractDialogForm.extend({
+	
+	_template: "edit-category-dialog",
+
+	_success: function(data){
+		var current_group = this._context.getModel().get("group_id");
+		this._context.getModel().update(data);
+		
+		this._context.refresh();
+		
+		var new_group = this._context.getModel().get("group_id");
+		
+		if (current_group != new_group){
+			var view = Views.GroupsCollection.getInstance().get(new_group);
+			view.attachCategory(this._context);
+		}
+	},
+	
+	_onShow: function(){
+		var html = "";
+		
+		Collections.Groups.getInstance().each(function(model){
+			html += "<option value=\"" + model.get("id") + "\">" + _.escape(model.get("name")) + "</option>";
+		});
+		
+		this._el.find("select[name=group]").html(html).val(this._context.getModel().get("group_id"));
+		
+		this._el.find('input[name=title]').val(this._context.getModel().get("title"));
+		this._el.find('input[name=amount]').val(this._context.getModel().get("amount"));
+		
+		if (this._context.getModel().get("pin") == 1){
+			this._el.find('input[name=pin]').attr('checked', "checked");
+		} else {
+			this._el.find('input[name=pin]').removeAttr('checked');
+		}
+	},
+	
+	_clearAll: function(){
+		return ;
+	},
+	
+	_modifyData: function(data){		
+		return data + "&id=" + this._context.getModel().get("id");
+	},
+	
+	_getLayoutLabels: function(){
+		return $.extend(this._super(), {title: i18n["/dialogs/titles/edit_category"]});
+	},
+});
+
+create_singleton(Views.EditCategoryDialog);
 
 
 Views.AddGroupInitiator = Views.Abstract.extend({
@@ -525,3 +587,31 @@ Views.AddGroupDialog = Views.AbstractDialogForm.extend({
 });
 
 create_singleton(Views.AddGroupDialog);
+
+Views.EditGroupDialog = Views.AbstractDialogForm.extend({
+	
+	_template: "edit-group-dialog",
+
+	_success: function(data){
+		this._context.getModel().update(data);
+		this._context.refresh();
+	},
+	
+	_onShow: function(){
+		this._el.find("[name=name]").val(this._context.getModel().get("name"));
+	},
+	
+	_modifyData: function(data){
+		return data + "&id=" + this._context.getModel().get("id");
+	},
+	
+	_clearAll: function(){
+		return ;
+	},
+	
+	_getLayoutLabels: function(){
+		return $.extend(this._super(), {title: i18n["/dialogs/titles/edit_group"]});
+	},
+});
+
+create_singleton(Views.EditGroupDialog);

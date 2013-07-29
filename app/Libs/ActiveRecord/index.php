@@ -209,7 +209,7 @@ abstract class Libs_ActiveRecord
 	 * $table->where('col1!=', '10');
 	 * $table->where('col1', array(1, 2, 4));
 	 */
-	private function _where($type, $q, $value = null)
+	private function _where($type, $q, $value = false)
 	{
 		$ch = array('like', '=', '>', '<');
 
@@ -219,7 +219,7 @@ abstract class Libs_ActiveRecord
 			return $this;
 		}
 
-		if (is_null($value))
+		if ($value === false)
 		{
 			$this->_query_buffer['where'][] = $type.' '.$q;
 			return $this;

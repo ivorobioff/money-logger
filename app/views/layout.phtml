@@ -6,7 +6,11 @@
    			->render();
   	 ?>
     <body>
-           <div id="tp"></div>
+      	<script>
+			i18n["/dialogs/submit"] = "<?=_t('/js/dialogs/submit')?>";
+			i18n["/dialogs/cancel"] = "<?=_t('/js/dialogs/cancel')?>";
+		</script>
+        <div id="tp"></div>
         <div id="content">
         	<div id="header-top">
         		 <div id="tp-left">

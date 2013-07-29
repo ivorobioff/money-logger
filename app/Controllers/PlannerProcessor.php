@@ -3,6 +3,32 @@ class Controllers_PlannerProcessor extends Libs_Controllers_Processor
 {
 	public function addCategory()
 	{
+		if ($errors = $this->_getCategoryValidationErrors())
+		{
+			return $this->ajaxError($errors);
+		}
+
+		$model = new Models_Categories();
+		$id = $model->add($_POST);
+
+		return $this->ajaxSuccess($model->getById($id));
+	}
+
+	public function editCategory()
+	{
+		if ($errors = $this->_getCategoryValidationErrors())
+		{
+			return $this->ajaxError($errors);
+		}
+
+		$model = new Models_Categories();
+		$model->edit($_POST);
+
+		return $this->ajaxSuccess($model->getById($_POST['id']));
+	}
+
+	private function _getCategoryValidationErrors()
+	{
 		if ($missing_fields = Libs_Validators::getSetnessValidator()
 				->setRequiredFields(array('title', 'group', 'amount'))
 				->setFields($_POST)
@@ -15,18 +41,13 @@ class Controllers_PlannerProcessor extends Libs_Controllers_Processor
 				$errors[$item] = _t('/planner/validator/missing_field');
 			}
 
-			return $this->ajaxError($errors);
+			return $errors;
 		}
 
 		if (floatval($_POST['amount']) < 0.01)
 		{
-			return $this->ajaxError(array('amount' => _t('/planner/validator/wrong_amount')));
+			 return array('amount' => _t('/planner/validator/wrong_amount'));
 		}
-
-		$model = new Models_Categories();
-		$id = $model->add($_POST);
-
-		return $this->ajaxSuccess($model->getById($id));
 	}
 
 	public function addGroup()
@@ -40,5 +61,18 @@ class Controllers_PlannerProcessor extends Libs_Controllers_Processor
 
 		$id = $model->add($_POST);
 		return $this->ajaxSuccess($model->getById($id));
+	}
+
+	public function editGroup()
+	{
+		if (trim(always_set($_POST, 'name', '')) == '')
+		{
+			return $this->ajaxError(array('name' => _t('/planner/validator/missing_field')));
+		}
+
+		$model = new Models_Groups();
+
+		$id = $model->edit($_POST);
+		return $this->ajaxSuccess($model->getById($_POST['id']));
 	}
 }

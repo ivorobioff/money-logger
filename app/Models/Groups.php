@@ -37,6 +37,14 @@ class Models_Groups
 		return $this->_table->insert($data);
 	}
 
+	public function edit(array $data)
+	{
+		return $this->_table
+			->where('id', $data['id'])
+			->where('user_id', Models_CurrentUser::getInstance()->id)
+			->update('name', $data['name']);
+	}
+
 	public function getById($id)
 	{
 		return $this->_table->fetchOne('id', $id);
