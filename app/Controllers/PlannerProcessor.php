@@ -31,19 +31,9 @@ class Controllers_PlannerProcessor extends Libs_Controllers_Processor
 
 	public function addGroup()
 	{
-		if ($missing_fields = Libs_Validators::getSetnessValidator()
-				->setRequiredFields(array('name'))
-				->setFields($_POST)
-				->getMissingFields())
+		if (trim(always_set($_POST, 'name', '')) == '')
 		{
-			$errors = array();
-
-			foreach ($missing_fields as $item)
-			{
-				$errors[$item] = _t('/planner/validator/missing_field');
-			}
-
-			return $this->ajaxError($errors);
+			return $this->ajaxError(array('name' => _t('/planner/validator/missing_field')));
 		}
 
 		$model = new Models_Groups();

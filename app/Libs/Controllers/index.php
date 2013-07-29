@@ -6,7 +6,7 @@ abstract class Libs_Controllers
 
 	public function __construct()
 	{
-
+		//
 	}
 
 	protected function _checkAuth()
@@ -31,7 +31,6 @@ abstract class Libs_Controllers
 			{
 				return false;
 			}
-
 		}
 
 		return true;

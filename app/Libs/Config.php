@@ -1,7 +1,7 @@
 <?php
 class Libs_Config
 {
-	static function getCustom($var, $default = null)
+	static public function getCustom($var, $default = null)
 	{
 		require_once APP_DIR.'/config/custom.php';
 

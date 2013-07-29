@@ -492,9 +492,9 @@ abstract class Libs_ActiveRecord
 	{
 		$this->_last_query = $sql;
 
-		if(!$res = $this->_db()->query($sql))
+		if (!$res = $this->_db()->query($sql))
 		{
-			if($this->_display_errors)
+			if ($this->_display_errors)
 			{
 				//pred(debug_backtrace());
 				die($this->_db()->error);
@@ -512,7 +512,7 @@ abstract class Libs_ActiveRecord
 
 		$res = $this->query($sql);
 
-		while($row = $res->fetch_assoc())
+		while ($row = $res->fetch_assoc())
 		{
 			$data[]=$row;
 		};

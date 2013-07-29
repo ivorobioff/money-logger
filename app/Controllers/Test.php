@@ -16,13 +16,13 @@ class Controllers_Test
 
 		$listener = new PHPUnit_Util_Log_TAP();
 
-		$testResult = new PHPUnit_Framework_TestResult();
-		$testResult->convertErrorsToExceptions(true);
+		$test_result = new PHPUnit_Framework_TestResult();
+		$test_result->convertErrorsToExceptions(true);
 
-		$testResult->addListener($listener);
+		$test_result->addListener($listener);
 
 		echo '<pre>';
-		$suite->run($testResult);
+		$suite->run($test_result);
 		echo '</pre>';
 	}
 }
