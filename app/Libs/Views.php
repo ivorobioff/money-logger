@@ -47,4 +47,9 @@ class Libs_Views
 	{
 		return $this->_vars[$var_name];
 	}
+
+	public function __isset($var_name)
+	{
+		return isset($this->_vars[$var_name]);
+	}
 }
