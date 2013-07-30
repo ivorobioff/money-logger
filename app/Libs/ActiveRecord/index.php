@@ -161,8 +161,7 @@ abstract class Libs_ActiveRecord
 
 		if (is_null($value))
 		{
-			$is_null = strpos($key, '!=') ? 'IS NOT NULL' : 'IS NULL';
-			$this->_query_buffer['where'][] = $type.' '.$key.' '.$is_null;
+			$this->_query_buffer['where'][] = $type.' '.$key.' IS NULL';
 			return $this;
 		}
 
