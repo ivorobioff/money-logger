@@ -145,12 +145,14 @@ abstract class Libs_ActiveRecord
 	/**
 	 * $table->where('col1', 10);
 	 * $table->where('col1!=', '10');
+	 * $table->where('col1 =', '10');
+	 * $table->where('col1 >', 10);
+	 * $table->where('col1 <', 10);
 	 * $table->where('col1', array(1, 2, 4));
+	 * $table->where('col1 LIKE', '%value%');
 	 */
 	private function _where($type, $key, $value)
 	{
-		$ch = array('like', '=', '>', '<');
-
 		if (is_array($value))
 		{
 			$this->_query_buffer['where'][] = $type.' '.$key.' IN ('.$this->_prepareValues($value).')';
@@ -165,7 +167,7 @@ abstract class Libs_ActiveRecord
 	private function _getSignsCond($q)
 	{
 		return strpos($q, '=')
-			|| strpos(strtolower($q), 'like')
+			|| strpos(strtolower($q), ' like')
 			|| strpos($q, '>')
 			|| strpos($q, '<');
 	}
