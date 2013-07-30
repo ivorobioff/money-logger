@@ -328,21 +328,21 @@ class Tests_ActiveRecord extends PHPUnit_Framework_TestCase
 				);
 			}
 
-				$this->_table->insertAll($data);
+			$this->_table->insertAll($data);
 
-				$res = $this->_table
-					->whereQuery('(id=3 OR id=9 OR id=5)')
-					->fetchAll();
+			$res = $this->_table
+				->whereQuery('(id=3 OR id=9 OR id=5)')
+				->fetchAll();
 
-					foreach ($res as $v)
-					{
-						$this->assertTrue(in_array($v['id'], array(3, 9, 5)));
-					}
-			}
-			catch(Exception $er)
+			foreach ($res as $v)
 			{
-				die($er->getMessage());
+				$this->assertTrue(in_array($v['id'], array(3, 9, 5)));
 			}
+		}
+		catch(Exception $er)
+		{
+			die($er->getMessage());
+		}
 	}
 
 	public function testUpdate()
