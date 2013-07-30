@@ -564,6 +564,7 @@ Views.AddGroupInitiator = Views.Abstract.extend({
 		
 		this._el.click(function(){
 			Views.AddGroupDialog.getInstance().show();
+			return false;
 		});
 	}
 });
