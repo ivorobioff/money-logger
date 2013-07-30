@@ -49,6 +49,6 @@ class Models_Categories
 
 	public function getById($id)
 	{
-		return $this->_table->fetchOne('id', $id);
+		return $this->_table->where('id', $id)->fetchOne();
 	}
 }

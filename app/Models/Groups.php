@@ -47,6 +47,6 @@ class Models_Groups
 
 	public function getById($id)
 	{
-		return $this->_table->fetchOne('id', $id);
+		return $this->_table->where('id', $id)->fetchOne();
 	}
 }

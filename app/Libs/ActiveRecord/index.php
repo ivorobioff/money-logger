@@ -111,15 +111,27 @@ abstract class Libs_ActiveRecord
 		return $this;
 	}
 
-	public function either($q, $value = null)
+	public function either($key, $value)
 	{
-		$this->_where('OR', $q, $value);
+		$this->_where('OR', $key, $value);
 		return $this;
 	}
 
-	public function where($q, $value = null)
+	public function where($key, $value)
 	{
-		$this->_where('AND', $q, $value);
+		$this->_where('AND', $key, $value);
+		return $this;
+	}
+
+	public function eitherQuery($q)
+	{
+		$this->_whereQuery('OR', $q);
+		return $this;
+	}
+
+	public function whereQuery($q)
+	{
+		$this->_whereQuery('AND', $q);
 		return $this;
 	}
 
@@ -200,34 +212,27 @@ abstract class Libs_ActiveRecord
 	{
 		$q = 'MATCH ('.$match.') AGAINST(\''.$this->escape($against).'\' '.$mode.')';
 
-		return $this->where($q);
+		return $this->whereQuery($q);
 	}
 
 	/**
 	 * $table->where('col1', 10);
-	 * $table->where('col1 = 10');
 	 * $table->where('col1!=', '10');
 	 * $table->where('col1', array(1, 2, 4));
 	 */
-	private function _where($type, $q, $value = false)
+	private function _where($type, $key, $value)
 	{
 		$ch = array('like', '=', '>', '<');
 
 		if (is_array($value))
 		{
-			$this->_query_buffer['where'][] = $type.' '.$q.' IN ('.$this->_prepareValues($value).')';
+			$this->_query_buffer['where'][] = $type.' '.$key.' IN ('.$this->_prepareValues($value).')';
 			return $this;
 		}
 
-		if ($value === false)
-		{
-			$this->_query_buffer['where'][] = $type.' '.$q;
-			return $this;
-		}
+		$eq = $this->_getSignsCond($key)  ? '' : '=';
 
-		$eq = $this->_getSignsCond($q)  ? '' : '=';
-
-		$this->_query_buffer['where'][] = $type.' '.$q.$eq.'\''.$this->escape($value).'\'';
+		$this->_query_buffer['where'][] = $type.' '.$key.$eq.'\''.$this->escape($value).'\'';
 	}
 
 	private function _getSignsCond($q)
@@ -236,6 +241,17 @@ abstract class Libs_ActiveRecord
 			|| strpos(strtolower($q), 'like')
 			|| strpos($q, '>')
 			|| strpos($q, '<');
+	}
+
+	/**
+	 * $table->where('col1 = 10');
+	 * @param string $type
+	 * @param string $q
+	 */
+	private function _whereQuery($type, $q)
+	{
+		$this->_query_buffer['where'][] = $type.' '.$q;
+		return $this;
 	}
 
 	public function clear()
@@ -388,14 +404,9 @@ abstract class Libs_ActiveRecord
 		return $this->_db()->affected_rows;
 	}
 
-	public function delete($q = null, $value = null)
+	public function delete()
 	{
-		if (!is_null($q))
-		{
-			$this->where($q, $value);
-		}
-
-		$sql = 'DELETE FROM '.$this->_table_name.' '.$this->_prepareWheres();
+		$sql = 'DELETE FROM '.$this->_table_name;
 
 		if ($this->_query_return)
 		{
@@ -425,32 +436,27 @@ abstract class Libs_ActiveRecord
 	 * @param unknown_type $value
 	 * @return boolean
 	 */
-	public function check($key = null, $value = null)
+	public function check()
 	{
-		$res = $this->fetchOne($key, $value);
+		$res = $this->fetchOne();
 
 		return $res ? true : false;
 	}
 
-	public function fetchOne($key = null, $value = null)
+	public function fetchOne()
 	{
-		$res = $this->limit(1)->_fetch($key, $value);
+		$res = $this->limit(1)->_fetch();
 
 		return $res ? $res[0] : array();
 	}
 
-	public function fetchAll($key = null, $value = null)
+	public function fetchAll()
 	{
-		return $this->_fetch($key, $value);
+		return $this->_fetch();
 	}
 
-	private function _fetch($key = null, $value = null)
+	private function _fetch()
 	{
-		if (!is_null($key))
-		{
-			$this->where($key, $value);
-		}
-
 		$sql = 'SELECT '.$this->_prepareSelects().
 			' FROM '.$this->_table_name.' '.$this->prepareAlias().
 			' '.$this->_prepareJoins().

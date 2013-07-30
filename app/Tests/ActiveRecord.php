@@ -143,7 +143,7 @@ class Tests_ActiveRecord extends PHPUnit_Framework_TestCase
 
 			$this->_table->insertAll($data);
 
-			$res = $this->_table->select('id')->select('first_name')->fetchOne('id', 2);
+			$res = $this->_table->select('id')->select('first_name')->where('id', 2)->fetchOne();
 
 			$this->assertTrue($res['id'] == 2);
 			$this->assertTrue(count($res) == 2);
@@ -299,7 +299,7 @@ class Tests_ActiveRecord extends PHPUnit_Framework_TestCase
 
 			$this->_table->insertAll($data);
 
-			$res = $this->_table->fetchAll('id', array(3, 9));
+			$res = $this->_table->where('id', array(3, 9))->fetchAll();
 
 			foreach ($res as $v)
 			{
@@ -371,7 +371,7 @@ class Tests_ActiveRecord extends PHPUnit_Framework_TestCase
 			->either('id', 8)
 			->delete();
 
-		$res = $this->_table->fetchAll('id', array(2, 5, 8));
+		$res = $this->_table->where('id', array(2, 5, 8))->fetchAll();
 
 		$this->assertFalse((bool) $res);
 	}
