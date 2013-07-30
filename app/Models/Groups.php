@@ -45,8 +45,23 @@ class Models_Groups
 			->update('name', $data['name']);
 	}
 
+	public function delete($id)
+	{
+		$this->_table
+			->where('id', $id)
+			->where('user_id', Models_CurrentUser::getInstance()->id)
+			->delete();
+	}
+
 	public function getById($id)
 	{
 		return $this->_table->where('id', $id)->fetchOne();
+	}
+
+	public function hasCategories($group_id)
+	{
+		return Db_Categories::create()
+			->where('group_id', $group_id)
+			->check();
 	}
 }

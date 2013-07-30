@@ -34,6 +34,8 @@ $i18n = array(
 
 	'/planner/validator/missing_field' => 'Не задано поле',
 	'/planner/validator/wrong_amount' => 'Сумма должно быть больше 0.00',
+	'/planner/validator/group_not_empty' => 'Группа содержит категории',
+	'/planner/validator/not_sync' => 'Категория уже задействована в операциях',
 	'/planner/add_group' => 'Добавить группу',
 
 	'/dialogs/add_categories/title' => 'Название',

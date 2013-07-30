@@ -27,6 +27,20 @@ class Controllers_PlannerProcessor extends Libs_Controllers_Processor
 		return $this->ajaxSuccess($model->getById($_POST['id']));
 	}
 
+	public function deleteCategory()
+	{
+		$model = new Models_Categories();
+
+		if (!$model->isSync($id))
+		{
+			return $this->ajaxError(array(_t('/planner/validator/not_sync')));
+		}
+
+		$model->delete($_POST['id']);
+
+		return $this->ajaxSuccess(array('id' => $_POST['id']));
+	}
+
 	private function _getCategoryValidationErrors()
 	{
 		if ($missing_fields = Libs_Validators::getSetnessValidator()
@@ -74,5 +88,20 @@ class Controllers_PlannerProcessor extends Libs_Controllers_Processor
 
 		$id = $model->edit($_POST);
 		return $this->ajaxSuccess($model->getById($_POST['id']));
+	}
+
+	public function deleteGroup()
+	{
+		$model = new Models_Groups();
+
+		$id = $_POST['id'];
+
+		if ($model->hasCategories($id))
+		{
+			return $this->ajaxError(array(_t('/planner/validator/group_not_empty')));
+		}
+
+		$model->delete($id);
+		return $this->ajaxSuccess(array('id' => $id));
 	}
 }

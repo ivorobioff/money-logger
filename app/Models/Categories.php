@@ -47,8 +47,24 @@ class Models_Categories
 			->update($data);
 	}
 
+	public function delete($id)
+	{
+		$this->_table
+			->where('user_id', Models_CurrentUser::getInstance()->id)
+			->where('id', $id)
+			->delete();
+	}
+
 	public function getById($id)
 	{
 		return $this->_table->where('id', $id)->fetchOne();
+	}
+
+	public function isSync($id)
+	{
+		return $this->_table
+			->whereQuery('amount=current_amount')
+			->where('id', $id)
+			->check();
 	}
 }
