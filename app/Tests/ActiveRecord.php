@@ -367,13 +367,15 @@ class Tests_ActiveRecord extends PHPUnit_Framework_TestCase
 
 		$this->_table
 			->where('id', 2)
-			->either('id', 5)
+			->eitherQuery('id=5')
 			->either('id', 8)
 			->delete();
 
-		$res = $this->_table->where('id', array(2, 5, 8))->fetchAll();
+		$deleted_items = $this->_table->where('id', array(2, 5, 8))->fetchAll();
+		$existen_items = $this->_table->where('id', array(1, 3, 4))->fetchAll();
 
-		$this->assertFalse((bool) $res);
+		$this->assertFalse((bool) $deleted_items);
+		$this->assertTrue(count($existen_items) == 3, 'Check if not deleted all');
 	}
 
 	public function testGetValue()

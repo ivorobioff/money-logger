@@ -406,7 +406,7 @@ abstract class Libs_ActiveRecord
 
 	public function delete()
 	{
-		$sql = 'DELETE FROM '.$this->_table_name;
+		$sql = 'DELETE FROM '.$this->_table_name.' '.$this->_prepareWheres();
 
 		if ($this->_query_return)
 		{
