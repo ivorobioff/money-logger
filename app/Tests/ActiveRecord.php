@@ -312,6 +312,39 @@ class Tests_ActiveRecord extends PHPUnit_Framework_TestCase
 		}
 	}
 
+	public function testWhereQuery()
+	{
+		try
+		{
+			$data = array();
+
+			for ($i = 0; $i <= 10; $i++)
+			{
+				$data[] = array(
+					'id' => $i,
+					'first_name' => 'Igor',
+					'last_name' => 'Vorobiov',
+						'number' =>123
+				);
+			}
+
+				$this->_table->insertAll($data);
+
+				$res = $this->_table
+					->whereQuery('(id=3 OR id=9 OR id=5)')
+					->fetchAll();
+
+					foreach ($res as $v)
+					{
+						$this->assertTrue(in_array($v['id'], array(3, 9, 5)));
+					}
+			}
+			catch(Exception $er)
+			{
+				die($er->getMessage());
+			}
+	}
+
 	public function testUpdate()
 	{
 		try
@@ -389,57 +422,6 @@ class Tests_ActiveRecord extends PHPUnit_Framework_TestCase
 
 			$this->assertTrue($name == 'Igor');
 			$this->assertTrue($empty == 'empty');
-		}
-		catch(Exception $ex)
-		{
-			die($ex->getMessage());
-		}
-	}
-
-	public function testFilter()
-	{
-		try
-		{
-			$data = array();
-
-			for ($i = 0; $i < 10; $i ++)
-			{
-				$data[] = array('id' => $i, 'first_name' => 'John'.$i, 'number' => $i);
-			}
-
-			$this->_table->insertAll($data);
-
-			//test1
-			$data = array('number' => 4);
-			$rules = array('number' => true);
-
-			$this->_table->filter($data, $rules);
-
-			$res = $this->_table->fetchAll();
-
-			$this->assertTrue($res[0]['number'] == 4);
-
-			//test2
-
-			$data = array('name' => 4);
-			$rules = array('name' => 'number');
-
-			$this->_table->filter($data, $rules);
-
-			$res = $this->_table->fetchAll();
-
-			$this->assertTrue($res[0]['number'] == 4);
-
-			//test3
-
-			$data = array('name' => 7);
-			$rules = array('name' => array('number', '>', '{value}'));
-
-			$this->_table->filter($data, $rules);
-
-			$res = $this->_table->fetchAll();
-
-			$this->assertTrue(count($res) == 2);
 		}
 		catch(Exception $ex)
 		{
