@@ -17,7 +17,7 @@ class Controllers_Test
 		$listener = new PHPUnit_Util_Log_TAP();
 
 		$test_result = new PHPUnit_Framework_TestResult();
-		$test_result->convertErrorsToExceptions(true);
+		$test_result->convertErrorsToExceptions(false);
 
 		$test_result->addListener($listener);
 

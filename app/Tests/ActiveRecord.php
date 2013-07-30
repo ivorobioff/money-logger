@@ -324,7 +324,7 @@ class Tests_ActiveRecord extends PHPUnit_Framework_TestCase
 					'id' => $i,
 					'first_name' => 'Igor',
 					'last_name' => 'Vorobiov',
-						'number' =>123
+					'number' =>123
 				);
 			}
 
@@ -424,6 +424,38 @@ class Tests_ActiveRecord extends PHPUnit_Framework_TestCase
 			$this->assertTrue($empty == 'empty');
 		}
 		catch(Exception $ex)
+		{
+			die($ex->getMessage());
+		}
+	}
+
+	public function testNull()
+	{
+		try
+		{
+			$data = array();
+
+			$data[] = array(
+				'id' => 1,
+				'first_name' => 'Igor',
+				'last_name' => 'Vorobiov',
+				'number' => 123,
+			);
+
+			$data[] = array(
+				'id' => 2,
+				'first_name' => 'Igor',
+				'last_name' => 'Vorobiov',
+				'number' => null,
+			);
+
+			$this->_table->insertAll($data);
+			$res = $this->_table->where('number', null)->fetchAll();
+
+			$this->assertTrue(count($res) == 1);
+			$this->assertTrue($res[0]['id'] == 2);
+		}
+		catch (Exception $ex)
 		{
 			die($ex->getMessage());
 		}

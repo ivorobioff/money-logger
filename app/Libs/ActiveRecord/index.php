@@ -159,9 +159,17 @@ abstract class Libs_ActiveRecord
 			return $this;
 		}
 
-		$eq = $this->_getSignsCond($key)  ? '' : '=';
+		if (is_null($value))
+		{
+			$is_null = strpos($key, '!=') ? 'IS NOT NULL' : 'IS NULL';
+			$this->_query_buffer['where'][] = $type.' '.$key.' '.$is_null;
+			return $this;
+		}
 
+		$eq = $this->_getSignsCond($key)  ? '' : '=';
 		$this->_query_buffer['where'][] = $type.' '.$key.$eq.'\''.$this->escape($value).'\'';
+
+		return $this;
 	}
 
 	private function _getSignsCond($q)
@@ -536,7 +544,15 @@ abstract class Libs_ActiveRecord
 
 		foreach ($data as $value)
 		{
-			$values .= $d.'\''.$this->escape($value).'\'';
+			if (is_null($value))
+			{
+				$values .= $d.'NULL';
+			}
+			else
+			{
+				$values .= $d.'\''.$this->escape($value).'\'';
+			}
+
 			$d = ',';
 		}
 
