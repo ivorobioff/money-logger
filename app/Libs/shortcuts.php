@@ -55,3 +55,8 @@ function is_auth()
 {
 	return Models_CurrentUser::getInstance()->isAuth();
 }
+
+function load_js($controller, $action)
+{
+
+}
