@@ -63,7 +63,6 @@
   };
 })();
 
-
 var Views = {};
 var Models = {};
 var Collections = {};
@@ -85,7 +84,8 @@ String.prototype.toCamelCase = function(){
 }
 
 String.prototype.render = function(data, modif){
-	var html = this;
+	var html = this + "";
+	
 	for (var i in data){
 		var escape = true;
 		

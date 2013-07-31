@@ -16,6 +16,10 @@ Views.Abstract = Class.extend({
 	
 	getElement: function(){
 		return this._el;
+	},
+	
+	remove: function(){
+		this._el.remove();
 	}
 });
 
@@ -255,6 +259,10 @@ Views.GroupsCollection = Class.extend({
 	
 	get: function(id){
 		return this._views[id];
+	},
+	
+	remove: function(id){
+		delete this._views[id];
 	}
 });
 
@@ -298,11 +306,13 @@ Views.Group = Views.Abstract.extend({
 	
 	refresh: function(){
 		this._el.find("[data-field=name]").html(_.escape(this._model.get("name")));
-	}
+	},
 });
 
 Views.GroupMenu = Views.AbstractContextMenu.extend({
 	_template: 'groups-context-menu',
+	
+	_delete_dialog: null,
 	
 	addCategory: function(context){
 		Views.AddCategoryDialog.getInstance().setContext(context).show();
@@ -314,6 +324,37 @@ Views.GroupMenu = Views.AbstractContextMenu.extend({
 	
 	deleteGroup: function(context){
 		
+		if (_.isNull(this._delete_dialog)){
+			this._delete_dialog = new Views.ConfirmDialog({
+				
+				text: i18n["/dialogs/text/delete_group"],				
+				
+				yes: function(dlg){
+					var id = dlg.getContext().getModel().get("id");
+					dlg.disableUI();					
+					post(_url("/PlannerProcessor/deleteGroup/"), {id: id}, {
+						callback: function(){
+							dlg.enableUI();
+						},
+						
+						success: function(data){
+							dlg.getContext().remove();
+							Views.GroupsCollection.getInstance().remove(data.id);
+							Collections.Groups.getInstance().remove(data.id);
+							dlg.hide();
+						},
+						
+						error: function(data){
+							alert(data);
+							dlg.hide();
+						}
+					})
+				}
+			
+			});
+		}
+		
+		this._delete_dialog.setContext(context).show();
 	}
 });
 
@@ -326,12 +367,44 @@ Views.CategoryMenu = Views.AbstractContextMenu.extend({
 	
 	_template: "categories-context-menu",
 	
+	_delete_dialog: null,
+	
 	editCategory: function(context){
 		Views.EditCategoryDialog.getInstance().setContext(context).show();
 	},
 	
-	deleteCategory: function(){
+	deleteCategory: function(context){
 		
+		if (_.isNull(this._delete_dialog)){
+			this._delete_dialog = new Views.ConfirmDialog({
+				
+				text: i18n["/dialogs/text/delete_category"],				
+				
+				yes: function(dlg){
+					var id = dlg.getContext().getModel().get("id");
+					dlg.disableUI();					
+					post(_url("/PlannerProcessor/deleteCategory/"), {id: id}, {
+						callback: function(){
+							dlg.enableUI();
+						},
+						
+						success: function(data){
+							dlg.getContext().remove();
+							Collections.Categories.getInstance().remove(data.id);
+							dlg.hide();
+						},
+						
+						error: function(data){
+							alert(data);
+							dlg.hide();
+						}
+					})
+				}
+			
+			});
+		}
+		
+		this._delete_dialog.setContext(context).show();
 	}
 });
 create_singleton(Views.CategoryMenu);
@@ -354,14 +427,12 @@ Views.AbstractDialog = Views.Abstract.extend({
 	},
 	
 	_render: function(){
+		var layout = $('#dialog-layout').html().render(this._getLayoutLabels());		
+		var content = $('#' + this._template).html().render(this._getContentLabels());
 		
-		var layout_labels = this._getLayoutLabels();
+		this._el = $(layout);
+		this._el.find('#dialog-content').html(content);
 		
-		this._el = $($('#dialog-layout').html().render(this._getLayoutLabels()));
-		
-		if (_.isNull(this._template)) throw "The template for the dialog is undefined";
-		
-		this._el.find('#dialog-content').html($('#' + this._template).html());
 		$('body').append(this._el);
 	},
 	
@@ -407,6 +478,10 @@ Views.AbstractDialog = Views.Abstract.extend({
 			submit: i18n["/dialogs/submit"],
 			cancel: i18n["/dialogs/cancel"],
 		};
+	},
+	
+	_getContentLabels: function(){
+		return {};
 	}
 });
 
@@ -575,7 +650,7 @@ Views.AddGroupDialog = Views.AbstractDialogForm.extend({
 
 	_success: function(data){
 		var model = Collections.Groups.getInstance().add(data);
-		new Views.Group(model);
+		Views.GroupsCollection.getInstance().add(model.get("id"), new Views.Group(model));
 	},
 	
 	_clearAll: function(){
@@ -616,3 +691,50 @@ Views.EditGroupDialog = Views.AbstractDialogForm.extend({
 });
 
 create_singleton(Views.EditGroupDialog);
+
+Views.ConfirmDialog = Views.AbstractDialog.extend({
+	
+	_options: null,
+	_template: 'confirm-dialog',
+	
+	initialize: function(options){
+		this._options = options;
+		this._super();
+	},
+	
+	_onPositiveClick: function(){
+		if (_.isFunction(this._options.yes)){
+			this._options.yes(this);
+		}
+	},
+	
+	_onNegativeClick: function(){
+		this.hide();
+	},
+	
+	_getLayoutLabels: function(){
+		return {
+			title: i18n["/dialogs/titles/warning"],
+			submit: i18n["/dialogs/yes"],
+			cancel: i18n["/dialogs/no"],
+		};
+	},
+	
+	_getContentLabels: function(){
+		return {
+			text: this._options.text
+		}
+	},
+	
+	getContext: function(){
+		return this._context;
+	},
+	
+	disableUI: function(){
+		this._el.find(".submit-button, .cancel-button").attr("disabled", "disabled");
+	},
+	
+	enableUI: function(){
+		this._el.find(".submit-button, .cancel-button").removeAttr("disabled");
+	}
+});

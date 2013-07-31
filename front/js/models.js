@@ -3,12 +3,12 @@ Collections.Abstract = Class.extend({
 	_models: null,
 	
 	initialize: function(){
-		this._models = [];
+		this._models = {};
 	},
 	
 	add: function(data){
 		var model = new this._model_class(data);
-		this._models.push(model);
+		this._models[model.get("id")] = model;
 		return model;
 	},
 	
@@ -27,6 +27,10 @@ Collections.Abstract = Class.extend({
 		
 		return this;
 	},
+	
+	remove: function(id){
+		delete this._models[id];
+	}
 	
 });
 

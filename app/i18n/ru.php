@@ -47,8 +47,14 @@ $i18n = array(
 
 	'/js/dialogs/submit' => 'Применить',
 	'/js/dialogs/cancel' => 'Отмена',
+	'/js/dialogs/yes' => 'Да',
+	'/js/dialogs/no' => 'Нет',
 	'/js/dialogs/titles/add_category' => 'Создать новую категорию',
 	'/js/dialogs/titles/edit_category' => 'Редактировать категорию',
 	'/js/dialogs/titles/add_group' => 'Создать новую группу',
-	'/js/dialogs/titles/edit_group' => 'Редактировать группу'
+	'/js/dialogs/titles/edit_group' => 'Редактировать группу',
+	'/js/dialogs/titles/warning' => 'Внимание!',
+
+	'/js/dialogs/text/delete_group' => 'Вы уверены, что хотите удалить данную группу?',
+	'/js/dialogs/text/delete_category' => 'Вы уверены что хотите удалить данную категорию?'
 );

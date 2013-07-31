@@ -29,6 +29,8 @@ class Controllers_PlannerProcessor extends Libs_Controllers_Processor
 
 	public function deleteCategory()
 	{
+		$id = $_POST['id'];
+
 		$model = new Models_Categories();
 
 		if (!$model->isSync($id))
@@ -36,9 +38,9 @@ class Controllers_PlannerProcessor extends Libs_Controllers_Processor
 			return $this->ajaxError(array(_t('/planner/validator/not_sync')));
 		}
 
-		$model->delete($_POST['id']);
+		$model->delete($id);
 
-		return $this->ajaxSuccess(array('id' => $_POST['id']));
+		return $this->ajaxSuccess(array('id' => $id));
 	}
 
 	private function _getCategoryValidationErrors()
