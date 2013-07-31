@@ -58,5 +58,21 @@ function is_auth()
 
 function load_js($controller, $action)
 {
+	$bootstrap_name = strtolower($controller.($action != 'index' ? '_'.$action : ''));
 
+	$composer = new Libs_JsComposer();
+
+	try
+	{
+		$composer
+			->setBootstrap($bootstrap_name.'.js')
+			->process()
+			->save();
+	}
+	catch (Libs_JsComposer_Exceptions_WrongBootstrap $ex)
+	{
+		return '';
+	}
+
+	return '<script src="'.$composer->getWebPath().'"></script>';
 }

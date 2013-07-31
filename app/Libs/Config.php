@@ -3,7 +3,7 @@ class Libs_Config
 {
 	static public function getCustom($var, $default = null)
 	{
-		require_once APP_DIR.'/config/custom.php';
+		require APP_DIR.'/config/custom.php';
 
 		if (isset(${$var}))
 		{

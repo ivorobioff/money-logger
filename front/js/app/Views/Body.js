@@ -1,4 +1,5 @@
 /**
+ * @load Views.Abstract
  * Класс вьюшка для бади.
  */
 Views.Body = Views.Abstract.extend({

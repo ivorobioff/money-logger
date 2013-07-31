@@ -14,3 +14,9 @@ $test_db = array(
 	'password' => '1234',
 	'dbname' => 'test'
 );
+
+$js_composer = array(
+	'app_path' => FRONT_DIR.'/js/app',
+	'web_path' => '/front/js/app/bin',
+	'is_production' => false
+);
