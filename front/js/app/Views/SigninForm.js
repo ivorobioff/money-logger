@@ -1,4 +1,6 @@
 /**
+ * @load Views.AutoRedirectForm
+ * 
  * Класс формы авторизации
  */
 Views.SigninForm = Views.AutoRedirectForm.extend({

@@ -1,4 +1,5 @@
 /**
+ * @load Views.AbstractForm
  * Абстракнтый класс форм которые требуют переадресацию после успеха.
  */
 Views.AutoRedirectForm = Views.AbstractForm.extend({

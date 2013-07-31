@@ -1,4 +1,6 @@
 /**
+ * @load Views.Abstract
+ * @load Views.Body
  * Абстракный класс для контекст-меню
  */
 Views.AbstractContextMenu = Views.Abstract.extend({

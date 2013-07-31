@@ -25,7 +25,7 @@ Views.ConfirmDialog = Views.AbstractDialog.extend({
 		return {
 			title: i18n["/dialogs/titles/warning"],
 			submit: i18n["/dialogs/yes"],
-			cancel: i18n["/dialogs/no"],
+			cancel: i18n["/dialogs/no"]
 		};
 	},
 	

@@ -1,3 +1,6 @@
+/**
+ * @load Views.AbstractDialog
+ */
 Views.AbstractDialogForm = Views.AbstractDialog.extend({
 		
 	_onPositiveClick: function(){
@@ -53,6 +56,5 @@ Views.AbstractDialogForm = Views.AbstractDialog.extend({
 		this._el.find('input, select, textarea').each(function(){
 			$(this).removeAttr('disabled');
 		});
-	},
-
+	}
 });

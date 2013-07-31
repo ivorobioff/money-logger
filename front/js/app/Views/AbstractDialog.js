@@ -1,3 +1,6 @@
+/**
+ * @load Views.Abstract
+ **/
 Views.AbstractDialog = Views.Abstract.extend({
 	
 	_template: null,

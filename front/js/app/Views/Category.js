@@ -1,4 +1,6 @@
 /**
+ * @load Views.Abstract
+ * @load Views.CategoryMenu
  * Вьюшка для отдельной категории
  */
 Views.Category = Views.Abstract.extend({

@@ -1,4 +1,9 @@
 /**
+ * @load Views.AbstractContextMenu
+ * @load Views.EditCategoryDialog
+ * @load Views.ConfirmDialog
+ * @load Collections.Categories
+ *
  * Класс вьюшка для контекста меню категорий
  */
 Views.CategoryMenu = Views.AbstractContextMenu.extend({

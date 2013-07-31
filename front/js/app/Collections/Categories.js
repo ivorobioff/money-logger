@@ -1,3 +1,6 @@
+/**
+ * @load Collections.Abstract
+ */
 Collections.Categories = Collections.Abstract.extend({
 	_model_class: Models.Category,
 
@@ -12,6 +15,6 @@ Collections.Categories = Collections.Abstract.extend({
 		}
 
 		return models;
-	},
+	}
 });
 create_singleton(Collections.Categories);

@@ -1,4 +1,9 @@
 /**
+ * @load Views.Abstract
+ * @load Views.GroupMenu
+ * @load Views.Category
+ * @load Collections.Categories
+ * 
  * Класс для отрисвоки группы
  */
 Views.Group = Views.Abstract.extend({

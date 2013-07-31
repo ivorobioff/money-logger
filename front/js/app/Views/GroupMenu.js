@@ -1,3 +1,11 @@
+/**
+ * @load Views.AbstractContextMenu
+ * @load Views.AddCategoryDialog
+ * @load Views.EditGroupDialog
+ * @load Views.ConfirmDialog
+ * @load Views.GroupsCollection
+ * @load Collections.Groups
+ */
 Views.GroupMenu = Views.AbstractContextMenu.extend({
 	_template: 'groups-context-menu',
 	

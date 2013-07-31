@@ -1,3 +1,10 @@
+/**
+ * @load Views.AbstractDialogForm
+ * @load Collections.Categories
+ * @load Views.GroupsCollection
+ * @load Views.Category
+ * @load Collections.Groups
+ */
 Views.AddCategoryDialog = Views.AbstractDialogForm.extend({
 	
 	_template: "add-category-dialog",

@@ -1,4 +1,5 @@
 /**
+ * @load Views.Abstract
  * Абстрактный класс форм
  */
 Views.AbstractForm = Views.Abstract.extend({

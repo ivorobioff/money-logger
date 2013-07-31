@@ -18,7 +18,7 @@ Views.AddGroupDialog = Views.AbstractDialogForm.extend({
 	
 	_getLayoutLabels: function(){
 		return $.extend(this._super(), {title: i18n["/dialogs/titles/add_group"]});
-	},
+	}
 });
 
 create_singleton(Views.AddGroupDialog);

@@ -1,4 +1,6 @@
 /**
+ * @load Views.AutoRedirectForm
+ * 
  * Класс формы регистрации
  */
 Views.SignupForm = Views.AutoRedirectForm.extend({

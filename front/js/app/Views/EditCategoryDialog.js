@@ -1,3 +1,8 @@
+/**
+ * @load Views.AbstractDialogForm
+ * @load Views.GroupsCollection
+ * @load Collections.Groups
+ */
 Views.EditCategoryDialog = Views.AbstractDialogForm.extend({
 	
 	_template: "edit-category-dialog",
@@ -45,7 +50,7 @@ Views.EditCategoryDialog = Views.AbstractDialogForm.extend({
 	
 	_getLayoutLabels: function(){
 		return $.extend(this._super(), {title: i18n["/dialogs/titles/edit_category"]});
-	},
+	}
 });
 
 create_singleton(Views.EditCategoryDialog);
