@@ -5,11 +5,11 @@ Models.Abstract = Class.extend({
 	/**
 	 * @type Array 
 	 */
-	_change_actions: null,
+	_on_change_subscribers: null,
 	
 	initialize: function(data){
 		this._data = data;
-		this._change_actions = [];
+		this._on_change_subscribers = [];
 	},
 	
 	get: function(key){
@@ -42,7 +42,7 @@ Models.Abstract = Class.extend({
 	},
 	
 	onChange: function(func){
-		this._change_actions.push(func);
+		this._on_change_subscribers.push(func);
 	},
 	
 	_set: function(key, value){
@@ -51,8 +51,8 @@ Models.Abstract = Class.extend({
 	
 	_runOnChangeSubscribers: function(changed_data){
 		
-		for (var i in this._change_actions){
-			this._change_actions[i](changed_data, this);
+		for (var i in this._on_change_subscribers){
+			this._on_change_subscribers[i](changed_data, this);
 		}
 	}
 });
