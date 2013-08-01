@@ -17,30 +17,13 @@ class Libs_JsComposer
 	public function setBootstrap($filename)
 	{
 		$this->_bootstrap = $this->_config['app_path'].'/bootstrap/'.$filename;
-
-		if (!is_readable($this->_bootstrap))
-		{
-			throw new Libs_JsComposer_Exceptions_WrongBootstrap('Bootstrap is not readable: "'.$this->_bootstrap.'"');
-		}
-
 		return $this;
 	}
 
 	public function process()
 	{
-		$bootstrap_content = file_get_contents($this->_bootstrap);
-
-		if ($bootstrap_content === false)
-		{
-			throw new Libs_JsComposer_Exceptions_WrongBootstrap('Can\'t load a bootstrap file: "'.$this->_bootstrap.'"');
-		}
-
-		if (!$bootstrap_classes = $this->_parseHeader($bootstrap_content))
-		{
-			throw new Libs_JsComposer_Exceptions_WrongBootstrap('The bootstrap header is empty: "'.$this->_bootstrap.'"');
-		}
-
-		$this->_loadClasses($bootstrap_classes);
+		$classes = $this->_getBootstrapClasses();
+		$this->_loadClasses($classes);
 
 		return $this;
 	}
@@ -65,6 +48,28 @@ class Libs_JsComposer
 	public function getWebPath()
 	{
 		return $this->_config['web_path'].'/'.$this->_getResultFileName();
+	}
+
+	private function _getBootstrapClasses()
+	{
+		if (!is_readable($this->_bootstrap))
+		{
+			throw new Libs_JsComposer_Exceptions_WrongBootstrap('Bootstrap is not readable: "'.$this->_bootstrap.'"');
+		}
+
+		$bootstrap_content = file_get_contents($this->_bootstrap);
+
+		if ($bootstrap_content === false)
+		{
+			throw new Libs_JsComposer_Exceptions_WrongBootstrap('Can\'t load a bootstrap file: "'.$this->_bootstrap.'"');
+		}
+
+		if (!$bootstrap_classes = $this->_parseHeader($bootstrap_content))
+		{
+			throw new Libs_JsComposer_Exceptions_WrongBootstrap('The bootstrap header is empty: "'.$this->_bootstrap.'"');
+		}
+
+		return $bootstrap_classes;
 	}
 
 	private function _getResultFilePath()
