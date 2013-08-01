@@ -40,6 +40,7 @@ Views.AbstractForm = Views.Abstract.extend({
 	},
 	
 	afterSubmit: function(data){},
+	
 	success: function(data){},
 	
 	error: function(data){

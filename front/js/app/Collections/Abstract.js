@@ -30,6 +30,5 @@ Collections.Abstract = Class.extend({
 	
 	remove: function(id){
 		delete this._models[id];
-	}
-	
+	}	
 });

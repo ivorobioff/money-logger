@@ -32,7 +32,7 @@ Views.ConfirmDialog = Views.AbstractDialog.extend({
 	_getContentLabels: function(){
 		return {
 			text: this._options.text
-		}
+		};
 	},
 	
 	getContext: function(){
