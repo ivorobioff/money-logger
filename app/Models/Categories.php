@@ -12,6 +12,7 @@ class Models_Categories
 	{
 		return $this->_table
 			->where('user_id', $user_id)
+			->orderBy('id', 'ASC')
 			->fetchAll();
 	}
 

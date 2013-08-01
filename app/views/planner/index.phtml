@@ -8,12 +8,10 @@ i18n["/dialogs/text/delete_group"] = "<?=_t('/js/dialogs/text/delete_group')?>";
 i18n["/dialogs/text/delete_category"] = "<?=_t('/js/dialogs/text/delete_category')?>";
 
 $(function(){
-	Collections.Groups.getInstance().addBunch(<?=json_encode($this->groups)?>);
 	Collections.Categories.getInstance().addBunch(<?=json_encode($this->categories)?>);
-
-	Collections.Groups.getInstance().each(function(model){
-		Views.GroupsCollection.getInstance().add(model.get("id"), new Views.Group(model));
-	});
+	Collections.Groups.getInstance().onAdd(function(model){
+		 new Views.Group(model);
+	}).addBunch(<?=json_encode($this->groups)?>);
 
 	new Views.AddGroupInitiator();
 });

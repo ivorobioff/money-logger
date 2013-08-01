@@ -1,15 +1,13 @@
 /**
  * @load Views.AbstractDialogForm
  * @load Collections.Groups
- * @load Views.GroupsCollection
  */
 Views.AddGroupDialog = Views.AbstractDialogForm.extend({
 	
 	_template: "add-group-dialog",
 
 	_success: function(data){
-		var model = Collections.Groups.getInstance().add(data);
-		Views.GroupsCollection.getInstance().add(model.get("id"), new Views.Group(model));
+		Collections.Groups.getInstance().add(data);
 	},
 	
 	_clearAll: function(){

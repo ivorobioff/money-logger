@@ -2,6 +2,7 @@ var Views = {};
 var Models = {};
 var Collections = {};
 var Helpers = {};
+var Libs = {};
 var i18n = {};
 
 

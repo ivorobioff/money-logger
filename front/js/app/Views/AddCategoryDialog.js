@@ -1,7 +1,6 @@
 /**
  * @load Views.AbstractDialogForm
  * @load Collections.Categories
- * @load Views.GroupsCollection
  * @load Views.Category
  * @load Collections.Groups
  */
@@ -10,9 +9,7 @@ Views.AddCategoryDialog = Views.AbstractDialogForm.extend({
 	_template: "add-category-dialog",
 
 	_success: function(data){
-		var model = Collections.Categories.getInstance().add(data);
-		var view = Views.GroupsCollection.getInstance().get(model.get("group_id"));
-		view.attachCategory(new Views.Category(model));
+		Collections.Categories.getInstance().add(data);
 	},
 	
 	_onShow: function(){

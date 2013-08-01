@@ -23,6 +23,12 @@ Views.Group = Views.Abstract.extend({
 		for (var i in categories){
 			this.attachCategory(new Views.Category(categories[i]));
 		}
+		
+		Collections.Categories.getInstance().onAdd($.proxy(function(model){
+			if (this._model.get("id") == model.get("group_id")){
+				this.attachCategory(new Views.Category(model));
+			}
+		}, this));
 	},
 	
 	_render: function(){

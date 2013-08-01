@@ -1,24 +1,3 @@
-Views.GroupsCollection = Class.extend({
-	_views: null,
-	
-	initialize: function(){
-		this._views = {};
-	},
-	
-	add: function(id, view){
-		this._views[id] = view;
-	},
-	
-	get: function(id){
-		return this._views[id];
-	},
-	
-	remove: function(id){
-		delete this._views[id];
-	}
-});
-
-create_singleton(Views.GroupsCollection);
 Models.Abstract = Class.extend({
 	
 	_data: null,
@@ -51,17 +30,53 @@ Models.Abstract = Class.extend({
  * @load Models.Abstract
  */
 Models.Group = Models.Abstract.extend({});
+Libs.Event = Class.extend({
+	_events: null,
+	
+	initialize: function(){
+		this._events = {};
+	},
+	
+	add: function (event, callback){
+		if (_.isUndefined(this._events[event])){
+			this._events[event] = [];
+		}
+		
+		this._events[event].push(callback);
+	},
+	
+	trigger: function(event, params){
+		
+		if (_.isUndefined(this._events[event])) return ; 
+		if (_.isUndefined(params)) params = [];	
+		
+		var events = this._events[event];
+		
+		for (var i in events){
+			events[i].apply(this, params)
+		}
+	}
+});
+/**
+ * @load Libs.Event
+ */
 Collections.Abstract = Class.extend({
 	_model_class: null,
 	_models: null,
 	
+	_event: null,
+	
 	initialize: function(){
 		this._models = {};
+		this._event = new Libs.Event();
 	},
 	
 	add: function(data){
 		var model = new this._model_class(data);
 		this._models[model.get("id")] = model;
+		
+		this._event.trigger("add", [model, this]);
+		
 		return model;
 	},
 	
@@ -82,8 +97,21 @@ Collections.Abstract = Class.extend({
 	},
 	
 	remove: function(id){
+		var model = this._models[id];
 		delete this._models[id];
-	}	
+		this._event("remove", [model, this]);
+		return this;
+	},
+	
+	onAdd: function(callback){
+		this._event.add("add", callback);
+		return this;
+	},
+	
+	onRemove: function(callback){
+		this._event.add("remove", callback);
+		return this;
+	}
 });
 /**
  * @load Collections.Abstract
@@ -258,15 +286,13 @@ Views.AbstractDialogForm = Views.AbstractDialog.extend({
 /**
  * @load Views.AbstractDialogForm
  * @load Collections.Groups
- * @load Views.GroupsCollection
  */
 Views.AddGroupDialog = Views.AbstractDialogForm.extend({
 	
 	_template: "add-group-dialog",
 
 	_success: function(data){
-		var model = Collections.Groups.getInstance().add(data);
-		Views.GroupsCollection.getInstance().add(model.get("id"), new Views.Group(model));
+		Collections.Groups.getInstance().add(data);
 	},
 	
 	_clearAll: function(){
@@ -369,6 +395,27 @@ Views.ConfirmDialog = Views.AbstractDialog.extend({
 		this._el.find(".submit-button, .cancel-button").removeAttr("disabled");
 	}
 });
+Views.GroupsCollection = Class.extend({
+	_views: null,
+	
+	initialize: function(){
+		this._views = {};
+	},
+	
+	add: function(id, view){
+		this._views[id] = view;
+	},
+	
+	get: function(id){
+		return this._views[id];
+	},
+	
+	remove: function(id){
+		delete this._views[id];
+	}
+});
+
+create_singleton(Views.GroupsCollection);
 /**
  * @load Views.AbstractDialogForm
  * @load Views.GroupsCollection
@@ -635,7 +682,6 @@ create_singleton(Views.EditGroupDialog);
 /**
  * @load Views.AbstractDialogForm
  * @load Collections.Categories
- * @load Views.GroupsCollection
  * @load Views.Category
  * @load Collections.Groups
  */
@@ -644,9 +690,7 @@ Views.AddCategoryDialog = Views.AbstractDialogForm.extend({
 	_template: "add-category-dialog",
 
 	_success: function(data){
-		var model = Collections.Categories.getInstance().add(data);
-		var view = Views.GroupsCollection.getInstance().get(model.get("group_id"));
-		view.attachCategory(new Views.Category(model));
+		Collections.Categories.getInstance().add(data);
 	},
 	
 	_onShow: function(){
@@ -753,6 +797,12 @@ Views.Group = Views.Abstract.extend({
 		for (var i in categories){
 			this.attachCategory(new Views.Category(categories[i]));
 		}
+		
+		Collections.Categories.getInstance().onAdd($.proxy(function(model){
+			if (this._model.get("id") == model.get("group_id")){
+				this.attachCategory(new Views.Category(model));
+			}
+		}, this));
 	},
 	
 	_render: function(){
