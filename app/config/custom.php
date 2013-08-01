@@ -1,6 +1,8 @@
 <?php
 $default_path = array('controller' => 'MoneyFlow');
 
+$is_production = false;
+
 $db_config = array(
 	'host' => 'localhost',
 	'username' => 'root',

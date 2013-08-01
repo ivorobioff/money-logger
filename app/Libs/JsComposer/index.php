@@ -9,15 +9,13 @@ class Libs_JsComposer
 
 	private $_classes = array();
 
-	public function __construct()
+	/**
+	 * @param string $filename - имя файла бутстрапа
+	 */
+	public function __construct($filename)
 	{
 		$this->_config = Libs_Config::getCustom('js_composer');
-	}
-
-	public function setBootstrap($filename)
-	{
 		$this->_bootstrap = $this->_config['app_path'].'/bootstrap/'.$filename;
-		return $this;
 	}
 
 	public function process()
@@ -41,11 +39,15 @@ class Libs_JsComposer
 
 		if (file_put_contents($this->_getResultFilePath(), $result) === false)
 		{
-			throw new Libs_JsComposer_Exceptions_ErrorSave('Can\' save file "'.$this->_getResultFilePath().'"');
+			throw new Libs_JsComposer_Exceptions_ErrorSave('Can\'t save file "'.$this->_getResultFilePath().'"');
 		}
 	}
 
-	public function getWebPath()
+	/**
+	 * Получить путь к жатому js файлу для доступа к нему с фронта
+	 * @return string
+	 */
+	public function getJs()
 	{
 		return $this->_config['web_path'].'/'.$this->_getResultFileName();
 	}

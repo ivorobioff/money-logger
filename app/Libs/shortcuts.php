@@ -60,19 +60,21 @@ function load_js($controller, $action)
 {
 	$bootstrap_name = strtolower($controller.($action != 'index' ? '_'.$action : ''));
 
-	$composer = new Libs_JsComposer();
+	$composer = new Libs_JsComposer($bootstrap_name.'.js');
+
+	if (Libs_Config::getCustom('is_production'))
+	{
+		return '<script src="'.$composer->getJs().'"></script>';
+	}
 
 	try
 	{
-		$composer
-			->setBootstrap($bootstrap_name.'.js')
-			->process()
-			->save();
+		$composer->process()->save();
 	}
 	catch (Libs_JsComposer_Exceptions_WrongBootstrap $ex)
 	{
 		return '';
 	}
 
-	return '<script src="'.$composer->getWebPath().'"></script>';
+	return '<script src="'.$composer->getJs().'"></script>';
 }
