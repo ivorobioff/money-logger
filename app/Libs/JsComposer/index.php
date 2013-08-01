@@ -15,7 +15,7 @@ class Libs_JsComposer
 	public function __construct($filename)
 	{
 		$this->_config = Libs_Config::getCustom('js_composer');
-		$this->_bootstrap = $this->_config['app_path'].'/bootstrap/'.$filename;
+		$this->_bootstrap = $filename;
 	}
 
 	public function process()
@@ -54,12 +54,12 @@ class Libs_JsComposer
 
 	private function _getBootstrapClasses()
 	{
-		if (!is_readable($this->_bootstrap))
+		if (!is_readable($this->_getBootstrapPath()))
 		{
 			throw new Libs_JsComposer_Exceptions_WrongBootstrap('Bootstrap is not readable: "'.$this->_bootstrap.'"');
 		}
 
-		$bootstrap_content = file_get_contents($this->_bootstrap);
+		$bootstrap_content = file_get_contents($this->_getBootstrapPath());
 
 		if ($bootstrap_content === false)
 		{
@@ -140,6 +140,11 @@ class Libs_JsComposer
 		}
 
 		return $content;
+	}
+
+	private function _getBootstrapPath()
+	{
+		return $this->_config['app_path'].'/bootstrap/'.$this->_bootstrap;
 	}
 
 	private function _getResultFileName()
