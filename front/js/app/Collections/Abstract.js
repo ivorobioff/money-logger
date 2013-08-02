@@ -40,7 +40,7 @@ Collections.Abstract = Class.extend({
 	remove: function(id){
 		var model = this._models[id];
 		delete this._models[id];
-		this._event("remove", [model, this]);
+		this._event.trigger("remove", [model, this]);
 		return this;
 	},
 	

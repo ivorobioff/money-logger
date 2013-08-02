@@ -17,13 +17,7 @@ Views.Group = Views.Abstract.extend({
 			Views.GroupMenu.getInstance().setContext(this).show({x: e.pageX, y: e.pageY});
 			return false;
 		}, this));
-		
-		var categories = Collections.Categories.getInstance().getByGroupId(this._model.get('id'));
-		
-		for (var i in categories){
-			this.attachCategory(new Views.Category(categories[i]));
-		}
-		
+				
 		Collections.Categories.getInstance().onAdd($.proxy(function(model){
 			if (this._model.get("id") == model.get("group_id")){
 				this.attachCategory(new Views.Category(model));

@@ -9,6 +9,7 @@ Views.Category = Views.Abstract.extend({
 	initialize: function(model){
 		this._model = model;
 		this._render();
+		
 		this._el.find('.tab-menu').click($.proxy(function(e){
 			Views.CategoryMenu.getInstance().setContext(this).show({x: e.pageX, y: e.pageY});
 			return false;

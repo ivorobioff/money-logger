@@ -16,18 +16,21 @@ Models.Abstract = Class.extend({
 	},
 	
 	set: function(key, value){
+		this._event.trigger("set:" + key + ":before", [this]);
 		this._set(key, value);		
-		this._event.trigger("set:" + key, [value, this]);
+		this._event.trigger("set:" + key + ":after", [value, this]);
 		return this;
 	},
 	
 	update: function(data)
 	{
+		this._event.trigger("update:before", [this]);
+	
 		for(var i in data){
 			this._set(i, data[i]);
 		}
 		
-		this._event.trigger("update", [this]);
+		this._event.trigger("update:after", [this]);
 		return this;
 	},
 	
@@ -36,12 +39,23 @@ Models.Abstract = Class.extend({
 	},
 	
 	onUpdate: function(callback){
-		this._event.add("update", callback);
+		if (!_.isFunction(callback)){
+			this._event.add("update:before", callback.before);
+			this._event.add("update:after", callback.after);
+		} else {
+			this._event.add("update:after", callback);
+		}
 		return this;
 	},
 	
 	onSet: function(key, callback){
-		this._event.add("set:" + key, callback);
+		if (!_.isFunction(callback)){
+			this._event.add("set:" + key + ":before", callback.before);
+			this._event.add("set:" + key + ":after", callback.after);
+		} else {
+			this._event.add("set:" + key + ":after", callback);
+		}
+		
 		return this;
 	},
 	

@@ -8,14 +8,14 @@ Views.EditCategoryDialog = Views.AbstractDialogForm.extend({
 	_template: "edit-category-dialog",
 
 	_success: function(data){
-		var current_group = this._context.getModel().get("group_id");
+		var old_group = this._context.getModel().get("group_id");
 		this._context.getModel().update(data);
 		
 		this._context.refresh();
 		
 		var new_group = this._context.getModel().get("group_id");
 		
-		if (current_group != new_group){
+		if (old_group != new_group){
 			var view = Views.GroupsCollection.getInstance().get(new_group);
 			view.attachCategory(this._context);
 		}

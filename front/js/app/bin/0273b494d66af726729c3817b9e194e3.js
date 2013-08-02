@@ -43,18 +43,21 @@ Models.Abstract = Class.extend({
 	},
 	
 	set: function(key, value){
+		this._event.trigger("set:" + key + ":before", [this]);
 		this._set(key, value);		
-		this._event.trigger("set:" + key, [value, this]);
+		this._event.trigger("set:" + key + ":after", [value, this]);
 		return this;
 	},
 	
 	update: function(data)
 	{
+		this._event.trigger("update:before", [this]);
+	
 		for(var i in data){
 			this._set(i, data[i]);
 		}
 		
-		this._event.trigger("update", [this]);
+		this._event.trigger("update:after", [this]);
 		return this;
 	},
 	
@@ -63,12 +66,23 @@ Models.Abstract = Class.extend({
 	},
 	
 	onUpdate: function(callback){
-		this._event.add("update", callback);
+		if (!_.isFunction(callback)){
+			this._event.add("update:before", callback.before);
+			this._event.add("update:after", callback.after);
+		} else {
+			this._event.add("update:after", callback);
+		}
 		return this;
 	},
 	
 	onSet: function(key, callback){
-		this._event.add("set:" + key, callback);
+		if (!_.isFunction(callback)){
+			this._event.add("set:" + key + ":before", callback.before);
+			this._event.add("set:" + key + ":after", callback.after);
+		} else {
+			this._event.add("set:" + key + ":after", callback);
+		}
+		
 		return this;
 	},
 	
@@ -122,7 +136,7 @@ Collections.Abstract = Class.extend({
 	remove: function(id){
 		var model = this._models[id];
 		delete this._models[id];
-		this._event("remove", [model, this]);
+		this._event.trigger("remove", [model, this]);
 		return this;
 	},
 	
@@ -354,19 +368,6 @@ Models.Category = Models.Abstract.extend({});
  */
 Collections.Categories = Collections.Abstract.extend({
 	_model_class: Models.Category,
-
-	getByGroupId: function(id){
-		var models = [];
-		for (var i in this._models){
-			var model = this._models[i];
-
-			if (model.get('group_id') == id){
-				models.push(model);
-			}
-		}
-
-		return models;
-	}
 });
 create_singleton(Collections.Categories);
 /**
@@ -449,14 +450,14 @@ Views.EditCategoryDialog = Views.AbstractDialogForm.extend({
 	_template: "edit-category-dialog",
 
 	_success: function(data){
-		var current_group = this._context.getModel().get("group_id");
+		var old_group = this._context.getModel().get("group_id");
 		this._context.getModel().update(data);
 		
 		this._context.refresh();
 		
 		var new_group = this._context.getModel().get("group_id");
 		
-		if (current_group != new_group){
+		if (old_group != new_group){
 			var view = Views.GroupsCollection.getInstance().get(new_group);
 			view.attachCategory(this._context);
 		}
@@ -648,6 +649,7 @@ Views.Category = Views.Abstract.extend({
 	initialize: function(model){
 		this._model = model;
 		this._render();
+		
 		this._el.find('.tab-menu').click($.proxy(function(e){
 			Views.CategoryMenu.getInstance().setContext(this).show({x: e.pageX, y: e.pageY});
 			return false;
@@ -814,13 +816,7 @@ Views.Group = Views.Abstract.extend({
 			Views.GroupMenu.getInstance().setContext(this).show({x: e.pageX, y: e.pageY});
 			return false;
 		}, this));
-		
-		var categories = Collections.Categories.getInstance().getByGroupId(this._model.get('id'));
-		
-		for (var i in categories){
-			this.attachCategory(new Views.Category(categories[i]));
-		}
-		
+				
 		Collections.Categories.getInstance().onAdd($.proxy(function(model){
 			if (this._model.get("id") == model.get("group_id")){
 				this.attachCategory(new Views.Category(model));
