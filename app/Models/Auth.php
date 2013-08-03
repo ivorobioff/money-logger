@@ -34,7 +34,7 @@ class Models_Auth
 
 	public function checkEmail($email)
 	{
-		return $this->_table->check('email', $email);
+		return $this->_table->where('email', $email)->check();
 	}
 
 	public function getUserByHashedId($id)
