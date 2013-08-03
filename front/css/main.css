@@ -53,14 +53,14 @@
     padding-top: 6px;
 }
 
-#menu
+#budget-menu
 {
     padding-right: 10px;
     float: right;
     padding-top: 3px;
 }
 
-#menu a
+#budget-menu a
 {
     color: #666666;
     font-size: 11px;
@@ -471,7 +471,7 @@ select
 	padding-right:5px;
 }
 
-#menu #last
+#budget-menu #last
 {
 	padding-right:0;
 }

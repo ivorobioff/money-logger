@@ -60,21 +60,34 @@ function load_js($controller, $action)
 {
 	$bootstrap_name = strtolower($controller.($action != 'index' ? '_'.$action : ''));
 
-	$composer = new Libs_JsComposer($bootstrap_name.'.js');
+	if ($bootstrap_name == 'common') return ;
+
+	$bin = md5($bootstrap_name);
 
 	if (Libs_Config::getCustom('is_production'))
 	{
-		return '<script src="'.$composer->getJs().'"></script>';
+		return '<script src="/front/js/app/bin/'.$bin.'.js"></script>';
 	}
+
+	$composer = new Libs_JsComposer();
 
 	try
 	{
-		$composer->process()->save();
+		$composer
+			->addBootstrap('common.js')
+			->addBootstrap($bootstrap_name.'.js')
+			->process()
+			->save($bin.'.js');
 	}
-	catch (Libs_JsComposer_Exceptions_WrongBootstrap $ex)
+	catch (Libs_JsComposer_Exceptions_NoStart $ex)
 	{
 		return '';
 	}
 
-	return '<script src="'.$composer->getJs().'"></script>';
+	return '<script src="/front/js/app/bin/'.$bin.'.js"></script>';
+}
+
+function user_id()
+{
+	return Models_CurrentUser::getInstance()->id;
 }

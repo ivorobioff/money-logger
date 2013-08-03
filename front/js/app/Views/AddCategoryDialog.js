@@ -9,7 +9,8 @@ Views.AddCategoryDialog = Views.AbstractDialogForm.extend({
 	_template: "add-category-dialog",
 
 	_success: function(data){
-		Collections.Categories.getInstance().add(data);
+		Collections.Categories.getInstance().add(data.model);
+		Models.Budget.getInstance().update(data.budget);
 	},
 	
 	_onShow: function(){

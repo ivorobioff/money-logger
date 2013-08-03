@@ -21,9 +21,12 @@ abstract class Libs_Controllers_Page extends Libs_Controllers
 
 	protected function render(Libs_Views $view)
 	{
+		$budget = new Models_Budgets();
+
 		$this->_layout
 			->assign('view', $view)
 			->assign('title', $this->_title)
+			->assign('budget_summary', $budget->getSummary())
 			->render();
 	}
 }

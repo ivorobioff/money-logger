@@ -1,5 +1,5 @@
 <?php
-class Controllers_Auth extends Libs_Controllers_Page
+class Controllers_Auth extends Libs_Controllers
 {
 	protected $_require_auth = false;
 

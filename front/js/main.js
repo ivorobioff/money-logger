@@ -38,6 +38,13 @@ String.prototype.render = function(data, modif){
 	return html;
 }
 
+$.fn.updateDataFields = function(model){
+	this.find("[data-field]").each(function(){
+		var el = $(this);
+		el.html(_.escape(model.get(el.attr("data-field"))));
+	});
+}
+
 /**
  * Полезная функция для дебага. Выводит хэш атрибутов объекта
  */

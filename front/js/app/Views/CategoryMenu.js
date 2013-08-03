@@ -34,6 +34,7 @@ Views.CategoryMenu = Views.AbstractContextMenu.extend({
 						success: function(data){
 							dlg.getContext().remove();
 							Collections.Categories.getInstance().remove(data.id);
+							Models.Budget.getInstance().update(data.budget);
 							dlg.hide();
 						},
 						

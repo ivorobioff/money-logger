@@ -18,6 +18,6 @@ $test_db = array(
 );
 
 $js_composer = array(
-	'app_path' => FRONT_DIR.'/js/app',
-	'web_path' => '/front/js/app/bin',
+	'app_path' => FRONT_DIR.'/js/app', //путь к js приложению
+	'bin_path' => FRONT_DIR.'/js/app/bin', // путь куда будет сохраняться готовый js файл
 );

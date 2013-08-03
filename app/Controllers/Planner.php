@@ -5,11 +5,10 @@ class Controllers_Planner extends Libs_Controllers_Page
 	{
 		$group_model = new Models_Groups();
 		$categories_model = new Models_Categories();
-		$user_id = Models_CurrentUser::getInstance()->id;
 
 		$view = Libs_Views::create('/planner/index.phtml')
-			->assign('groups', $group_model->getGroupsByUserId($user_id))
-			->assign('categories', $categories_model->getCategoriesByUserId($user_id));
+			->assign('groups', $group_model->getAll())
+			->assign('categories', $categories_model->getAll());
 
 		$this->render($view);
 	}

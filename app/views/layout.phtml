@@ -12,16 +12,18 @@
 			i18n["/dialogs/yes"] = "<?=_t('/js/dialogs/yes')?>";
 			i18n["/dialogs/no"] = "<?=_t('/js/dialogs/no')?>";
 			i18n["/dialogs/titles/warning"] = "<?=_t('/js/dialogs/titles/warning')?>";
+			i18n["/dialogs/titles/deposit"] = "<?=_t('/js/dialogs/titles/deposit')?>";
+			i18n["/dialogs/titles/withdrawal"] = "<?=_t('/js/dialogs/titles/withdrawal')?>";
 		</script>
         <div id="tp"></div>
         <div id="content">
         	<div id="header-top">
         		 <div id="tp-left">
-	                Остаток: 2300000.00
+	                <?=_t('/budget/remainder');?>: <span data-field="remainder"><?=$this->budget_summary['remainder']?></span>
 	            </div>
 	            <div id="tp-right">
-	                <b>Бюджет:</b> 300000.00 &nbsp;&nbsp;
-	                <b>Расходы:</b> 23300.00
+	                <b><?=_t('/budget/budget')?>:</b>  <span data-field="budget"><?=$this->budget_summary['budget']?></span>&nbsp;&nbsp;
+	                <b><?=_t('/budget/expenses')?>:</b>  <span data-field="expenses"><?=$this->budget_summary['expenses']?></span>
 	                (<a href="<?=_url('/AuthProcessor/signout/');?>"><?=_t('/auth/exit')?></a>)
 	            </div>
 	            <br class="clr" />
@@ -53,10 +55,10 @@
                 		echo _t('/sections/money_flow');
                 	}
                 ?></div>
-                <div id="menu">
-                        <a href="#">Внести сумму</a>
-                        <a href="#">Забрать сумму</a>
-                        <a href="#" id="last">Закрыть месяц</a>
+                <div id="budget-menu">
+                        <a href="#" action="deposit"><?=_t('/budget/menu/deposit')?></a>
+                        <a href="#" action="withdrawal"><?=_t('/budget/menu/withdrawal')?></a>
+                        <a href="#" id="last"><?=_t('/budget/menu/close_month')?></a>
                  </div>
                <br class="clr" />
             </div>
@@ -91,6 +93,13 @@
                 Kisya &amp; Solnyshko Co. All rights reserved. 2012
             </div>
         </div>
+<script>
+	$(function(){
+		Models.Budget.getInstance().update(<?=json_encode($this->budget_summary)?>, true);
+		new Views.Budget();
+		new Views.BudgetMenu();
+	});
+</script>
 <script type="text/template" id="dialog-layout">
 <div class="dlg-cont" style="display: none;">
 <div class="bg"></div>
@@ -112,6 +121,22 @@
 </div>
 </div>
 </div>
+</script>
+
+<script id="deposit-dialog" type="text/template">
+<div class="form">
+	<form action="<?=_url('/BudgetProcessor/deposit/');?>">
+	<?php Libs_Views::create('budget/fields.phtml')->render()?>
+	</form>
+	</div>
+</script>
+
+<script id="withdrawal-dialog" type="text/template">
+<div class="form">
+	<form action="<?=_url('/BudgetProcessor/withdrawal/');?>">
+	<?php Libs_Views::create('budget/fields.phtml')->render()?>
+	</form>
+	</div>
 </script>
 
 <script id="confirm-dialog" type="text/template">

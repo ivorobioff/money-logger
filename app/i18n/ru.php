@@ -35,6 +35,7 @@ $i18n = array(
 	'/planner/validator/missing_field' => 'Не задано поле',
 	'/planner/validator/wrong_amount' => 'Сумма должно быть больше 0.00',
 	'/planner/validator/group_not_empty' => 'Группа содержит категории',
+	'/planner/validator/group_one_left' => 'Последнюю группу нельзя удалить',
 	'/planner/validator/not_sync' => 'Категория уже задействована в операциях',
 	'/planner/add_group' => 'Добавить группу',
 
@@ -42,8 +43,18 @@ $i18n = array(
 	'/dialogs/add_categories/sum' => 'Сумма',
 	'/dialogs/add_categories/group' => 'Группа',
 	'/dialogs/add_categories/pin' => 'Прикрепить',
+	'/dialogs/budget/amount' => 'Сумма',
 
 	'/dialogs/add_group/name' => 'Название',
+
+	'/budget/menu/deposit' => 'Внести сумму',
+	'/budget/menu/withdrawal' => 'Забрать сумму',
+	'/budget/menu/close_month' => 'Закрыть месяц',
+	'/budget/remainder' => 'Остаток',
+	'/budget/expenses' => 'Расходы',
+	'/budget/budget' => 'Бюджет',
+	'/budget/validator/small_amount' => 'Сумма не должна быть меньше 0.01',
+	'/budget/validator/not_enough_money' => 'Не хватает средств для снятия',
 
 	'/js/dialogs/submit' => 'Применить',
 	'/js/dialogs/cancel' => 'Отмена',
@@ -54,6 +65,8 @@ $i18n = array(
 	'/js/dialogs/titles/add_group' => 'Создать новую группу',
 	'/js/dialogs/titles/edit_group' => 'Редактировать группу',
 	'/js/dialogs/titles/warning' => 'Внимание!',
+	'/js/dialogs/titles/deposit' => 'Внести сумму',
+	'/js/dialogs/titles/withdrawal' => 'Забрать сумму',
 
 	'/js/dialogs/text/delete_group' => 'Вы уверены, что хотите удалить данную группу?',
 	'/js/dialogs/text/delete_category' => 'Вы уверены что хотите удалить данную категорию?'

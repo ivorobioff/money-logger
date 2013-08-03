@@ -7,30 +7,38 @@ Models.Abstract = Class.extend({
 	_event: null,
 	
 	initialize: function(data){
+		
+		if (_.isUndefined(data)) data = {};
+		
 		this._data = data;
 		this._event = new Libs.Event();
 	},
-	
+		
 	get: function(key){
 		return this._data[key];
 	},
 	
-	set: function(key, value){
-		this._event.trigger("set:" + key + ":before", [this]);
+	set: function(key, value, silent){
+		
+		if (_.isUndefined(silent)) silent = false;
+		
+		if (!silent) this._event.trigger("set:" + key + ":before", [this]);
 		this._set(key, value);		
-		this._event.trigger("set:" + key + ":after", [value, this]);
+		if (!silent) this._event.trigger("set:" + key + ":after", [value, this]);
 		return this;
 	},
 	
-	update: function(data)
+	update: function(data, silent)
 	{
-		this._event.trigger("update:before", [this]);
+		if (_.isUndefined(silent)) silent = false;
+		
+		if (!silent) this._event.trigger("update:before", [this]);
 	
 		for(var i in data){
 			this._set(i, data[i]);
 		}
 		
-		this._event.trigger("update:after", [this]);
+		if (!silent) this._event.trigger("update:after", [this]);
 		return this;
 	},
 	

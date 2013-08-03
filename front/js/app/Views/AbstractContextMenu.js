@@ -1,6 +1,7 @@
 /**
  * @load Views.Abstract
  * @load Views.Body
+ * @load Helpers.ItemClick
  * Абстракный класс для контекст-меню
  */
 Views.AbstractContextMenu = Views.Abstract.extend({
@@ -9,9 +10,11 @@ Views.AbstractContextMenu = Views.Abstract.extend({
 	_is_shown: false,
 	_coor: {},
 	_context: null,
+	_helper: null,
 	
 	initialize: function(){	
 		this._render();
+		this._helper = new Helpers.ItemClick(this);
 		
 		this._el.find('a').click($.proxy(this._onItemClick, this));
 		
@@ -27,19 +30,7 @@ Views.AbstractContextMenu = Views.Abstract.extend({
 	},
 	
 	_onItemClick: function(e){
-		var action = $(e.target).attr('action');
-		
-		if (!_.isString(action)){
-			return ;
-		}
-		
-		var method = action.toCamelCase();
-		
-		if (!_.isFunction(this[method])){
-			return ;
-		}
-		
-		this[method](this._context);
+		this._helper.process(e, [this._context]);
 		this.hide();
 		return false;
 	},

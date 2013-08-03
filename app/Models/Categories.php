@@ -8,10 +8,10 @@ class Models_Categories
 		$this->_table = new Db_Categories();
 	}
 
-	public function getCategoriesByUserId($user_id)
+	public function getAll()
 	{
 		return $this->_table
-			->where('user_id', $user_id)
+			->where('user_id', user_id())
 			->orderBy('id', 'ASC')
 			->fetchAll();
 	}
@@ -23,7 +23,7 @@ class Models_Categories
 			'amount' => round($data['amount'], 2),
 			'current_amount' => $data['amount'],
 			'group_id' => $data['group'],
-			'user_id' => Models_CurrentUser::getInstance()->id,
+			'user_id' => user_id(),
 			'pin' => isset($data['pin']) ? 1 : 0,
 		);
 		return $this->_table->insert($data);
@@ -43,7 +43,7 @@ class Models_Categories
 		);
 
 		$this->_table
-			->where('user_id', Models_CurrentUser::getInstance()->id)
+			->where('user_id', user_id())
 			->where('id', $id)
 			->update($data);
 	}
@@ -51,7 +51,7 @@ class Models_Categories
 	public function delete($id)
 	{
 		$this->_table
-			->where('user_id', Models_CurrentUser::getInstance()->id)
+			->where('user_id', user_id())
 			->where('id', $id)
 			->delete();
 	}

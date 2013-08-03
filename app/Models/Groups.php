@@ -19,10 +19,10 @@ class Models_Groups
 		$this->_table->insert($data);
 	}
 
-	public function getGroupsByUserId($user_id)
+	public function getAll()
 	{
 		return $this->_table
-			->where('user_id', $user_id)
+			->where('user_id', user_id())
 			->orderBy('id', 'ASC')
 			->fetchAll();
 	}
@@ -30,7 +30,7 @@ class Models_Groups
 	public function add(array $data)
 	{
 		$data = array(
-			'user_id' => Models_CurrentUser::getInstance()->id,
+			'user_id' => user_id(),
 			'name' => $data['name'],
 			'is_default' => 0
 		);
@@ -42,7 +42,7 @@ class Models_Groups
 	{
 		return $this->_table
 			->where('id', $data['id'])
-			->where('user_id', Models_CurrentUser::getInstance()->id)
+			->where('user_id', user_id())
 			->update('name', $data['name']);
 	}
 
@@ -50,7 +50,7 @@ class Models_Groups
 	{
 		$this->_table
 			->where('id', $id)
-			->where('user_id', Models_CurrentUser::getInstance()->id)
+			->where('user_id', user_id())
 			->delete();
 	}
 
@@ -64,5 +64,14 @@ class Models_Groups
 		return Db_Categories::create()
 			->where('group_id', $group_id)
 			->check();
+	}
+
+	public function oneLeft()
+	{
+		return $this->_table
+			->select('COUNT(*) AS total')
+			->where('user_id', user_id())
+			->createResultFormat()
+			->getValue('total', 0) < 2;
 	}
 }

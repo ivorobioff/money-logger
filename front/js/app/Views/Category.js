@@ -30,7 +30,6 @@ Views.Category = Views.Abstract.extend({
 	},
 	
 	refresh: function(){
-		this._el.find("[data-field=title]").html(_.escape(this._model.get("title")));
-		this._el.find("[data-field=amount]").html(_.escape(this._model.get("amount")));
+		this._el.updateDataFields(this._model);
 	}
 });

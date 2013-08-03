@@ -40,6 +40,6 @@ Views.Group = Views.Abstract.extend({
 	},
 	
 	refresh: function(){
-		this._el.find("[data-field=name]").html(_.escape(this._model.get("name")));
+		this._el.find(".group-title").updateDataFields(this._model);
 	},
 });

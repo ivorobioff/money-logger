@@ -4,7 +4,7 @@
  */
 class Libs_JsComposer
 {
-	private $_bootstrap;
+	private $_bootstraps = array();
 	private $_config;
 
 	private $_classes = array();
@@ -12,21 +12,36 @@ class Libs_JsComposer
 	/**
 	 * @param string $filename - имя файла бутстрапа
 	 */
-	public function __construct($filename)
+	public function __construct()
 	{
 		$this->_config = Libs_Config::getCustom('js_composer');
-		$this->_bootstrap = $filename;
+	}
+
+	public function addBootstrap($filename)
+	{
+		$this->_bootstraps[] = $filename;
+		return $this;
 	}
 
 	public function process()
 	{
-		$classes = $this->_getBootstrapClasses();
+		if (!$this->_bootstraps) throw new Libs_JsComposer_Exceptions_NoStart();
+
+		$classes = array();
+
+		foreach ($this->_bootstraps as $bootstrap)
+		{
+			$classes = array_merge($classes, $this->_getBootstrapClasses($bootstrap));
+		}
+
+		if (!$classes) throw new Libs_JsComposer_Exceptions_NoStart();
+
 		$this->_loadClasses($classes);
 
 		return $this;
 	}
 
-	public function save()
+	public function save($filename)
 	{
 		$this->_classes = array_reverse($this->_classes);
 
@@ -37,46 +52,25 @@ class Libs_JsComposer
 			$result .= $this->_getFileContentByClass($class)."\n";
 		}
 
-		if (file_put_contents($this->_getResultFilePath(), $result) === false)
+		$path = $this->_config['bin_path'].'/'.$filename;
+
+		if (file_put_contents($path, $result) === false)
 		{
-			throw new Libs_JsComposer_Exceptions_ErrorSave('Can\'t save file "'.$this->_getResultFilePath().'"');
+			throw new Libs_JsComposer_Exceptions_ErrorSave('Can\'t save file "'.$path.'"');
 		}
 	}
 
-	/**
-	 * Получить путь к жатому js файлу для доступа к нему с фронта
-	 * @return string
-	 */
-	public function getJs()
+
+	private function _getBootstrapClasses($filename)
 	{
-		return $this->_config['web_path'].'/'.$this->_getResultFileName();
-	}
+		$path = $this->_config['app_path'].'/bootstrap/'.$filename;
 
-	private function _getBootstrapClasses()
-	{
-		if (!is_readable($this->_getBootstrapPath()))
-		{
-			throw new Libs_JsComposer_Exceptions_WrongBootstrap('Bootstrap is not readable: "'.$this->_bootstrap.'"');
-		}
+		if (!is_readable($path)) return array() ;
 
-		$bootstrap_content = file_get_contents($this->_getBootstrapPath());
+		$content = file_get_contents($path);
+		if ($content === false) return array();
 
-		if ($bootstrap_content === false)
-		{
-			throw new Libs_JsComposer_Exceptions_WrongBootstrap('Can\'t load a bootstrap file: "'.$this->_bootstrap.'"');
-		}
-
-		if (!$bootstrap_classes = $this->_parseHeader($bootstrap_content))
-		{
-			throw new Libs_JsComposer_Exceptions_WrongBootstrap('The bootstrap header is empty: "'.$this->_bootstrap.'"');
-		}
-
-		return $bootstrap_classes;
-	}
-
-	private function _getResultFilePath()
-	{
-		return $this->_config['app_path'].'/bin/'.$this->_getResultFileName();
+		return $this->_parseHeader($content);
 	}
 
 	private function _loadClasses($classes)
@@ -140,15 +134,5 @@ class Libs_JsComposer
 		}
 
 		return $content;
-	}
-
-	private function _getBootstrapPath()
-	{
-		return $this->_config['app_path'].'/bootstrap/'.$this->_bootstrap;
-	}
-
-	private function _getResultFileName()
-	{
-		return md5(rtrim($this->_bootstrap, '.js')).'.js';
 	}
 }

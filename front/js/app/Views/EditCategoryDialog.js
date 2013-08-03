@@ -9,9 +9,10 @@ Views.EditCategoryDialog = Views.AbstractDialogForm.extend({
 
 	_success: function(data){
 		var old_group = this._context.getModel().get("group_id");
-		this._context.getModel().update(data);
-		
+		this._context.getModel().update(data.model);
 		this._context.refresh();
+		
+		Models.Budget.getInstance().update(data.budget);
 		
 		var new_group = this._context.getModel().get("group_id");
 		

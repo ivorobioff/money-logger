@@ -34,30 +34,38 @@ Models.Abstract = Class.extend({
 	_event: null,
 	
 	initialize: function(data){
+		
+		if (_.isUndefined(data)) data = {};
+		
 		this._data = data;
 		this._event = new Libs.Event();
 	},
-	
+		
 	get: function(key){
 		return this._data[key];
 	},
 	
-	set: function(key, value){
-		this._event.trigger("set:" + key + ":before", [this]);
+	set: function(key, value, silent){
+		
+		if (_.isUndefined(silent)) silent = false;
+		
+		if (!silent) this._event.trigger("set:" + key + ":before", [this]);
 		this._set(key, value);		
-		this._event.trigger("set:" + key + ":after", [value, this]);
+		if (!silent) this._event.trigger("set:" + key + ":after", [value, this]);
 		return this;
 	},
 	
-	update: function(data)
+	update: function(data, silent)
 	{
-		this._event.trigger("update:before", [this]);
+		if (_.isUndefined(silent)) silent = false;
+		
+		if (!silent) this._event.trigger("update:before", [this]);
 	
 		for(var i in data){
 			this._set(i, data[i]);
 		}
 		
-		this._event.trigger("update:after", [this]);
+		if (!silent) this._event.trigger("update:after", [this]);
 		return this;
 	},
 	
@@ -108,18 +116,21 @@ Collections.Abstract = Class.extend({
 		this._event = new Libs.Event();
 	},
 	
-	add: function(data){
+	add: function(data, silent){
+		
+		if (_.isUndefined(silent)) silent = false;
+		
 		var model = new this._model_class(data);
 		this._models[model.get("id")] = model;
 		
-		this._event.trigger("add", [model, this]);
+		if (!silent) this._event.trigger("add", [model, this]);
 		
 		return model;
 	},
 	
-	addBunch: function(data){
+	addBunch: function(data, silent){
 		for (var i in data){
-			this.add(data[i]);
+			this.add(data[i], silent);
 		}
 		
 		return this._models;
@@ -133,10 +144,15 @@ Collections.Abstract = Class.extend({
 		return this;
 	},
 	
-	remove: function(id){
+	remove: function(id, silent){
+		
+		if (_.isUndefined(silent)) silent = false;
+		
 		var model = this._models[id];
 		delete this._models[id];
-		this._event.trigger("remove", [model, this]);
+		
+		if (!silent) this._event.trigger("remove", [model, this]);
+		
 		return this;
 	},
 	
@@ -451,9 +467,10 @@ Views.EditCategoryDialog = Views.AbstractDialogForm.extend({
 
 	_success: function(data){
 		var old_group = this._context.getModel().get("group_id");
-		this._context.getModel().update(data);
-		
+		this._context.getModel().update(data.model);
 		this._context.refresh();
+		
+		Models.Budget.getInstance().update(data.budget);
 		
 		var new_group = this._context.getModel().get("group_id");
 		
@@ -496,6 +513,33 @@ Views.EditCategoryDialog = Views.AbstractDialogForm.extend({
 });
 
 create_singleton(Views.EditCategoryDialog);
+Helpers.ItemClick = Class.extend({
+	
+	_that: null,
+	
+	initialize: function(that){
+		this._that = that;
+	},
+	
+	process: function(e, params){
+		
+		if (_.isUndefined(params)) params = [];
+		
+		var action = $(e.target).attr('action');
+		
+		if (!_.isString(action)){
+			return ;
+		}
+		
+		var method = action.toCamelCase();
+		
+		if (!_.isFunction(this._that[method])){
+			return ;
+		}
+		
+		this._that[method].apply(this._that, params);
+	}
+});
 /**
  * @load Views.Abstract
  * Класс вьюшка для бади.
@@ -511,6 +555,7 @@ create_singleton(Views.Body);
 /**
  * @load Views.Abstract
  * @load Views.Body
+ * @load Helpers.ItemClick
  * Абстракный класс для контекст-меню
  */
 Views.AbstractContextMenu = Views.Abstract.extend({
@@ -519,9 +564,11 @@ Views.AbstractContextMenu = Views.Abstract.extend({
 	_is_shown: false,
 	_coor: {},
 	_context: null,
+	_helper: null,
 	
 	initialize: function(){	
 		this._render();
+		this._helper = new Helpers.ItemClick(this);
 		
 		this._el.find('a').click($.proxy(this._onItemClick, this));
 		
@@ -537,19 +584,7 @@ Views.AbstractContextMenu = Views.Abstract.extend({
 	},
 	
 	_onItemClick: function(e){
-		var action = $(e.target).attr('action');
-		
-		if (!_.isString(action)){
-			return ;
-		}
-		
-		var method = action.toCamelCase();
-		
-		if (!_.isFunction(this[method])){
-			return ;
-		}
-		
-		this[method](this._context);
+		this._helper.process(e, [this._context]);
 		this.hide();
 		return false;
 	},
@@ -621,6 +656,7 @@ Views.CategoryMenu = Views.AbstractContextMenu.extend({
 						success: function(data){
 							dlg.getContext().remove();
 							Collections.Categories.getInstance().remove(data.id);
+							Models.Budget.getInstance().update(data.budget);
 							dlg.hide();
 						},
 						
@@ -670,8 +706,7 @@ Views.Category = Views.Abstract.extend({
 	},
 	
 	refresh: function(){
-		this._el.find("[data-field=title]").html(_.escape(this._model.get("title")));
-		this._el.find("[data-field=amount]").html(_.escape(this._model.get("amount")));
+		this._el.updateDataFields(this._model);
 	}
 });
 /**
@@ -715,7 +750,8 @@ Views.AddCategoryDialog = Views.AbstractDialogForm.extend({
 	_template: "add-category-dialog",
 
 	_success: function(data){
-		Collections.Categories.getInstance().add(data);
+		Collections.Categories.getInstance().add(data.model);
+		Models.Budget.getInstance().update(data.budget);
 	},
 	
 	_onShow: function(){
@@ -839,6 +875,96 @@ Views.Group = Views.Abstract.extend({
 	},
 	
 	refresh: function(){
-		this._el.find("[data-field=name]").html(_.escape(this._model.get("name")));
+		this._el.find(".group-title").updateDataFields(this._model);
 	},
 });
+/**
+ * @load Models.Abstract
+ */
+Models.Budget = Models.Abstract.extend({});
+create_singleton(Models.Budget);
+/**
+ * @load Views.AbstractDialogForm
+ * @load Models.Budget
+ */
+Views.WithdrawalDialog = Views.AbstractDialogForm.extend({
+	_template: 'withdrawal-dialog',
+	
+	_success: function(data){
+		Models.Budget.getInstance().update(data);
+	},
+
+	_clearAll: function(){
+		this._el.find('input[name=amount]').val("");
+	},
+	
+	_getLayoutLabels: function(){
+		return $.extend(this._super(), {title: i18n["/dialogs/titles/withdrawal"]});
+	}
+});
+
+create_singleton(Views.WithdrawalDialog);
+/**
+ * @load Views.AbstractDialogForm
+ * @load Models.Budget
+ */
+Views.DepositDialog = Views.AbstractDialogForm.extend({
+	_template: 'deposit-dialog',
+	
+	_success: function(data){
+		Models.Budget.getInstance().update(data);
+	},
+
+	_clearAll: function(){
+		this._el.find('input[name=amount]').val("");
+	},
+	
+	_getLayoutLabels: function(){
+		return $.extend(this._super(), {title: i18n["/dialogs/titles/deposit"]});
+	}
+});
+
+create_singleton(Views.DepositDialog);
+/**
+ * @load Views.Abstract
+ * @load Helpers.ItemClick
+ * @load Views.DepositDialog
+ * @load Views.WithdrawalDialog
+ */
+Views.BudgetMenu = Views.Abstract.extend({
+	_id: "budget-menu",
+	_helper: null,
+	
+	initialize: function(){
+		this._render();
+		this._helper = new Helpers.ItemClick(this);
+		
+		this._el.find("a").click($.proxy(function(e){
+			this._helper.process(e);
+			return false;
+		}, this));
+	},
+	
+	deposit: function(){
+		Views.DepositDialog.getInstance().show();
+	},
+	
+	withdrawal: function(){
+		Views.WithdrawalDialog.getInstance().show();
+	}
+});
+/**
+ * @load Views.Abstract
+ */
+Views.Budget = Views.Abstract.extend({
+	_id: "header-top",
+	
+	initialize: function(){
+		this._render();
+		
+		Models.Budget.getInstance().onUpdate($.proxy(function(model){
+			this._el.updateDataFields(model);
+		}, this));
+	}
+});
+create_singleton(Views.Budget);

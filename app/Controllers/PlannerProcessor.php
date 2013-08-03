@@ -11,7 +11,8 @@ class Controllers_PlannerProcessor extends Libs_Controllers_Processor
 		$model = new Models_Categories();
 		$id = $model->add($_POST);
 
-		return $this->ajaxSuccess($model->getById($id));
+		$budget = new Models_Budgets();
+		return $this->ajaxSuccess(array('model' => $model->getById($id), 'budget' => $budget->getSummary()));
 	}
 
 	public function editCategory()
@@ -24,7 +25,9 @@ class Controllers_PlannerProcessor extends Libs_Controllers_Processor
 		$model = new Models_Categories();
 		$model->edit($_POST);
 
-		return $this->ajaxSuccess($model->getById($_POST['id']));
+		$budget = new Models_Budgets();
+
+		return $this->ajaxSuccess(array('model' => $model->getById($_POST['id']), 'budget' => $budget->getSummary()));
 	}
 
 	public function deleteCategory()
@@ -40,7 +43,9 @@ class Controllers_PlannerProcessor extends Libs_Controllers_Processor
 
 		$model->delete($id);
 
-		return $this->ajaxSuccess(array('id' => $id));
+		$budget = new Models_Budgets();
+
+		return $this->ajaxSuccess(array('id' => $id, 'budget' => $budget->getSummary()));
 	}
 
 	private function _getCategoryValidationErrors()
@@ -97,6 +102,11 @@ class Controllers_PlannerProcessor extends Libs_Controllers_Processor
 		$model = new Models_Groups();
 
 		$id = $_POST['id'];
+
+		if ($model->oneLeft())
+		{
+			return $this->ajaxError(array(_t('/planner/validator/group_one_left')));
+		}
 
 		if ($model->hasCategories($id))
 		{

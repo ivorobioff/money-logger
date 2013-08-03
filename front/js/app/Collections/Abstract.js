@@ -12,18 +12,21 @@ Collections.Abstract = Class.extend({
 		this._event = new Libs.Event();
 	},
 	
-	add: function(data){
+	add: function(data, silent){
+		
+		if (_.isUndefined(silent)) silent = false;
+		
 		var model = new this._model_class(data);
 		this._models[model.get("id")] = model;
 		
-		this._event.trigger("add", [model, this]);
+		if (!silent) this._event.trigger("add", [model, this]);
 		
 		return model;
 	},
 	
-	addBunch: function(data){
+	addBunch: function(data, silent){
 		for (var i in data){
-			this.add(data[i]);
+			this.add(data[i], silent);
 		}
 		
 		return this._models;
@@ -37,10 +40,15 @@ Collections.Abstract = Class.extend({
 		return this;
 	},
 	
-	remove: function(id){
+	remove: function(id, silent){
+		
+		if (_.isUndefined(silent)) silent = false;
+		
 		var model = this._models[id];
 		delete this._models[id];
-		this._event.trigger("remove", [model, this]);
+		
+		if (!silent) this._event.trigger("remove", [model, this]);
+		
 		return this;
 	},
 	
