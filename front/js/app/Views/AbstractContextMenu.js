@@ -1,22 +1,23 @@
 /**
- * @load Views.Abstract
+ * @load Views.AbstractMenu
  * @load Views.Body
- * @load Helpers.ItemClick
  * Абстракный класс для контекст-меню
  */
-Views.AbstractContextMenu = Views.Abstract.extend({
+Views.AbstractContextMenu = Views.AbstractMenu.extend({
 	
 	_template: "context-menu",
 	_is_shown: false,
 	_coor: {},
 	_context: null,
-	_helper: null,
 	
 	initialize: function(){	
 		this._render();
-		this._helper = new Helpers.ItemClick(this);
 		
-		this._el.find('a').click($.proxy(this._onItemClick, this));
+		this._el.find('a').click($.proxy(function(e){
+			this._onItemClick(e, [this._context]);
+			this.hide();
+			return false;
+		}, this));
 		
 		this._el.mousedown(function(){
 			return false;
@@ -27,12 +28,6 @@ Views.AbstractContextMenu = Views.Abstract.extend({
 					this.hide();
 			}
 		}, this));
-	},
-	
-	_onItemClick: function(e){
-		this._helper.process(e, [this._context]);
-		this.hide();
-		return false;
 	},
 	
 	_render: function(){

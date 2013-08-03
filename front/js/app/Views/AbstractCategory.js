@@ -3,7 +3,7 @@
  * @load Views.CategoryMenu
  * Вьюшка для отдельной категории
  */
-Views.Category = Views.Abstract.extend({
+Views.AbstractCategory = Views.Abstract.extend({
 	_model: null,
 	
 	initialize: function(model){
@@ -19,7 +19,7 @@ Views.Category = Views.Abstract.extend({
 	_render: function(){
 		var template = $('#category-template').html().render({
 			title: this._model.get("title"), 
-			amount: this._model.get("amount")
+			amount: this._getAmountValue(),
 		});
 		
 		this._el = $(template);
@@ -31,5 +31,9 @@ Views.Category = Views.Abstract.extend({
 	
 	refresh: function(){
 		this._el.updateDataFields(this._model);
+	},
+	
+	_getAmountValue: function(){
+		return '';
 	}
 });

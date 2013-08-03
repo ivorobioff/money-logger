@@ -1,3 +1,24 @@
+Views.GroupsCollection = Class.extend({
+	_views: null,
+	
+	initialize: function(){
+		this._views = {};
+	},
+	
+	add: function(id, view){
+		this._views[id] = view;
+	},
+	
+	get: function(id){
+		return this._views[id];
+	},
+	
+	remove: function(id){
+		delete this._views[id];
+	}
+});
+
+create_singleton(Views.GroupsCollection);
 Libs.Event = Class.extend({
 	_events: null,
 	
@@ -249,10 +270,15 @@ Views.AbstractDialog = Views.Abstract.extend({
 	},
 	
 	hide: function(){
+		this._onHide();
 		this._el.hide();
 	},
 	
 	_onShow: function(){
+		
+	},
+	
+	_onHide: function(){
 		
 	},
 	
@@ -280,7 +306,11 @@ Views.AbstractDialog = Views.Abstract.extend({
  * @load Views.AbstractDialog
  */
 Views.AbstractDialogForm = Views.AbstractDialog.extend({
-		
+	
+	initialize: function(){
+		this._super();	
+		this._el.find("form").submit($.proxy(this._onPositiveClick, this));
+	},
 	_onPositiveClick: function(){
 		
 		var url = this._el.find("form").attr('action');		
@@ -295,7 +325,6 @@ Views.AbstractDialogForm = Views.AbstractDialog.extend({
 			
 			success: $.proxy(function(data){
 				this._success(data);
-				this._clearAll();
 				this.hide();
 			}, this),
 			
@@ -308,6 +337,12 @@ Views.AbstractDialogForm = Views.AbstractDialog.extend({
 				alert(errors);
 			}, this)
 		});
+		
+		return false;
+	},
+	
+	_onNegativeClick: function(){
+		this.hide();
 	},
 	
 	_modifyData: function(data){
@@ -317,13 +352,7 @@ Views.AbstractDialogForm = Views.AbstractDialog.extend({
 	_success: function(data){
 	
 	},
-	
-	_onNegativeClick: function(){
-		this._el.hide();
-		this._clearAll();
-	},
-	
-	
+		
 	_disableUI: function(){
 		this._el.find('input, select, textarea').each(function(){
 			$(this).attr('disabled', 'disabled');
@@ -334,6 +363,10 @@ Views.AbstractDialogForm = Views.AbstractDialog.extend({
 		this._el.find('input, select, textarea').each(function(){
 			$(this).removeAttr('disabled');
 		});
+	},
+	
+	_onHide: function(){
+		this._clearAll();
 	}
 });
 /**
@@ -368,7 +401,7 @@ Views.AddGroupInitiator = Views.Abstract.extend({
 	initialize: function(){
 		this._render();
 		
-		this._el.click(function(){
+		this._el.find('a').click(function(){
 			Views.AddGroupDialog.getInstance().show();
 			return false;
 		});
@@ -435,27 +468,6 @@ Views.ConfirmDialog = Views.AbstractDialog.extend({
 		this._el.find(".submit-button, .cancel-button").removeAttr("disabled");
 	}
 });
-Views.GroupsCollection = Class.extend({
-	_views: null,
-	
-	initialize: function(){
-		this._views = {};
-	},
-	
-	add: function(id, view){
-		this._views[id] = view;
-	},
-	
-	get: function(id){
-		return this._views[id];
-	},
-	
-	remove: function(id){
-		delete this._views[id];
-	}
-});
-
-create_singleton(Views.GroupsCollection);
 /**
  * @load Views.AbstractDialogForm
  * @load Views.GroupsCollection
@@ -513,33 +525,6 @@ Views.EditCategoryDialog = Views.AbstractDialogForm.extend({
 });
 
 create_singleton(Views.EditCategoryDialog);
-Helpers.ItemClick = Class.extend({
-	
-	_that: null,
-	
-	initialize: function(that){
-		this._that = that;
-	},
-	
-	process: function(e, params){
-		
-		if (_.isUndefined(params)) params = [];
-		
-		var action = $(e.target).attr('action');
-		
-		if (!_.isString(action)){
-			return ;
-		}
-		
-		var method = action.toCamelCase();
-		
-		if (!_.isFunction(this._that[method])){
-			return ;
-		}
-		
-		this._that[method].apply(this._that, params);
-	}
-});
 /**
  * @load Views.Abstract
  * Класс вьюшка для бади.
@@ -554,23 +539,48 @@ Views.Body = Views.Abstract.extend({
 create_singleton(Views.Body);
 /**
  * @load Views.Abstract
+ */
+Views.AbstractMenu = Views.Abstract.extend({
+	_onItemClick: function(e, params){
+		
+		if (_.isUndefined(params)) params = [];
+		
+		var action = $(e.target).attr('action');
+		
+		if (!_.isString(action)){
+			return ;
+		}
+		
+		var method = action.toCamelCase();
+		
+		if (!_.isFunction(this[method])){
+			return ;
+		}
+		
+		this[method].apply(this, params);
+		return false;
+	}
+});
+/**
+ * @load Views.AbstractMenu
  * @load Views.Body
- * @load Helpers.ItemClick
  * Абстракный класс для контекст-меню
  */
-Views.AbstractContextMenu = Views.Abstract.extend({
+Views.AbstractContextMenu = Views.AbstractMenu.extend({
 	
 	_template: "context-menu",
 	_is_shown: false,
 	_coor: {},
 	_context: null,
-	_helper: null,
 	
 	initialize: function(){	
 		this._render();
-		this._helper = new Helpers.ItemClick(this);
 		
-		this._el.find('a').click($.proxy(this._onItemClick, this));
+		this._el.find('a').click($.proxy(function(e){
+			this._onItemClick(e, [this._context]);
+			this.hide();
+			return false;
+		}, this));
 		
 		this._el.mousedown(function(){
 			return false;
@@ -581,12 +591,6 @@ Views.AbstractContextMenu = Views.Abstract.extend({
 					this.hide();
 			}
 		}, this));
-	},
-	
-	_onItemClick: function(e){
-		this._helper.process(e, [this._context]);
-		this.hide();
-		return false;
 	},
 	
 	_render: function(){
@@ -671,6 +675,14 @@ Views.CategoryMenu = Views.AbstractContextMenu.extend({
 		}
 		
 		this._delete_dialog.setContext(context).show();
+	},
+	
+	withdrawal: function(){
+		alert('withdrawal');
+	},
+	
+	returnAmount: function(){
+		alert('deposit');
 	}
 });
 create_singleton(Views.CategoryMenu);
@@ -679,7 +691,7 @@ create_singleton(Views.CategoryMenu);
  * @load Views.CategoryMenu
  * Вьюшка для отдельной категории
  */
-Views.Category = Views.Abstract.extend({
+Views.AbstractCategory = Views.Abstract.extend({
 	_model: null,
 	
 	initialize: function(model){
@@ -695,7 +707,7 @@ Views.Category = Views.Abstract.extend({
 	_render: function(){
 		var template = $('#category-template').html().render({
 			title: this._model.get("title"), 
-			amount: this._model.get("amount")
+			amount: this._getAmountValue(),
 		});
 		
 		this._el = $(template);
@@ -707,6 +719,19 @@ Views.Category = Views.Abstract.extend({
 	
 	refresh: function(){
 		this._el.updateDataFields(this._model);
+	},
+	
+	_getAmountValue: function(){
+		return '';
+	}
+});
+/**
+ * @load Views.AbstractCategory
+ * Вьюшка для отдельной категории
+ */
+Views.PlannerCategory = Views.AbstractCategory.extend({
+	_getAmountValue: function(){
+		return this._model.get("amount");
 	}
 });
 /**
@@ -742,7 +767,7 @@ create_singleton(Views.EditGroupDialog);
 /**
  * @load Views.AbstractDialogForm
  * @load Collections.Categories
- * @load Views.Category
+ * @load Views.PlannerCategory
  * @load Collections.Groups
  */
 Views.AddCategoryDialog = Views.AbstractDialogForm.extend({
@@ -835,27 +860,22 @@ Views.GroupMenu = Views.AbstractContextMenu.extend({
 create_singleton(Views.GroupMenu);
 /**
  * @load Views.Abstract
- * @load Views.GroupMenu
- * @load Views.Category
+ * @load Views.PlannerCategory
  * @load Collections.Categories
  * 
  * Класс для отрисвоки группы
  */
-Views.Group = Views.Abstract.extend({
+Views.AbstractGroup = Views.Abstract.extend({
 	_model: null,
+	_view_class: null,
 	
 	initialize: function(model){
 		this._model = model;
 		this._render();
 		
-		this._el.find('.group-title .tab-menu').click($.proxy(function(e){
-			Views.GroupMenu.getInstance().setContext(this).show({x: e.pageX, y: e.pageY});
-			return false;
-		}, this));
-				
 		Collections.Categories.getInstance().onAdd($.proxy(function(model){
 			if (this._model.get("id") == model.get("group_id")){
-				this.attachCategory(new Views.Category(model));
+				this.attachCategory(new this._view_class(model));
 			}
 		}, this));
 	},
@@ -865,13 +885,32 @@ Views.Group = Views.Abstract.extend({
 		this._el = $(template);
 		$('#count').append(this._el);
 	},
-	
-	getModel: function(){
-		return this._model;
-	},
-	
+
 	attachCategory: function(view){
 		view.getElement().insertBefore(this._el.find('#categories-hook'));
+	}
+});
+/**
+ * @load Views.AbstractGroup
+ * @load Views.GroupMenu
+ * @load Views.PlannerCategory
+ * Класс для отрисвоки группы
+ */
+Views.PlannerGroup = Views.AbstractGroup.extend({
+	
+	_view_class: Views.PlannerCategory,
+	
+	initialize: function(model){
+		this._super(model);
+		
+		this._el.find('.group-title .tab-menu').click($.proxy(function(e){
+			Views.GroupMenu.getInstance().setContext(this).show({x: e.pageX, y: e.pageY});
+			return false;
+		}, this));
+	},
+
+	getModel: function(){
+		return this._model;
 	},
 	
 	refresh: function(){
@@ -926,23 +965,16 @@ Views.DepositDialog = Views.AbstractDialogForm.extend({
 
 create_singleton(Views.DepositDialog);
 /**
- * @load Views.Abstract
- * @load Helpers.ItemClick
+ * @load Views.AbstractMenu
  * @load Views.DepositDialog
  * @load Views.WithdrawalDialog
  */
-Views.BudgetMenu = Views.Abstract.extend({
+Views.BudgetMenu = Views.AbstractMenu.extend({
 	_id: "budget-menu",
-	_helper: null,
 	
 	initialize: function(){
 		this._render();
-		this._helper = new Helpers.ItemClick(this);
-		
-		this._el.find("a").click($.proxy(function(e){
-			this._helper.process(e);
-			return false;
-		}, this));
+		this._el.find("a").click($.proxy(this._onItemClick, this));
 	},
 	
 	deposit: function(){

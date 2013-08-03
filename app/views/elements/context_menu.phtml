@@ -1,0 +1,12 @@
+<script type="text/template" id="<?=$this->id?>">
+	<div class="info-menu">
+		<?php
+			$br = '';
+			foreach ($this->items as $action => $title)
+			{
+				echo $br.'<a href="#" action="'.$action.'">'.$title.'</a>';
+				$br = '<br/>';
+			}
+		?>
+	</div>
+</script>

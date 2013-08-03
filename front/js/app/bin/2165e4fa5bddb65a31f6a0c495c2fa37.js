@@ -307,15 +307,11 @@ Views.DepositDialog = Views.AbstractDialogForm.extend({
 });
 
 create_singleton(Views.DepositDialog);
-Helpers.ItemClick = Class.extend({
-	
-	_that: null,
-	
-	initialize: function(that){
-		this._that = that;
-	},
-	
-	process: function(e, params){
+/**
+ * @load Views.Abstract
+ */
+Views.AbstractMenu = Views.Abstract.extend({
+	_onItemClick: function(e, params){
 		
 		if (_.isUndefined(params)) params = [];
 		
@@ -327,31 +323,25 @@ Helpers.ItemClick = Class.extend({
 		
 		var method = action.toCamelCase();
 		
-		if (!_.isFunction(this._that[method])){
+		if (!_.isFunction(this[method])){
 			return ;
 		}
 		
-		this._that[method].apply(this._that, params);
+		this[method].apply(this, params);
+		return false;
 	}
 });
 /**
- * @load Views.Abstract
- * @load Helpers.ItemClick
+ * @load Views.AbstractMenu
  * @load Views.DepositDialog
  * @load Views.WithdrawalDialog
  */
-Views.BudgetMenu = Views.Abstract.extend({
+Views.BudgetMenu = Views.AbstractMenu.extend({
 	_id: "budget-menu",
-	_helper: null,
 	
 	initialize: function(){
 		this._render();
-		this._helper = new Helpers.ItemClick(this);
-		
-		this._el.find("a").click($.proxy(function(e){
-			this._helper.process(e);
-			return false;
-		}, this));
+		this._el.find("a").click($.proxy(this._onItemClick, this));
 	},
 	
 	deposit: function(){

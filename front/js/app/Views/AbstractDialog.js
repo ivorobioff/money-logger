@@ -49,10 +49,15 @@ Views.AbstractDialog = Views.Abstract.extend({
 	},
 	
 	hide: function(){
+		this._onHide();
 		this._el.hide();
 	},
 	
 	_onShow: function(){
+		
+	},
+	
+	_onHide: function(){
 		
 	},
 	

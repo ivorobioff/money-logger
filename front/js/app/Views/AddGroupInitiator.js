@@ -8,7 +8,7 @@ Views.AddGroupInitiator = Views.Abstract.extend({
 	initialize: function(){
 		this._render();
 		
-		this._el.click(function(){
+		this._el.find('a').click(function(){
 			Views.AddGroupDialog.getInstance().show();
 			return false;
 		});

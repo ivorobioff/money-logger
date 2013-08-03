@@ -9,7 +9,7 @@ i18n["/dialogs/text/delete_category"] = "<?=_t('/js/dialogs/text/delete_category
 
 $(function(){
 	Collections.Groups.getInstance().onAdd(function(model){
-		Views.GroupsCollection .getInstance().add(model.get("id"), new Views.Group(model));
+		Views.GroupsCollection .getInstance().add(model.get("id"), new Views.PlannerGroup(model));
 	}).addBunch(<?=json_encode($this->groups)?>);
 
 	Collections.Categories.getInstance().addBunch(<?=json_encode($this->categories)?>);
@@ -17,75 +17,48 @@ $(function(){
 	new Views.AddGroupInitiator();
 });
 </script>
+<?php
+Libs_Views::create('/dialogs/group.phtml')
+	->assign('id', 'add-group-dialog')
+	->assign('url', _url('/PlannerProcessor/addGroup/'))
+	->render();
 
-<script id="add-group-dialog" type="text/template">
-<div class="form">
-	<form action="<?=_url('/PlannerProcessor/addGroup/');?>">
-	<?php Libs_Views::create('planner/group_fields.phtml')->render()?>
-	</form>
-	</div>
-</script>
+Libs_Views::create('/dialogs/group.phtml')
+	->assign('id', 'edit-group-dialog')
+	->assign('url', _url('/PlannerProcessor/editGroup/'))
+	->render();
 
-<script id="edit-group-dialog" type="text/template">
-<div class="form">
-	<form action="<?=_url('/PlannerProcessor/editGroup/');?>">
-	<?php Libs_Views::create('planner/group_fields.phtml')->render()?>
-	</form>
-	</div>
-</script>
+Libs_Views::create('/dialogs/category.phtml')
+	->assign('id', 'add-category-dialog')
+	->assign('url', _url('/PlannerProcessor/addCategory/'))
+	->render();
 
-<script type="text/template" id="category-template">
-<tr class="group-categories">
-<td>
-	 <span class="tab-menu cat-item" data-field="title">{{title}}</span>
-</td>
-<td class="tdrg" data-field="amount">{{amount}}</td>
-</tr>
-</script>
+Libs_Views::create('/dialogs/category.phtml')
+	->assign('id', 'edit-category-dialog')
+	->assign('url', _url('/PlannerProcessor/editCategory/'))
+	->render();
 
-<script type="text/template" id="group-template">
-<table class="count_tb count_tb_ex">
-<tr class="group-title">
-	<th>
-		<span class="tab-menu group-item" data-field="name">{{name}}</span>
-	</th>
-	<th><?=_t('/money_flow/sum')?></th>
-</tr>
-<tr id="categories-hook">
-	<td colspan="2" class="tdbg"></td>
-</tr>
-</table>
-</script>
+Libs_Views::create('/elements/category.phtml')->render();
 
-<script type="text/template" id="groups-context-menu">
-	<div class="info-menu">
-		<a href="#" action="add-category"><?=_t('/context_menu/add_category')?></a>
-		<br/>
- 		<a href="#" action="edit-group"><?=_t('/context_menu/edit')?></a>
-		<br/>
-		<a href="#" action="delete-group"><?=_t('/context_menu/delete')?></a>
-	</div>
-</script>
-<script type="text/template" id="categories-context-menu">
-	<div class="info-menu">
-		<a href="#" action="edit-category"><?=_t('/context_menu/edit')?></a>
-		<br/>
-		<a href="#" action="delete-category"><?=_t('/context_menu/delete')?></a>
-	</div>
-</script>
+Libs_Views::create('/elements/group.phtml')
+	->assign('show_menu', true)
+	->render();
 
-<script id="add-category-dialog" type="text/template">
-<div class="form" id="dialog-content">
-<form action="<?=_url('/PlannerProcessor/addCategory/')?>">
-<?php Libs_Views::create('planner/category_fields.phtml')->render()?>
-</form>
-</div>
-</script>
+Libs_Views::create('/elements/context_menu.phtml')
+	->assign('id', 'categories-context-menu')
+	->assign('items', array(
+				'edit-category' => _t('/context_menu/edit'),
+				'delete-category' => _t('/context_menu/delete')
+			))
+	->render();
 
-<script id="edit-category-dialog" type="text/template">
-<div class="form" id="dialog-content">
-<form action="<?=_url('/PlannerProcessor/editCategory/')?>">
-<?php Libs_Views::create('planner/category_fields.phtml')->render()?>
-</form>
-</div>
-</script>
+Libs_Views::create('/elements/context_menu.phtml')
+	->assign('id', 'groups-context-menu')
+	->assign('items', array(
+				'add-category' =>_t('/context_menu/add_category'),
+				'edit-group' => _t('/context_menu/edit'),
+				'delete-group' => _t('/context_menu/delete'),
+			))
+	->render();
+
+?>

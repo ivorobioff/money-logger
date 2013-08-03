@@ -49,6 +49,14 @@ Views.CategoryMenu = Views.AbstractContextMenu.extend({
 		}
 		
 		this._delete_dialog.setContext(context).show();
+	},
+	
+	withdrawal: function(){
+		alert('withdrawal');
+	},
+	
+	returnAmount: function(){
+		alert('deposit');
 	}
 });
 create_singleton(Views.CategoryMenu);

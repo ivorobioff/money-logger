@@ -123,21 +123,17 @@
 </div>
 </script>
 
-<script id="deposit-dialog" type="text/template">
-<div class="form">
-	<form action="<?=_url('/BudgetProcessor/deposit/');?>">
-	<?php Libs_Views::create('budget/fields.phtml')->render()?>
-	</form>
-	</div>
-</script>
+<?php
+Libs_Views::create('/dialogs/budget.phtml')
+	->assign('id', 'deposit-dialog')
+	->assign('url', _url('/BudgetProcessor/deposit/'))
+	->render();
 
-<script id="withdrawal-dialog" type="text/template">
-<div class="form">
-	<form action="<?=_url('/BudgetProcessor/withdrawal/');?>">
-	<?php Libs_Views::create('budget/fields.phtml')->render()?>
-	</form>
-	</div>
-</script>
+Libs_Views::create('/dialogs/budget.phtml')
+	->assign('id', 'withdrawal-dialog')
+	->assign('url', _url('/BudgetProcessor/withdrawal/'))
+	->render();
+?>
 
 <script id="confirm-dialog" type="text/template">
 <div class="form form-t">

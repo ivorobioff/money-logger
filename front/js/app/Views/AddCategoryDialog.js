@@ -1,7 +1,7 @@
 /**
  * @load Views.AbstractDialogForm
  * @load Collections.Categories
- * @load Views.Category
+ * @load Views.PlannerCategory
  * @load Collections.Groups
  */
 Views.AddCategoryDialog = Views.AbstractDialogForm.extend({
