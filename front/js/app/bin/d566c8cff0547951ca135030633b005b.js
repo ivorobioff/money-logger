@@ -101,79 +101,8 @@ Models.Abstract = Class.extend({
 /**
  * @load Models.Abstract
  */
-Models.Category = Models.Abstract.extend({});
-/**
- * @load Libs.Event
- */
-Collections.Abstract = Class.extend({
-	_model_class: null,
-	_models: null,
-	
-	_event: null,
-	
-	initialize: function(){
-		this._models = {};
-		this._event = new Libs.Event();
-	},
-	
-	add: function(data, silent){
-		
-		if (_.isUndefined(silent)) silent = false;
-		
-		var model = new this._model_class(data);
-		this._models[model.get("id")] = model;
-		
-		if (!silent) this._event.trigger("add", [model, this]);
-		
-		return model;
-	},
-	
-	addBunch: function(data, silent){
-		for (var i in data){
-			this.add(data[i], silent);
-		}
-		
-		return this._models;
-	},
-	
-	each: function(callback){
-		for (var i in this._models){
-			callback(this._models[i], i);
-		}
-		
-		return this;
-	},
-	
-	remove: function(id, silent){
-		
-		if (_.isUndefined(silent)) silent = false;
-		
-		var model = this._models[id];
-		delete this._models[id];
-		
-		if (!silent) this._event.trigger("remove", [model, this]);
-		
-		return this;
-	},
-	
-	onAdd: function(callback){
-		this._event.add("add", callback);
-		return this;
-	},
-	
-	onRemove: function(callback){
-		this._event.add("remove", callback);
-		return this;
-	}
-});
-/**
- * @load Collections.Abstract
- * @load Models.Category
- */
-Collections.Categories = Collections.Abstract.extend({
-	_model_class: Models.Category,
-});
-create_singleton(Collections.Categories);
+Models.Budget = Models.Abstract.extend({});
+create_singleton(Models.Budget);
 /**
  * Абстрактный класс вьюшек
  */
@@ -284,6 +213,173 @@ Views.AbstractDialog = Views.Abstract.extend({
 /**
  * @load Views.AbstractDialog
  */
+Views.AbstractDialogForm = Views.AbstractDialog.extend({
+	
+	initialize: function(){
+		this._super();	
+		this._el.find("form").submit($.proxy(this._onPositiveClick, this));
+	},
+	_onPositiveClick: function(){
+		
+		var url = this._el.find("form").attr('action');		
+		var data = this._el.find("form").serialize();
+		
+		if (!_.isUndefined(this._context) && !_.isNull(this._context)){
+			data += "&id=" + this._context.getModel().get("id");
+		}
+		
+		this._disableUI();
+
+		post(url, data, {
+			callback: $.proxy(function(result){
+				this._enableUI();
+			}, this),
+			
+			success: $.proxy(function(data){
+				this._success(data);
+				this.hide();
+			}, this),
+			
+			error: $.proxy(function(data){
+				var errors = "";
+				for (var i in data){
+					errors += i + " >> " + data[i] + "\n";
+				}
+				
+				alert(errors);
+			}, this)
+		});
+		
+		return false;
+	},
+	
+	_onNegativeClick: function(){
+		this.hide();
+	},
+	
+	_success: function(data){
+	
+	},
+		
+	_disableUI: function(){
+		this._el.find('input, select, textarea').each(function(){
+			$(this).attr('disabled', 'disabled');
+		});
+	},
+	
+	_enableUI: function(){
+		this._el.find('input, select, textarea').each(function(){
+			$(this).removeAttr('disabled');
+		});
+	},
+	
+	_onHide: function(){
+		this._clearAll();
+	}
+});
+/**
+ * @load Views.AbstractDialogForm
+ * @load Models.Budget
+ */
+Views.MoneyFlowWithdrawalDialog = Views.AbstractDialogForm.extend({
+	
+	_template: "withdrawal-dialog",
+
+	_success: function(data){
+		this._context.getModel().update(data.model);
+		Models.Budget.getInstance().update(data.budget);
+	},
+	
+	_clearAll: function(){
+		this._el.find("[name=amount]").val("");
+		this._el.find("[name=comment]").val("");
+	},
+	
+	_getLayoutLabels: function(){
+		return $.extend(this._super(), {title: i18n["/dialogs/titles/money_flow_withdrawal"]});
+	}
+});
+
+create_singleton(Views.MoneyFlowWithdrawalDialog);
+/**
+ * @load Models.Abstract
+ */
+Models.Category = Models.Abstract.extend({});
+/**
+ * @load Libs.Event
+ */
+Collections.Abstract = Class.extend({
+	_model_class: null,
+	_models: null,
+	
+	_event: null,
+	
+	initialize: function(){
+		this._models = {};
+		this._event = new Libs.Event();
+	},
+	
+	add: function(data, silent){
+		
+		if (_.isUndefined(silent)) silent = false;
+		
+		var model = new this._model_class(data);
+		this._models[model.get("id")] = model;
+		
+		if (!silent) this._event.trigger("add", [model, this]);
+		
+		return model;
+	},
+	
+	addBunch: function(data, silent){
+		for (var i in data){
+			this.add(data[i], silent);
+		}
+		
+		return this._models;
+	},
+	
+	each: function(callback){
+		for (var i in this._models){
+			callback(this._models[i], i);
+		}
+		
+		return this;
+	},
+	
+	remove: function(id, silent){
+		
+		if (_.isUndefined(silent)) silent = false;
+		
+		var model = this._models[id];
+		delete this._models[id];
+		
+		if (!silent) this._event.trigger("remove", [model, this]);
+		
+		return this;
+	},
+	
+	onAdd: function(callback){
+		this._event.add("add", callback);
+		return this;
+	},
+	
+	onRemove: function(callback){
+		this._event.add("remove", callback);
+		return this;
+	}
+});
+/**
+ * @load Collections.Abstract
+ * @load Models.Category
+ */
+Collections.Categories = Collections.Abstract.extend({
+	_model_class: Models.Category,
+});
+create_singleton(Collections.Categories);
+/**
+ * @load Views.AbstractDialog
+ */
 Views.ConfirmDialog = Views.AbstractDialog.extend({
 	
 	_options: null,
@@ -364,73 +460,6 @@ Views.GroupsCollection = Class.extend({
 
 create_singleton(Views.GroupsCollection);
 /**
- * @load Views.AbstractDialog
- */
-Views.AbstractDialogForm = Views.AbstractDialog.extend({
-	
-	initialize: function(){
-		this._super();	
-		this._el.find("form").submit($.proxy(this._onPositiveClick, this));
-	},
-	_onPositiveClick: function(){
-		
-		var url = this._el.find("form").attr('action');		
-		var data = this._el.find("form").serialize();
-		
-		this._disableUI();
-
-		post(url, this._modifyData(data), {
-			callback: $.proxy(function(result){
-				this._enableUI();
-			}, this),
-			
-			success: $.proxy(function(data){
-				this._success(data);
-				this.hide();
-			}, this),
-			
-			error: $.proxy(function(data){
-				var errors = "";
-				for (var i in data){
-					errors += i + " >> " + data[i] + "\n";
-				}
-				
-				alert(errors);
-			}, this)
-		});
-		
-		return false;
-	},
-	
-	_onNegativeClick: function(){
-		this.hide();
-	},
-	
-	_modifyData: function(data){
-		return data;
-	},
-	
-	_success: function(data){
-	
-	},
-		
-	_disableUI: function(){
-		this._el.find('input, select, textarea').each(function(){
-			$(this).attr('disabled', 'disabled');
-		});
-	},
-	
-	_enableUI: function(){
-		this._el.find('input, select, textarea').each(function(){
-			$(this).removeAttr('disabled');
-		});
-	},
-	
-	_onHide: function(){
-		this._clearAll();
-	}
-});
-/**
  * @load Views.AbstractDialogForm
  * @load Views.GroupsCollection
  * @load Collections.Groups
@@ -442,7 +471,6 @@ Views.EditCategoryDialog = Views.AbstractDialogForm.extend({
 	_success: function(data){
 		var old_group = this._context.getModel().get("group_id");
 		this._context.getModel().update(data.model);
-		this._context.refresh();
 		
 		Models.Budget.getInstance().update(data.budget);
 		
@@ -475,10 +503,6 @@ Views.EditCategoryDialog = Views.AbstractDialogForm.extend({
 	
 	_clearAll: function(){
 		return ;
-	},
-	
-	_modifyData: function(data){		
-		return data + "&id=" + this._context.getModel().get("id");
 	},
 	
 	_getLayoutLabels: function(){
@@ -591,7 +615,8 @@ Views.AbstractContextMenu = Views.AbstractMenu.extend({
  * @load Views.EditCategoryDialog
  * @load Views.ConfirmDialog
  * @load Collections.Categories
- *
+ * @load Views.MoneyFlowWithdrawalDialog
+ * 
  * Класс вьюшка для контекста меню категорий
  */
 Views.CategoryMenu = Views.AbstractContextMenu.extend({
@@ -640,11 +665,15 @@ Views.CategoryMenu = Views.AbstractContextMenu.extend({
 	},
 	
 	withdrawal: function(){
-		alert('withdrawal');
+		Views.MoneyFlowWithdrawalDialog.getInstance().setContext(this._context).show();
 	},
 	
-	returnAmount: function(){
-		alert('deposit');
+	refund: function(){
+		alert('refund');
+	},
+	
+	returnRemainder: function(){
+		alert('return remaider');
 	}
 });
 create_singleton(Views.CategoryMenu);
@@ -663,6 +692,10 @@ Views.AbstractCategory = Views.Abstract.extend({
 		this._el.find('.tab-menu').click($.proxy(function(e){
 			Views.CategoryMenu.getInstance().setContext(this).show({x: e.pageX, y: e.pageY});
 			return false;
+		}, this));
+		
+		this._model.onUpdate($.proxy(function(){
+			this.refresh();
 		}, this));
 	},
 	
@@ -745,11 +778,6 @@ Views.AbstractGroup = Views.Abstract.extend({
 Views.MoneyFlowGroup = Views.AbstractGroup.extend({
 	_view_class: Views.MoneyFlowCategory
 });
-/**
- * @load Models.Abstract
- */
-Models.Budget = Models.Abstract.extend({});
-create_singleton(Models.Budget);
 /**
  * @load Views.AbstractDialogForm
  * @load Models.Budget

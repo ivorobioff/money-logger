@@ -178,10 +178,15 @@ Views.AbstractDialog = Views.Abstract.extend({
 	},
 	
 	hide: function(){
+		this._onHide();
 		this._el.hide();
 	},
 	
 	_onShow: function(){
+		
+	},
+	
+	_onHide: function(){
 		
 	},
 	
@@ -209,7 +214,11 @@ Views.AbstractDialog = Views.Abstract.extend({
  * @load Views.AbstractDialog
  */
 Views.AbstractDialogForm = Views.AbstractDialog.extend({
-		
+	
+	initialize: function(){
+		this._super();	
+		this._el.find("form").submit($.proxy(this._onPositiveClick, this));
+	},
 	_onPositiveClick: function(){
 		
 		var url = this._el.find("form").attr('action');		
@@ -224,7 +233,6 @@ Views.AbstractDialogForm = Views.AbstractDialog.extend({
 			
 			success: $.proxy(function(data){
 				this._success(data);
-				this._clearAll();
 				this.hide();
 			}, this),
 			
@@ -237,6 +245,12 @@ Views.AbstractDialogForm = Views.AbstractDialog.extend({
 				alert(errors);
 			}, this)
 		});
+		
+		return false;
+	},
+	
+	_onNegativeClick: function(){
+		this.hide();
 	},
 	
 	_modifyData: function(data){
@@ -246,13 +260,7 @@ Views.AbstractDialogForm = Views.AbstractDialog.extend({
 	_success: function(data){
 	
 	},
-	
-	_onNegativeClick: function(){
-		this._el.hide();
-		this._clearAll();
-	},
-	
-	
+		
 	_disableUI: function(){
 		this._el.find('input, select, textarea').each(function(){
 			$(this).attr('disabled', 'disabled');
@@ -263,6 +271,10 @@ Views.AbstractDialogForm = Views.AbstractDialog.extend({
 		this._el.find('input, select, textarea').each(function(){
 			$(this).removeAttr('disabled');
 		});
+	},
+	
+	_onHide: function(){
+		this._clearAll();
 	}
 });
 /**

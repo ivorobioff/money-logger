@@ -3,6 +3,6 @@
 <td>
 	 <span class="tab-menu cat-item" data-field="title">{{title}}</span>
 </td>
-<td class="tdrg" data-field="amount">{{amount}}</td>
+<td class="tdrg" data-field="<?=isset($this->current_amount) ? 'current_amount' : 'amount'?>">{{amount}}</td>
 </tr>
 </script>

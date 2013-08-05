@@ -27,7 +27,8 @@ $i18n = array(
 	'/money_flow/sum' => 'Сумма',
 
 	'/context_menu/withdrawal' => 'Снять сумму',
-	'/context_menu/return_amount' => 'Сделать возврат',
+	'/context_menu/return_remainder' => 'Убрать остаток',
+	'/context_menu/refund' => 'Сделать возврат',
 	'/context_menu/edit' => 'Редактировать',
 	'/context_menu/delete' => 'Удалить',
 	'/context_menu/add_category' => 'Добавить категорию',
@@ -37,6 +38,7 @@ $i18n = array(
 	'/planner/validator/group_not_empty' => 'Группа содержит категории',
 	'/planner/validator/group_one_left' => 'Последнюю группу нельзя удалить',
 	'/planner/validator/not_sync' => 'Категория уже задействована в операциях',
+	'/planner/validator/amount_too_small' => 'Запланированая суммма меньше потраченной суммы',
 	'/planner/add_group' => 'Добавить группу',
 
 	'/dialogs/add_categories/title' => 'Название',
@@ -44,6 +46,8 @@ $i18n = array(
 	'/dialogs/add_categories/group' => 'Группа',
 	'/dialogs/add_categories/pin' => 'Прикрепить',
 	'/dialogs/budget/amount' => 'Сумма',
+	'/dialogs/money_flow/amount' => 'Сумма',
+	'/dialogs/money_flow/comments' => 'Коммен-<br/>тарий',
 
 	'/dialogs/add_group/name' => 'Название',
 
@@ -56,6 +60,8 @@ $i18n = array(
 	'/budget/validator/small_amount' => 'Сумма не должна быть меньше 0.01',
 	'/budget/validator/not_enough_money' => 'Не хватает средств для снятия',
 
+	'/money_flow/validator/missing_field' => 'Не задано поле',
+
 	'/js/dialogs/submit' => 'Применить',
 	'/js/dialogs/cancel' => 'Отмена',
 	'/js/dialogs/yes' => 'Да',
@@ -67,6 +73,8 @@ $i18n = array(
 	'/js/dialogs/titles/warning' => 'Внимание!',
 	'/js/dialogs/titles/deposit' => 'Внести сумму',
 	'/js/dialogs/titles/withdrawal' => 'Забрать сумму',
+	'/js/dialogs/titles/money_flow_withdrawal' => 'Снять сумму',
+	'/js/dialogs/titles/refund' => 'Вернуть сумму',
 
 	'/js/dialogs/text/delete_group' => 'Вы уверены, что хотите удалить данную группу?',
 	'/js/dialogs/text/delete_category' => 'Вы уверены что хотите удалить данную категорию?'

@@ -14,6 +14,10 @@ Views.AbstractCategory = Views.Abstract.extend({
 			Views.CategoryMenu.getInstance().setContext(this).show({x: e.pageX, y: e.pageY});
 			return false;
 		}, this));
+		
+		this._model.onUpdate($.proxy(function(){
+			this.refresh();
+		}, this));
 	},
 	
 	_render: function(){

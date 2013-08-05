@@ -12,9 +12,13 @@ Views.AbstractDialogForm = Views.AbstractDialog.extend({
 		var url = this._el.find("form").attr('action');		
 		var data = this._el.find("form").serialize();
 		
+		if (!_.isUndefined(this._context) && !_.isNull(this._context)){
+			data += "&id=" + this._context.getModel().get("id");
+		}
+		
 		this._disableUI();
 
-		post(url, this._modifyData(data), {
+		post(url, data, {
 			callback: $.proxy(function(result){
 				this._enableUI();
 			}, this),
@@ -39,10 +43,6 @@ Views.AbstractDialogForm = Views.AbstractDialog.extend({
 	
 	_onNegativeClick: function(){
 		this.hide();
-	},
-	
-	_modifyData: function(data){
-		return data;
 	},
 	
 	_success: function(data){

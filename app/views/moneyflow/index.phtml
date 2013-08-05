@@ -1,5 +1,8 @@
 <div id="count"></div>
 <script>
+i18n["/dialogs/titles/money_flow_withdrawal"] = "<?=_t('/js/dialogs/titles/money_flow_withdrawal')?>";
+i18n["/dialogs/titles/refund"] = "<?=_t('/js/dialogs/titles/refund')?>";
+
 $(function(){
 	Collections.Groups
 		.getInstance()
@@ -14,7 +17,9 @@ $(function(){
 });
 </script>
 <?php
-Libs_Views::create('/elements/category.phtml')->render();
+Libs_Views::create('/elements/category.phtml')
+	->assign('current_amount', true)
+	->render();
 
 Libs_Views::create('/elements/group.phtml')
 	->assign('show_menu', false)
@@ -24,7 +29,18 @@ Libs_Views::create('/elements/context_menu.phtml')
 	->assign('id', 'categories-context-menu')
 	->assign('items', array(
 				'withdrawal' => _t('/context_menu/withdrawal'),
-				'return-amount' => _t('/context_menu/return_amount')
+				'refund' => _t('/context_menu/refund'),
+				'return-remainder' => _t('/context_menu/return_remainder'),
 			))
+	->render();
+
+Libs_Views::create('/dialogs/amount.phtml')
+	->assign('id', 'withdrawal-dialog')
+	->assign('url', _url('/MoneyFlowProcessor/withdrawal/'))
+	->render();
+
+Libs_Views::create('/dialogs/amount.phtml')
+	->assign('id', 'return-amount-dialog')
+	->assign('url', _url('/MoneyFlowProcessor/returnAmount/'))
 	->render();
 ?>

@@ -36,8 +36,8 @@ class Models_Categories
 		unset($data['id']);
 		$data = array(
 			'title' => $data['title'],
-			'amount' => round($data['amount'], 2),
-			'current_amount' => $data['amount'],
+			'amount' => $data['amount'],
+			'current_amount' => $data['current_amount'],
 			'group_id' => $data['group'],
 			'pin' => isset($data['pin']) ? 1 : 0,
 		);
@@ -67,5 +67,21 @@ class Models_Categories
 			->whereQuery('amount=current_amount')
 			->where('id', $id)
 			->check();
+	}
+
+	public function getCurrentAmount($id)
+	{
+		return $this->_table
+			->where('id', $id)
+			->createResultFormat()
+			->getValue('current_amount', 0);
+	}
+
+	public function withdrawal($id, $amount)
+	{
+		$this->_table
+			->where('user_id', user_id())
+			->where('id', $id)
+			->update('current_amount = current_amount-', $amount);
 	}
 }

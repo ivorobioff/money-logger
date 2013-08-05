@@ -22,12 +22,31 @@ class Controllers_PlannerProcessor extends Libs_Controllers_Processor
 			return $this->ajaxError($errors);
 		}
 
+		$data = $_POST;
+
 		$model = new Models_Categories();
-		$model->edit($_POST);
+		$category = $model->getById($data['id']);
+
+		if ($category['amount'] == $category['current_amount'])
+		{
+			$data['current_amount'] = $data['amount'];
+		}
+		else
+		{
+			$diff_amount = $data['amount'] - $category['amount'];
+			$data['current_amount'] = $category['current_amount'] + $diff_amount;
+		}
+
+		if ($data['current_amount'] < 0)
+		{
+			return $this->ajaxError(array('amount' => _t('/planner/validator/amount_too_small')));
+		}
+
+		$model->edit($data);
 
 		$budget = new Models_Budgets();
 
-		return $this->ajaxSuccess(array('model' => $model->getById($_POST['id']), 'budget' => $budget->getSummary()));
+		return $this->ajaxSuccess(array('model' => $model->getById($data['id']), 'budget' => $budget->getSummary()));
 	}
 
 	public function deleteCategory()

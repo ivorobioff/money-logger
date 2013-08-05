@@ -64,4 +64,11 @@ class Models_Budgets
 			->where('income >=', $amount)
 			->check();
 	}
+
+	public function addRealExpenses($amount)
+	{
+		$this->_table
+			->where('user_id', user_id())
+			->update('real_expenses = real_expenses + ', $amount);
+	}
 }

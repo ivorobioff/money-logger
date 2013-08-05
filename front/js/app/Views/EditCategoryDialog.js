@@ -10,7 +10,6 @@ Views.EditCategoryDialog = Views.AbstractDialogForm.extend({
 	_success: function(data){
 		var old_group = this._context.getModel().get("group_id");
 		this._context.getModel().update(data.model);
-		this._context.refresh();
 		
 		Models.Budget.getInstance().update(data.budget);
 		
@@ -43,10 +42,6 @@ Views.EditCategoryDialog = Views.AbstractDialogForm.extend({
 	
 	_clearAll: function(){
 		return ;
-	},
-	
-	_modifyData: function(data){		
-		return data + "&id=" + this._context.getModel().get("id");
 	},
 	
 	_getLayoutLabels: function(){

@@ -14,10 +14,6 @@ Views.EditGroupDialog = Views.AbstractDialogForm.extend({
 		this._el.find("[name=name]").val(this._context.getModel().get("name"));
 	},
 
-	_modifyData: function(data){
-		return data + "&id=" + this._context.getModel().get("id");
-	},
-
 	_clearAll: function(){
 		return ;
 	},

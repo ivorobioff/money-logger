@@ -3,7 +3,8 @@
  * @load Views.EditCategoryDialog
  * @load Views.ConfirmDialog
  * @load Collections.Categories
- *
+ * @load Views.MoneyFlowWithdrawalDialog
+ * 
  * Класс вьюшка для контекста меню категорий
  */
 Views.CategoryMenu = Views.AbstractContextMenu.extend({
@@ -52,11 +53,15 @@ Views.CategoryMenu = Views.AbstractContextMenu.extend({
 	},
 	
 	withdrawal: function(){
-		alert('withdrawal');
+		Views.MoneyFlowWithdrawalDialog.getInstance().setContext(this._context).show();
 	},
 	
-	returnAmount: function(){
-		alert('deposit');
+	refund: function(){
+		alert('refund');
+	},
+	
+	returnRemainder: function(){
+		alert('return remaider');
 	}
 });
 create_singleton(Views.CategoryMenu);
