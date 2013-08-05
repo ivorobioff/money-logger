@@ -29,7 +29,7 @@ $i18n = array(
 	'/money_flow/validator/wrong_amount' => 'Сумма должно быть больше 0.00',
 
 	'/context_menu/withdrawal' => 'Снять сумму',
-	'/context_menu/return_remainder' => 'Вернуть в остаток',
+	'/context_menu/return_remainder' => 'Вернуть остаток',
 	'/context_menu/refund' => 'Возвратить сумму',
 	'/context_menu/edit' => 'Редактировать',
 	'/context_menu/delete' => 'Удалить',
