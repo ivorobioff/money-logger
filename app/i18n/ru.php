@@ -25,9 +25,11 @@ $i18n = array(
 	'/sections/settings' => 'Настройки',
 
 	'/money_flow/sum' => 'Сумма',
+	'/money_flow/validator/missing_field' => 'Не задано поле',
+	'/money_flow/validator/wrong_amount' => 'Сумма должно быть больше 0.00',
 
 	'/context_menu/withdrawal' => 'Снять сумму',
-	'/context_menu/return_remainder' => 'Убрать остаток',
+	'/context_menu/return_remainder' => 'Вернуть остаток',
 	'/context_menu/refund' => 'Сделать возврат',
 	'/context_menu/edit' => 'Редактировать',
 	'/context_menu/delete' => 'Удалить',
@@ -60,8 +62,6 @@ $i18n = array(
 	'/budget/validator/small_amount' => 'Сумма не должна быть меньше 0.01',
 	'/budget/validator/not_enough_money' => 'Не хватает средств для снятия',
 
-	'/money_flow/validator/missing_field' => 'Не задано поле',
-
 	'/js/dialogs/submit' => 'Применить',
 	'/js/dialogs/cancel' => 'Отмена',
 	'/js/dialogs/yes' => 'Да',
@@ -74,7 +74,7 @@ $i18n = array(
 	'/js/dialogs/titles/deposit' => 'Внести сумму',
 	'/js/dialogs/titles/withdrawal' => 'Забрать сумму',
 	'/js/dialogs/titles/money_flow_withdrawal' => 'Снять сумму',
-	'/js/dialogs/titles/refund' => 'Вернуть сумму',
+	'/js/dialogs/titles/refund' => 'Сделать возврат',
 
 	'/js/dialogs/text/delete_group' => 'Вы уверены, что хотите удалить данную группу?',
 	'/js/dialogs/text/delete_category' => 'Вы уверены что хотите удалить данную категорию?'

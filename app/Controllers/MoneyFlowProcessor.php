@@ -13,7 +13,7 @@ class Controllers_MoneyFlowProcessor extends Libs_Controllers_Processor
 
 		if ($amount < 0.01)
 		{
-			return $this->ajaxError(array('amount' => _t('/money_flow/validator/missing_field')));
+			return $this->ajaxError(array('amount' => _t('/money_flow/validator/wrong_amount')));
 		}
 
 		$model = new Models_Categories();
