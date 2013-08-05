@@ -418,9 +418,83 @@ create_singleton(Models.Budget);
  * @load Views.AbstractDialogForm
  * @load Models.Budget
  */
+Views.RefundDialog = Views.AbstractDialogForm.extend({
+
+	_template: "refund-dialog",
+	
+	_success: function(data){
+		this._context.getModel().update(data.model);
+		Models.Budget.getInstance().update(data.budget);
+	},
+	
+	_clearAll: function(){
+		this._el.find("[name=amount]").val("");
+		this._el.find("[name=comment]").val("");
+	},
+	
+	_getLayoutLabels: function(){
+		return $.extend(this._super(), {title: i18n["/dialogs/titles/refund"]});
+	}
+});
+
+create_singleton(Views.RefundDialog);
+/**
+ * @load Views.AbstractDialog
+ */
+Views.ConfirmDialog = Views.AbstractDialog.extend({
+	
+	_options: null,
+	_template: 'confirm-dialog',
+	
+	initialize: function(options){
+		this._options = options;
+		this._super();
+	},
+	
+	_onPositiveClick: function(){
+		if (_.isFunction(this._options.yes)){
+			this._options.yes(this);
+		}
+	},
+	
+	_onNegativeClick: function(){
+		this.hide();
+	},
+	
+	_getLayoutLabels: function(){
+		return {
+			title: i18n["/dialogs/titles/warning"],
+			submit: i18n["/dialogs/yes"],
+			cancel: i18n["/dialogs/no"]
+		};
+	},
+	
+	_getContentLabels: function(){
+		return {
+			text: this._options.text
+		};
+	},
+	
+	getContext: function(){
+		return this._context;
+	},
+	
+	disableUI: function(){
+		this._el.find(".submit-button, .cancel-button").attr("disabled", "disabled");
+	},
+	
+	enableUI: function(){
+		this._el.find(".submit-button, .cancel-button").removeAttr("disabled");
+	}
+});
+/**
+ * @load Views.AbstractDialogForm
+ * @load Models.Budget
+ * @load Views.ConfirmDialog
+ */
 Views.MoneyFlowWithdrawalDialog = Views.AbstractDialogForm.extend({
 	
-	_template: "withdrawal-dialog",
+	_template: "moneyflow-withdrawal-dialog",
 
 	_request_amount_confirm: null,
 	
@@ -484,55 +558,6 @@ Collections.Categories = Collections.Abstract.extend({
 	_model_class: Models.Category,
 });
 create_singleton(Collections.Categories);
-/**
- * @load Views.AbstractDialog
- */
-Views.ConfirmDialog = Views.AbstractDialog.extend({
-	
-	_options: null,
-	_template: 'confirm-dialog',
-	
-	initialize: function(options){
-		this._options = options;
-		this._super();
-	},
-	
-	_onPositiveClick: function(){
-		if (_.isFunction(this._options.yes)){
-			this._options.yes(this);
-		}
-	},
-	
-	_onNegativeClick: function(){
-		this.hide();
-	},
-	
-	_getLayoutLabels: function(){
-		return {
-			title: i18n["/dialogs/titles/warning"],
-			submit: i18n["/dialogs/yes"],
-			cancel: i18n["/dialogs/no"]
-		};
-	},
-	
-	_getContentLabels: function(){
-		return {
-			text: this._options.text
-		};
-	},
-	
-	getContext: function(){
-		return this._context;
-	},
-	
-	disableUI: function(){
-		this._el.find(".submit-button, .cancel-button").attr("disabled", "disabled");
-	},
-	
-	enableUI: function(){
-		this._el.find(".submit-button, .cancel-button").removeAttr("disabled");
-	}
-});
 /**
  * @load Views.AbstractDialogForm
  * @load Views.GroupsCollection
@@ -690,6 +715,7 @@ Views.AbstractContextMenu = Views.AbstractMenu.extend({
  * @load Views.ConfirmDialog
  * @load Collections.Categories
  * @load Views.MoneyFlowWithdrawalDialog
+ * @load Views.RefundDialog
  * 
  * Класс вьюшка для контекста меню категорий
  */
@@ -698,6 +724,8 @@ Views.CategoryMenu = Views.AbstractContextMenu.extend({
 	_template: "categories-context-menu",
 	
 	_delete_dialog: null,
+	
+	_return_remainder_dialog: null,
 	
 	editCategory: function(context){
 		Views.EditCategoryDialog.getInstance().setContext(context).show();
@@ -738,16 +766,38 @@ Views.CategoryMenu = Views.AbstractContextMenu.extend({
 		this._delete_dialog.setContext(context).show();
 	},
 	
-	withdrawal: function(){
-		Views.MoneyFlowWithdrawalDialog.getInstance().setContext(this._context).show();
+	withdrawal: function(context){
+		Views.MoneyFlowWithdrawalDialog.getInstance().setContext(context).show();
 	},
 	
-	refund: function(){
-		alert('refund');
+	refund: function(context){
+		Views.RefundDialog.getInstance().setContext(context).show();
 	},
 	
-	returnRemainder: function(){
-		alert('return remaider');
+	returnRemainder: function(context){
+		if (_.isNull(this._return_remainder_dialog)){
+			this._return_remainder_dialog = new Views.ConfirmDialog({
+				text: i18n["/dialogs/text/return_remainder"],
+				yes: $.proxy(function(dlg){
+					dlg.disableUI();
+					post("/MoneyFlowProcessor/returnRemainder/", {id: dlg.getContext().getModel().get("id")}, {
+						callback: function(){
+							dlg.enableUI();
+							dlg.hide();
+						},
+						success: function(data){
+							dlg.getContext().getModel().update(data.model);
+							Models.Budget.getInstance().update(data.budget);
+						},
+						error: function(data){
+							alert(data.error);
+						}
+					});
+				}, this)
+			});
+		}
+		
+		this._return_remainder_dialog.setContext(context).show();
 	}
 });
 create_singleton(Views.CategoryMenu);

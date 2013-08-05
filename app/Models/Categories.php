@@ -95,4 +95,23 @@ class Models_Categories
 				'amount = amount +' => $amount
 			));
 	}
+
+	public function refund($id, $amount)
+	{
+		$this->_table
+			->where('user_id', user_id())
+			->where('id', $id)
+			->update('current_amount = current_amount +', $amount);
+	}
+
+	public function returnRemainder($id, $amount)
+	{
+		$this->_table
+			->where('user_id', user_id())
+			->where('id', $id)
+			->update(array(
+				'current_amount' => 0,
+				'amount = amount - ' => $amount
+			));
+	}
 }

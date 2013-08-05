@@ -27,6 +27,9 @@ $i18n = array(
 	'/money_flow/sum' => 'Сумма',
 	'/money_flow/validator/missing_field' => 'Не задано поле',
 	'/money_flow/validator/wrong_amount' => 'Сумма должно быть больше 0.00',
+	'/money_flow/validator/refund_too_big' => 'Сумма для восстановления слишком большая',
+	'/money_flow/validator/remainder_zero' => 'Невозможно вернуть остаток. Остаток равен нулю',
+	'/money_flow/validator/is_sync' => 'Невозможно вернуть остаток. Остаток должен быть меньше запланированой суммы',
 
 	'/context_menu/withdrawal' => 'Снять сумму',
 	'/context_menu/return_remainder' => 'Вернуть остаток',
@@ -74,9 +77,10 @@ $i18n = array(
 	'/js/dialogs/titles/deposit' => 'Внести сумму',
 	'/js/dialogs/titles/withdrawal' => 'Забрать сумму',
 	'/js/dialogs/titles/money_flow_withdrawal' => 'Снять сумму',
-	'/js/dialogs/titles/refund' => 'Сделать возврат',
+	'/js/dialogs/titles/refund' => 'Восстановить сумму',
 
 	'/js/dialogs/text/delete_group' => 'Вы уверены, что хотите удалить данную группу?',
 	'/js/dialogs/text/delete_category' => 'Вы уверены что хотите удалить данную категорию?',
-	'/js/dialogs/text/request_amount' => 'У вас не хватает средств для снятия. Запросить недостающую сумму?'
+	'/js/dialogs/text/request_amount' => 'У вас не хватает средств для снятия. Запросить недостающую сумму?',
+	'/js/dialogs/text/return_remainder' => 'Вы уверены, что хотите вернуть оставшуюся сумму?',
 );
