@@ -279,10 +279,15 @@ Views.AbstractDialog = Views.Abstract.extend({
 	},
 	
 	hide: function(){
+		this._onHide();
 		this._el.hide();
 	},
 	
 	_onShow: function(){
+		
+	},
+	
+	_onHide: function(){
 		
 	},
 	
@@ -310,50 +315,55 @@ Views.AbstractDialog = Views.Abstract.extend({
  * @load Views.AbstractDialog
  */
 Views.AbstractDialogForm = Views.AbstractDialog.extend({
-		
+	
+	initialize: function(){
+		this._super();	
+		this._el.find("form").submit($.proxy(this._onPositiveClick, this));
+	},
 	_onPositiveClick: function(){
 		
 		var url = this._el.find("form").attr('action');		
 		var data = this._el.find("form").serialize();
 		
+		if (!_.isUndefined(this._context) && !_.isNull(this._context)){
+			data += "&id=" + this._context.getModel().get("id");
+		}
+		
 		this._disableUI();
 
-		post(url, this._modifyData(data), {
+		post(url, data, {
 			callback: $.proxy(function(result){
 				this._enableUI();
 			}, this),
 			
 			success: $.proxy(function(data){
 				this._success(data);
-				this._clearAll();
 				this.hide();
 			}, this),
 			
-			error: $.proxy(function(data){
-				var errors = "";
-				for (var i in data){
-					errors += i + " >> " + data[i] + "\n";
-				}
-				
-				alert(errors);
-			}, this)
+			error: $.proxy(this.showError, this)
 		});
+		
+		return false;
 	},
 	
-	_modifyData: function(data){
-		return data;
+	_onNegativeClick: function(){
+		this.hide();
 	},
 	
 	_success: function(data){
 	
 	},
 	
-	_onNegativeClick: function(){
-		this._el.hide();
-		this._clearAll();
+	showError: function(data){
+		var errors = "";
+		for (var i in data){
+			errors += i + " >> " + data[i] + "\n";
+		}
+		
+		alert(errors);
 	},
-	
-	
+		
 	_disableUI: function(){
 		this._el.find('input, select, textarea').each(function(){
 			$(this).attr('disabled', 'disabled');
@@ -364,6 +374,10 @@ Views.AbstractDialogForm = Views.AbstractDialog.extend({
 		this._el.find('input, select, textarea').each(function(){
 			$(this).removeAttr('disabled');
 		});
+	},
+	
+	_onHide: function(){
+		this._clearAll();
 	}
 });
 /**
@@ -408,15 +422,11 @@ Views.DepositDialog = Views.AbstractDialogForm.extend({
 });
 
 create_singleton(Views.DepositDialog);
-Helpers.ItemClick = Class.extend({
-	
-	_that: null,
-	
-	initialize: function(that){
-		this._that = that;
-	},
-	
-	process: function(e, params){
+/**
+ * @load Views.Abstract
+ */
+Views.AbstractMenu = Views.Abstract.extend({
+	_onItemClick: function(e, params){
 		
 		if (_.isUndefined(params)) params = [];
 		
@@ -428,31 +438,25 @@ Helpers.ItemClick = Class.extend({
 		
 		var method = action.toCamelCase();
 		
-		if (!_.isFunction(this._that[method])){
+		if (!_.isFunction(this[method])){
 			return ;
 		}
 		
-		this._that[method].apply(this._that, params);
+		this[method].apply(this, params);
+		return false;
 	}
 });
 /**
- * @load Views.Abstract
- * @load Helpers.ItemClick
+ * @load Views.AbstractMenu
  * @load Views.DepositDialog
  * @load Views.WithdrawalDialog
  */
-Views.BudgetMenu = Views.Abstract.extend({
+Views.BudgetMenu = Views.AbstractMenu.extend({
 	_id: "budget-menu",
-	_helper: null,
 	
 	initialize: function(){
 		this._render();
-		this._helper = new Helpers.ItemClick(this);
-		
-		this._el.find("a").click($.proxy(function(e){
-			this._helper.process(e);
-			return false;
-		}, this));
+		this._el.find("a").click($.proxy(this._onItemClick, this));
 	},
 	
 	deposit: function(){

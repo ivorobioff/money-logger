@@ -28,14 +28,7 @@ Views.AbstractDialogForm = Views.AbstractDialog.extend({
 				this.hide();
 			}, this),
 			
-			error: $.proxy(function(data){
-				var errors = "";
-				for (var i in data){
-					errors += i + " >> " + data[i] + "\n";
-				}
-				
-				alert(errors);
-			}, this)
+			error: $.proxy(this.showError, this)
 		});
 		
 		return false;
@@ -47,6 +40,15 @@ Views.AbstractDialogForm = Views.AbstractDialog.extend({
 	
 	_success: function(data){
 	
+	},
+	
+	showError: function(data){
+		var errors = "";
+		for (var i in data){
+			errors += i + " >> " + data[i] + "\n";
+		}
+		
+		alert(errors);
 	},
 		
 	_disableUI: function(){

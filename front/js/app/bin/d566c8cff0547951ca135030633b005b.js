@@ -240,14 +240,7 @@ Views.AbstractDialogForm = Views.AbstractDialog.extend({
 				this.hide();
 			}, this),
 			
-			error: $.proxy(function(data){
-				var errors = "";
-				for (var i in data){
-					errors += i + " >> " + data[i] + "\n";
-				}
-				
-				alert(errors);
-			}, this)
+			error: $.proxy(this.showError, this)
 		});
 		
 		return false;
@@ -259,6 +252,15 @@ Views.AbstractDialogForm = Views.AbstractDialog.extend({
 	
 	_success: function(data){
 	
+	},
+	
+	showError: function(data){
+		var errors = "";
+		for (var i in data){
+			errors += i + " >> " + data[i] + "\n";
+		}
+		
+		alert(errors);
 	},
 		
 	_disableUI: function(){
@@ -285,6 +287,8 @@ Views.MoneyFlowWithdrawalDialog = Views.AbstractDialogForm.extend({
 	
 	_template: "withdrawal-dialog",
 
+	_request_amount_confirm: null,
+	
 	_success: function(data){
 		this._context.getModel().update(data.model);
 		Models.Budget.getInstance().update(data.budget);
@@ -297,6 +301,36 @@ Views.MoneyFlowWithdrawalDialog = Views.AbstractDialogForm.extend({
 	
 	_getLayoutLabels: function(){
 		return $.extend(this._super(), {title: i18n["/dialogs/titles/money_flow_withdrawal"]});
+	},
+	
+	showError: function(data){
+		if (!_.isUndefined(data.post_back)){
+			
+			if (_.isNull(this._request_amount_confirm)){
+				this._request_amount_confirm = new Views.ConfirmDialog({
+					text: i18n["/dialogs/text/request_amount"],
+					yes: $.proxy(function(){
+						post("/MoneyFlowProcessor/withdrawal/", data.post_back, {
+							callback: $.proxy(function(){
+								this._request_amount_confirm.hide();
+							}, this),
+							success: $.proxy(function(data){
+								this._context.getModel().update(data.model);
+								Models.Budget.getInstance().update(data.budget);
+								this.hide();
+							}, this),
+							error: $.proxy(function(data){
+								this.showError(data);
+							}, this),
+						});
+					}, this)
+				});
+			}
+			
+			this._request_amount_confirm.show();
+		} else {
+			this._super(data);
+		}
 	}
 });
 

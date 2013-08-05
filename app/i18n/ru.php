@@ -77,5 +77,6 @@ $i18n = array(
 	'/js/dialogs/titles/refund' => 'Сделать возврат',
 
 	'/js/dialogs/text/delete_group' => 'Вы уверены, что хотите удалить данную группу?',
-	'/js/dialogs/text/delete_category' => 'Вы уверены что хотите удалить данную категорию?'
+	'/js/dialogs/text/delete_category' => 'Вы уверены что хотите удалить данную категорию?',
+	'/js/dialogs/text/request_amount' => 'У вас не хватает средств для снятия. Запросить недостающую сумму?'
 );
