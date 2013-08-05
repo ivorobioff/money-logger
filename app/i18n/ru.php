@@ -30,7 +30,7 @@ $i18n = array(
 
 	'/context_menu/withdrawal' => 'Снять сумму',
 	'/context_menu/return_remainder' => 'Вернуть остаток',
-	'/context_menu/refund' => 'Сделать возврат',
+	'/context_menu/refund' => 'Возвратить сумму',
 	'/context_menu/edit' => 'Редактировать',
 	'/context_menu/delete' => 'Удалить',
 	'/context_menu/add_category' => 'Добавить категорию',
