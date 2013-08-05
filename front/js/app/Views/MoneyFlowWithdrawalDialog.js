@@ -1,6 +1,7 @@
 /**
  * @load Views.AbstractDialogForm
  * @load Models.Budget
+ * @load Views.ConfirmDialog
  */
 Views.MoneyFlowWithdrawalDialog = Views.AbstractDialogForm.extend({
 	
