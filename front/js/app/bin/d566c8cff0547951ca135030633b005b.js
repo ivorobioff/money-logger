@@ -309,10 +309,12 @@ Views.MoneyFlowWithdrawalDialog = Views.AbstractDialogForm.extend({
 			if (_.isNull(this._request_amount_confirm)){
 				this._request_amount_confirm = new Views.ConfirmDialog({
 					text: i18n["/dialogs/text/request_amount"],
-					yes: $.proxy(function(){
+					yes: $.proxy(function(dlg){
+						dlg.disableUI();
 						post("/MoneyFlowProcessor/withdrawal/", data.post_back, {
 							callback: $.proxy(function(){
-								this._request_amount_confirm.hide();
+								dlg.enableUI();
+								dlg.hide();
 							}, this),
 							success: $.proxy(function(data){
 								this._context.getModel().update(data.model);

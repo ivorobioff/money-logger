@@ -32,18 +32,17 @@ Views.GroupMenu = Views.AbstractContextMenu.extend({
 					post(_url("/PlannerProcessor/deleteGroup/"), {id: id}, {
 						callback: function(){
 							dlg.enableUI();
+							dlg.hide();
 						},
 						
 						success: function(data){
 							dlg.getContext().remove();
 							Views.GroupsCollection.getInstance().remove(data.id);
 							Collections.Groups.getInstance().remove(data.id);
-							dlg.hide();
 						},
 						
 						error: function(data){
 							alert(data);
-							dlg.hide();
 						}
 					})
 				}

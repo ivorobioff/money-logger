@@ -444,10 +444,12 @@ Views.MoneyFlowWithdrawalDialog = Views.AbstractDialogForm.extend({
 			if (_.isNull(this._request_amount_confirm)){
 				this._request_amount_confirm = new Views.ConfirmDialog({
 					text: i18n["/dialogs/text/request_amount"],
-					yes: $.proxy(function(){
+					yes: $.proxy(function(dlg){
+						dlg.disableUI();
 						post("/MoneyFlowProcessor/withdrawal/", data.post_back, {
 							callback: $.proxy(function(){
-								this._request_amount_confirm.hide();
+								dlg.enableUI();
+								dlg.hide();
 							}, this),
 							success: $.proxy(function(data){
 								this._context.getModel().update(data.model);
@@ -897,18 +899,17 @@ Views.GroupMenu = Views.AbstractContextMenu.extend({
 					post(_url("/PlannerProcessor/deleteGroup/"), {id: id}, {
 						callback: function(){
 							dlg.enableUI();
+							dlg.hide();
 						},
 						
 						success: function(data){
 							dlg.getContext().remove();
 							Views.GroupsCollection.getInstance().remove(data.id);
 							Collections.Groups.getInstance().remove(data.id);
-							dlg.hide();
 						},
 						
 						error: function(data){
 							alert(data);
-							dlg.hide();
 						}
 					})
 				}
