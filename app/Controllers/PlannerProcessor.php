@@ -35,11 +35,11 @@ class Controllers_PlannerProcessor extends Libs_Controllers_Processor
 		{
 			$diff_amount = $data['amount'] - $category['amount'];
 			$data['current_amount'] = $category['current_amount'] + $diff_amount;
-		}
 
-		if ($data['current_amount'] < 0)
-		{
-			return $this->ajaxError(array('amount' => _t('/planner/validator/amount_too_small')));
+			if ($data['current_amount'] < 0)
+			{
+				return $this->ajaxError(array('amount' => _t('/planner/validator/amount_too_small')));
+			}
 		}
 
 		$model->edit($data);

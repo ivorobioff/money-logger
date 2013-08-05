@@ -84,4 +84,15 @@ class Models_Categories
 			->where('id', $id)
 			->update('current_amount = current_amount-', $amount);
 	}
+
+	public function requestAmount($id, $amount)
+	{
+		$this->_table
+			->where('user_id', user_id())
+			->where('id', $id)
+			->update(array(
+				'current_amount = current_amount +' => $amount,
+				'amount = amount +' => $amount
+			));
+	}
 }

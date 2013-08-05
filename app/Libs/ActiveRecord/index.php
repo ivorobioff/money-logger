@@ -83,24 +83,6 @@ abstract class Libs_ActiveRecord
 		return $this;
 	}
 
-	/**
-	 * $table->duplicate('c=c+1');
-	 * $table->duplicate('c=c+', 1);
-	 * $table->duplicate('c', 1);
-	 */
-	public function duplicate($q = '', $value = null)
-	{
-		if (is_null($value))
-		{
-			$this->_query_buffer['duplicate'] = 'ON DUPLICATE KEY UPDATE '.$q;
-			return $this;
-		}
-
-		$eq = strpos($q, '=') ? '' : '=';
-
-		$this->_query_buffer['duplicate'] = 'ON DUPLICATE KEY UPDATE '.$q.$eq.'\''.$this->escape($value).'\'';
-		return $this;
-	}
 
 	/**
 	 * $table->select('col1, col2, col3');
@@ -260,21 +242,20 @@ abstract class Libs_ActiveRecord
 	}
 
 	/**
-	 * $table->update('c=c+2');
-	 * $this->update('c=c+', 2);
-	 * $this->update(array('c', 2));
+	 * $table->update('a=a+2');
+	 * $this->update('a', 2);
+	 * $this->update('a=a+', 2);
+	 * $this->update(array('a'=> 2, 'b' => '3'));
 	 * @return int
 	 */
-	public function update($data, $value = null)
+	public function update($data, $value = false)
 	{
-		if (!$data)
+		if (is_string($data))
 		{
-			return false;
-		}
-
-		if (!is_null($value))
-		{
-			$data = array($data => $value);
+			if ($value !== false)
+			{
+				$data = array($data => $value);
+			}
 		}
 
 		$sql = 'UPDATE '.$this->_table_name.
@@ -292,6 +273,26 @@ abstract class Libs_ActiveRecord
 		$this->clear();
 
 		return $this->_db()->affected_rows;
+	}
+
+	/**
+	 * $table->duplicate('a=a+1');
+	 * $table->duplicate('a=a+', 1);
+	 * $table->duplicate('a', 1);
+	 * $table->duplicate(array('a' => 1, 'b' => 2));
+	 */
+	public function duplicate($data, $value = false)
+	{
+		if (is_string($data))
+		{
+			if ($value !== false)
+			{
+				$data = array($data => $value);
+			}
+		}
+
+		$this->_query_buffer['duplicate'] = 'ON DUPLICATE KEY UPDATE '.$this->_prepareUpdates($data);
+		return $this;
 	}
 
 	public function insert(array $data)
@@ -476,7 +477,7 @@ abstract class Libs_ActiveRecord
 		{
 			$eq = strpos($k, '=') ? '' : '=';
 
-			$updates .=$d.$k.$eq.'\''.$this->escape($v).'\'';
+			$updates .=$d.$k.$eq.(is_null($v) ? ' NULL ' : '\''.$this->escape($v).'\'');
 			$d = ',';
 
 			$eq = '';

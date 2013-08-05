@@ -19,11 +19,16 @@ class Controllers_MoneyFlowProcessor extends Libs_Controllers_Processor
 		$model = new Models_Categories();
 		$budget = new Models_Budgets();
 
+		if ($request_amount = always_set($_POST, 'request_amount'))
+		{
+			$model->requestAmount($id,$request_amount);
+		}
+
 		$current_amount = $model->getCurrentAmount($id);
 
 		if ($current_amount < $amount)
 		{
-			return $this->ajaxError(array('need_amount' => $amount - $current_amount));
+			return $this->ajaxError(array('request_amount' => $amount - $current_amount));
 		}
 
 		$model->withdrawal($id, $amount);
