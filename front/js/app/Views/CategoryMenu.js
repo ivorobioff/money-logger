@@ -4,6 +4,7 @@
  * @load Views.ConfirmDialog
  * @load Collections.Categories
  * @load Views.MoneyFlowWithdrawalDialog
+ * @load Views.RefundDialog
  * 
  * Класс вьюшка для контекста меню категорий
  */
@@ -12,6 +13,8 @@ Views.CategoryMenu = Views.AbstractContextMenu.extend({
 	_template: "categories-context-menu",
 	
 	_delete_dialog: null,
+	
+	_return_remainder_dialog: null,
 	
 	editCategory: function(context){
 		Views.EditCategoryDialog.getInstance().setContext(context).show();
@@ -52,16 +55,38 @@ Views.CategoryMenu = Views.AbstractContextMenu.extend({
 		this._delete_dialog.setContext(context).show();
 	},
 	
-	withdrawal: function(){
-		Views.MoneyFlowWithdrawalDialog.getInstance().setContext(this._context).show();
+	withdrawal: function(context){
+		Views.MoneyFlowWithdrawalDialog.getInstance().setContext(context).show();
 	},
 	
-	refund: function(){
-		alert('refund');
+	refund: function(context){
+		Views.RefundDialog.getInstance().setContext(context).show();
 	},
 	
-	returnRemainder: function(){
-		alert('return remaider');
+	returnRemainder: function(context){
+		if (_.isNull(this._return_remainder_dialog)){
+			this._return_remainder_dialog = new Views.ConfirmDialog({
+				text: i18n["/dialogs/text/return_remainder"],
+				yes: $.proxy(function(dlg){
+					dlg.disableUI();
+					post("/MoneyFlowProcessor/returnRemainder/", {id: dlg.getContext().getModel().get("id")}, {
+						callback: function(){
+							dlg.enableUI();
+							dlg.hide();
+						},
+						success: function(data){
+							dlg.getContext().getModel().update(data.model);
+							Models.Budget.getInstance().update(data.budget);
+						},
+						error: function(data){
+							alert(data.error);
+						}
+					});
+				}, this)
+			});
+		}
+		
+		this._return_remainder_dialog.setContext(context).show();
 	}
 });
 create_singleton(Views.CategoryMenu);

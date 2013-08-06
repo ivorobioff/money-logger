@@ -5,7 +5,7 @@
  */
 Views.MoneyFlowWithdrawalDialog = Views.AbstractDialogForm.extend({
 	
-	_template: "withdrawal-dialog",
+	_template: "moneyflow-withdrawal-dialog",
 
 	_request_amount_confirm: null,
 	

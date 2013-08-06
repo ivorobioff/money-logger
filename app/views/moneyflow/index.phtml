@@ -3,6 +3,7 @@
 i18n["/dialogs/titles/money_flow_withdrawal"] = "<?=_t('/js/dialogs/titles/money_flow_withdrawal')?>";
 i18n["/dialogs/titles/refund"] = "<?=_t('/js/dialogs/titles/refund')?>";
 i18n["/dialogs/text/request_amount"] = "<?=_t('/js/dialogs/text/request_amount')?>";
+i18n["/dialogs/text/return_remainder"] = "<?=_t('/js/dialogs/text/return_remainder')?>";
 
 $(function(){
 	Collections.Groups
@@ -36,12 +37,12 @@ Libs_Views::create('/elements/context_menu.phtml')
 	->render();
 
 Libs_Views::create('/dialogs/amount.phtml')
-	->assign('id', 'withdrawal-dialog')
+	->assign('id', 'moneyflow-withdrawal-dialog')
 	->assign('url', _url('/MoneyFlowProcessor/withdrawal/'))
 	->render();
 
 Libs_Views::create('/dialogs/amount.phtml')
-	->assign('id', 'return-amount-dialog')
-	->assign('url', _url('/MoneyFlowProcessor/returnAmount/'))
+	->assign('id', 'refund-dialog')
+	->assign('url', _url('/MoneyFlowProcessor/refund/'))
 	->render();
 ?>

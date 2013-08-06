@@ -71,4 +71,11 @@ class Models_Budgets
 			->where('user_id', user_id())
 			->update('real_expenses = real_expenses + ', $amount);
 	}
+
+	public function subtractRealExpenses($amount)
+	{
+		$this->_table
+			->where('user_id', user_id())
+			->update('real_expenses = real_expenses - ', $amount);
+	}
 }
