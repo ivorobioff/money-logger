@@ -1,6 +1,6 @@
 <?php
 /**
- * Класс для логирование опираций и состояние бюджета/категории до и после совершонной операции.
+ * Класс для логирование опираций и состояние бюджета и категории до и после совершонной операции.
  * @author Игорь Воробьев<vib@avantajprim.com>
  */
 class Libs_Logger
@@ -8,9 +8,10 @@ class Libs_Logger
 	const AC_BUDGET_WITHDRAWAL = 'budget_withdrawal';
 	const AC_BUDGET_DEPOSIT = 'budget_deposit';
 	const AC_CATEGORY_WITHDRAWAL = 'category_withdrawal';
+	const AC_CATEGORY_REFUND = 'category_refund';
 	const AC_CHANGE_AMOUNT = 'change_amount';
 	const AC_REQUEST_AMOUNT = 'request_amount';
-	const AC_RETURN_AMOUNT = 'return_amount';
+	const AC_RETURN_REMAINDER = 'return_remainder';
 	const AC_DELETE_CATEGORY = 'delete_category';
 	const AC_CREATE_CATEGORY = 'create_category';
 
