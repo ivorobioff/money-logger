@@ -3,6 +3,8 @@ class Controllers_MoneyFlowProcessor extends Libs_Controllers_Processor
 {
 	public function withdrawal()
 	{
+		$logger = new Libs_Logger();
+
 		if ($fail = $this->_hasFail())
 		{
 			return $this->ajaxError($fail);
@@ -12,30 +14,51 @@ class Controllers_MoneyFlowProcessor extends Libs_Controllers_Processor
 		$id = $_POST['id'];
 
 		$model = new Models_Categories();
+		$category = $model->getById($id);
+
 		$budget = new Models_Budgets();
 
 		if ($request_amount = always_set($_POST, 'request_amount'))
 		{
+			$logger_request = new Libs_Logger();
+
+			$logger_request->fixBefore($id);
+
 			$model->requestAmount($id, $request_amount);
+
+			$logger->fixAfter($id)
+				->setAmount($request_amount)
+				->setAction(Libs_Logger::AC_REQUEST_AMOUNT)
+				->setTitle($category['title'])
+				->save();
 		}
 
-		$current_amount = $model->getCurrentAmount($id);
-
-		if ($current_amount < $amount)
+		if ($category['current_amount'] < $amount)
 		{
 			$post_back = $_POST;
-			$post_back['request_amount'] =  $amount - $current_amount;
+			$post_back['request_amount'] =  $amount - $category['current_amount'];
 			return $this->ajaxError(array('post_back' => $post_back));
 		}
 
+		$logger->fixBefore($id);
+
 		$model->withdrawal($id, $amount);
 		$budget->addRealExpenses($amount);
+
+		$logger->fixAfter($id)
+			->setAmount($amount)
+			->setAction(Libs_Logger::AC_CATEGORY_WITHDRAWAL)
+			->setTitle($category['title'])
+			->setComment(always_set($_POST, 'comment', ''))
+			->save();
 
 		return $this->ajaxSuccess(array('model' => $model->getById($id), 'budget' => $budget->getSummary()));
 	}
 
 	public function refund()
 	{
+		$logger = new Libs_Logger();
+
 		if ($fail = $this->_hasFail())
 		{
 			return $this->ajaxError($fail);
@@ -54,14 +77,26 @@ class Controllers_MoneyFlowProcessor extends Libs_Controllers_Processor
 			return $this->ajaxError(array('amount' => _t('/money_flow/validator/refund_too_big')));
 		}
 
+		$logger->fixBefore($id);
+
 		$model->refund($id, $amount);
 		$budget->subtractRealExpenses($amount);
+
+		$logger
+			->fixAfter($id)
+			->setAction(Libs_Logger::AC_CATEGORY_REFUND)
+			->setAmount($amount)
+			->setTitle($category['title'])
+			->setComment(always_set($_POST, 'comment', ''))
+			->save();
 
 		return $this->ajaxSuccess(array('model' => $model->getById($id), 'budget' => $budget->getSummary()));
 	}
 
 	public function returnRemainder()
 	{
+		$logger = new Libs_Logger();
+
 		$id = $_POST['id'];
 
 		$model = new Models_Categories();
@@ -77,7 +112,16 @@ class Controllers_MoneyFlowProcessor extends Libs_Controllers_Processor
 			return $this->ajaxError(array('error' => _t('/money_flow/validator/is_sync')));
 		}
 
+		$logger->fixBefore($id);
+
 		$model->returnRemainder($id, $category['current_amount']);
+
+		$logger
+			->fixAfter($id)
+			->setAction(Libs_Logger::AC_RETURN_REMAINDER)
+			->setAmount($category['current_amount'])
+			->setTitle($category['title'])
+			->save();
 
 		$budget = new Models_Budgets();
 

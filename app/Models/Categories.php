@@ -20,7 +20,7 @@ class Models_Categories
 	{
 		$data = array(
 			'title' => $data['title'],
-			'amount' => round($data['amount'], 2),
+			'amount' => $data['amount'],
 			'current_amount' => $data['amount'],
 			'group_id' => $data['group'],
 			'user_id' => user_id(),
@@ -67,14 +67,6 @@ class Models_Categories
 			->whereQuery('amount=current_amount')
 			->where('id', $id)
 			->check();
-	}
-
-	public function getCurrentAmount($id)
-	{
-		return $this->_table
-			->where('id', $id)
-			->createResultFormat()
-			->getValue('current_amount', 0);
 	}
 
 	public function withdrawal($id, $amount)

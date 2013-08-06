@@ -9,7 +9,8 @@ class Libs_Logger
 	const AC_BUDGET_DEPOSIT = 'budget_deposit';
 	const AC_CATEGORY_WITHDRAWAL = 'category_withdrawal';
 	const AC_CATEGORY_REFUND = 'category_refund';
-	const AC_CHANGE_AMOUNT = 'change_amount';
+	const AC_ADD_AMOUNT = 'add_amount';
+	const AC_SUBTRACT_AMOUNT = 'subtract_amount';
 	const AC_REQUEST_AMOUNT = 'request_amount';
 	const AC_RETURN_REMAINDER = 'return_remainder';
 	const AC_DELETE_CATEGORY = 'delete_category';

@@ -3,29 +3,51 @@ class Controllers_PlannerProcessor extends Libs_Controllers_Processor
 {
 	public function addCategory()
 	{
+		$logger = new Libs_Logger();
+
 		if ($errors = $this->_getCategoryValidationErrors())
 		{
 			return $this->ajaxError($errors);
 		}
 
 		$model = new Models_Categories();
-		$id = $model->add($_POST);
+
+		$logger->fixBefore();
+
+		$data = $_POST;
+		$data['amount'] = round($data['amount'], 2);
+
+		$id = $model->add($data);
+
+		$category = $model->getById($id);
+
+		$logger
+			->fixAfter($id)
+			->setAmount($data['amount'])
+			->setAction(Libs_Logger::AC_CREATE_CATEGORY)
+			->setTitle($category['title'])
+			->save();
 
 		$budget = new Models_Budgets();
-		return $this->ajaxSuccess(array('model' => $model->getById($id), 'budget' => $budget->getSummary()));
+		return $this->ajaxSuccess(array('model' => $category, 'budget' => $budget->getSummary()));
 	}
 
 	public function editCategory()
 	{
+		$logger = new Libs_Logger();
+
 		if ($errors = $this->_getCategoryValidationErrors())
 		{
 			return $this->ajaxError($errors);
 		}
 
 		$data = $_POST;
+		$data['amount'] = round($data['amount'], 2);
 
 		$model = new Models_Categories();
 		$category = $model->getById($data['id']);
+
+		$changed_amount = $data['amount'] - $category['amount'];
 
 		if ($category['amount'] == $category['current_amount'])
 		{
@@ -42,15 +64,32 @@ class Controllers_PlannerProcessor extends Libs_Controllers_Processor
 			}
 		}
 
+		if ($changed_amount != 0)
+		{
+			$logger->fixBefore($data['id']);
+
+		}
+
 		$model->edit($data);
 
-		$budget = new Models_Budgets();
+		if ($changed_amount != 0)
+		{
+			$logger
+				->fixAfter($data['id'])
+				->setAmount(abs($changed_amount))
+				->setAction($changed_amount > 0 ? Libs_Logger::AC_ADD_AMOUNT : Libs_Logger::AC_SUBTRACT_AMOUNT)
+				->setTitle($category['title'])
+				->save();
+		}
 
+		$budget = new Models_Budgets();
 		return $this->ajaxSuccess(array('model' => $model->getById($data['id']), 'budget' => $budget->getSummary()));
 	}
 
 	public function deleteCategory()
 	{
+		$logger = new Libs_Logger();
+
 		$id = $_POST['id'];
 
 		$model = new Models_Categories();
@@ -60,7 +99,17 @@ class Controllers_PlannerProcessor extends Libs_Controllers_Processor
 			return $this->ajaxError(array(_t('/planner/validator/not_sync')));
 		}
 
+		$category = $model->getById($id);
+
+		$logger->fixBefore($id);
+
 		$model->delete($id);
+
+		$logger->fixAfter()
+			->setAction(Libs_Logger::AC_DELETE_CATEGORY)
+			->setAmount($category['amount'])
+			->setTitle($category['title'])
+			->save();
 
 		$budget = new Models_Budgets();
 
