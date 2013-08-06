@@ -15,38 +15,43 @@ class Libs_Logger
 	const AC_CREATE_CATEGORY = 'create_category';
 
 	private $_item_id;
-
-	private $_title;
+	private $_title = '-';
 	private $_action;
 	private $_amount;
 	private $_comment = '';
 
 	/**
-	 * @var Libs_Logger_States
+	 * @var array
 	 */
 	private $_fixed_before;
 
 	/**
-	 * @var Libs_Logger_States
+	 * @var array
 	 */
 	private $_fixed_after;
 
-	public function __construct($item_id = null)
+	public function setItemId($id)
 	{
-		$this->_item_id = $item_id;
+		$this->_item_id = $id;
+		return $this;
+	}
+
+	public function unsetItemId()
+	{
+		unset($this->_item_id);
+		return $this;
 	}
 
 	public function fixBefore()
 	{
-		$this->_fixed_before = $this->_createStateObject();
-		$this->_fixed_before->fix();
+		$this->_fixed_before = $this->_fix();
 		return $this;
 	}
 
 	public function fixAfter()
 	{
-		$this->_fixed_after = $this->_createStateObject();
-		$this->_fixed_after->fix();
+		$this->_fixed_after = $this->_fix();
+
 		return $this;
 	}
 
@@ -84,7 +89,7 @@ class Libs_Logger
 	{
 		return array(
 			'user_id' => user_id(),
-			'title' => is_null($this->_item_id) ? '-' : $this->_title,
+			'title' => $this->_title,
 			'action' => $this->_action,
 			'fixation' => $this->_prepareFixation(),
 			'amount' => $this->_amount,
@@ -95,23 +100,23 @@ class Libs_Logger
 	private function _prepareFixation()
 	{
 		return json_encode(array(
-			'before' => $this->_fixed_before->toArray(),
-			'after' => $this->_fixed_after->toArray()
+			'before' => $this->_fixed_before,
+			'after' => $this->_fixed_after
 		));
 	}
 
-	/**
-	 * @return Libs_Logger_States
-	 */
-	private function _createStateObject()
+	private function _fix()
 	{
-		if (is_null($this->_item_id))
+		$model_budget = new Models_Budgets();
+		$model_category = new Models_Categories();
+
+		$data['budget'] = $model_budget->getSummary();
+
+		if ($this->_item_id)
 		{
-			return new Libs_Logger_States_Budget();
+			$data['category'] = $model_category->getById($this->_item_id);
 		}
-		else
-		{
-			return new Libs_Logger_States_Category($this->_item_id);
-		}
+
+		return $data;
 	}
 }
