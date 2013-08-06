@@ -14,7 +14,6 @@ class Libs_Logger
 	const AC_DELETE_CATEGORY = 'delete_category';
 	const AC_CREATE_CATEGORY = 'create_category';
 
-	private $_item_id;
 	private $_title = '-';
 	private $_action;
 	private $_amount;
@@ -30,27 +29,15 @@ class Libs_Logger
 	 */
 	private $_fixed_after;
 
-	public function setItemId($id)
+	public function fixBefore($id = null)
 	{
-		$this->_item_id = $id;
+		$this->_fixed_before = $this->_fix($id);
 		return $this;
 	}
 
-	public function unsetItemId()
+	public function fixAfter($id = null)
 	{
-		unset($this->_item_id);
-		return $this;
-	}
-
-	public function fixBefore()
-	{
-		$this->_fixed_before = $this->_fix();
-		return $this;
-	}
-
-	public function fixAfter()
-	{
-		$this->_fixed_after = $this->_fix();
+		$this->_fixed_after = $this->_fix($id);
 
 		return $this;
 	}
@@ -105,16 +92,16 @@ class Libs_Logger
 		));
 	}
 
-	private function _fix()
+	private function _fix($id = null)
 	{
 		$model_budget = new Models_Budgets();
-		$model_category = new Models_Categories();
 
 		$data['budget'] = $model_budget->getSummary();
 
-		if ($this->_item_id)
+		if ($id)
 		{
-			$data['category'] = $model_category->getById($this->_item_id);
+			$model_category = new Models_Categories();
+			$data['category'] = $model_category->getById($id);
 		}
 
 		return $data;
