@@ -82,7 +82,8 @@ class Libs_Logger
 			'action' => $this->_action,
 			'fixation' => $this->_prepareFixation(),
 			'amount' => $this->_amount,
-			'comment' => $this->_comment
+			'comment' => $this->_comment,
+			'insert_date' => date('Y-m-d H:s:i')
 		);
 	}
 

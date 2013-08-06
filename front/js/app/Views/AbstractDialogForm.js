@@ -1,5 +1,6 @@
 /**
  * @load Views.AbstractDialog
+ * @load Helpers.ErrorsHandler
  */
 Views.AbstractDialogForm = Views.AbstractDialog.extend({
 	
@@ -43,12 +44,7 @@ Views.AbstractDialogForm = Views.AbstractDialog.extend({
 	},
 	
 	showError: function(data){
-		var errors = "";
-		for (var i in data){
-			errors += i + " >> " + data[i] + "\n";
-		}
-		
-		alert(errors);
+		Helpers.ErrorsHandler.getInstance().show(data);
 	},
 		
 	_disableUI: function(){

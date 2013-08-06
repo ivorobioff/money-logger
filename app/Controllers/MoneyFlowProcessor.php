@@ -14,8 +14,6 @@ class Controllers_MoneyFlowProcessor extends Libs_Controllers_Processor
 		$id = $_POST['id'];
 
 		$model = new Models_Categories();
-		$category = $model->getById($id);
-
 		$budget = new Models_Budgets();
 
 		if ($request_amount = always_set($_POST, 'request_amount'))
@@ -26,11 +24,17 @@ class Controllers_MoneyFlowProcessor extends Libs_Controllers_Processor
 
 			$model->requestAmount($id, $request_amount);
 
+			$category = $model->getById($id);
+
 			$logger->fixAfter($id)
 				->setAmount($request_amount)
 				->setAction(Libs_Logger::AC_REQUEST_AMOUNT)
 				->setTitle($category['title'])
 				->save();
+		}
+		else
+		{
+			$category = $model->getById($id);
 		}
 
 		if ($category['current_amount'] < $amount)
@@ -132,7 +136,7 @@ class Controllers_MoneyFlowProcessor extends Libs_Controllers_Processor
 	{
 		if (!isset($_POST['amount']))
 		{
-			return array('amount' => _t('/money_flow/validator/missing_field'));
+			return array('amount' => _t('/money_flow/validator/missing_field', array('field' => 'amount')));
 		}
 
 		if (floatval($_POST['amount']) < 0.01)

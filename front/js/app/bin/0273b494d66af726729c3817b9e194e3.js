@@ -195,6 +195,25 @@ Collections.Groups = Collections.Abstract.extend({
 	_model_class: Models.Group
 });
 create_singleton(Collections.Groups);
+Helpers.ErrorsHandler = Class.extend({
+	show: function(data){
+		if (_.keys(data).length == 1){
+			alert(data[_.first(_.keys(data))]);
+			return ;
+		}
+		
+		var errors = "";
+		var c = 1;
+		for (var i in data){
+			errors += c + ". " + data[i] + "\n";
+			c++;
+		}
+		
+		alert(errors);
+	}
+});
+
+create_singleton(Helpers.ErrorsHandler);
 /**
  * Абстрактный класс вьюшек
  */
@@ -304,6 +323,7 @@ Views.AbstractDialog = Views.Abstract.extend({
 });
 /**
  * @load Views.AbstractDialog
+ * @load Helpers.ErrorsHandler
  */
 Views.AbstractDialogForm = Views.AbstractDialog.extend({
 	
@@ -347,12 +367,7 @@ Views.AbstractDialogForm = Views.AbstractDialog.extend({
 	},
 	
 	showError: function(data){
-		var errors = "";
-		for (var i in data){
-			errors += i + " >> " + data[i] + "\n";
-		}
-		
-		alert(errors);
+		Helpers.ErrorsHandler.getInstance().show(data);
 	},
 		
 	_disableUI: function(){
@@ -410,6 +425,35 @@ Views.AddGroupInitiator = Views.Abstract.extend({
 	}
 });
 /**
+ * @load Models.Abstract
+ */
+Models.Budget = Models.Abstract.extend({});
+create_singleton(Models.Budget);
+/**
+ * @load Views.AbstractDialogForm
+ * @load Models.Budget
+ */
+Views.RefundDialog = Views.AbstractDialogForm.extend({
+
+	_template: "refund-dialog",
+	
+	_success: function(data){
+		this._context.getModel().update(data.model);
+		Models.Budget.getInstance().update(data.budget);
+	},
+	
+	_clearAll: function(){
+		this._el.find("[name=amount]").val("");
+		this._el.find("[name=comment]").val("");
+	},
+	
+	_getLayoutLabels: function(){
+		return $.extend(this._super(), {title: i18n["/dialogs/titles/refund"]});
+	}
+});
+
+create_singleton(Views.RefundDialog);
+/**
  * @load Views.AbstractDialog
  */
 Views.ConfirmDialog = Views.AbstractDialog.extend({
@@ -458,36 +502,6 @@ Views.ConfirmDialog = Views.AbstractDialog.extend({
 		this._el.find(".submit-button, .cancel-button").removeAttr("disabled");
 	}
 });
-/**
- * @load Models.Abstract
- */
-Models.Budget = Models.Abstract.extend({});
-create_singleton(Models.Budget);
-/**
- * @load Views.AbstractDialogForm
- * @load Models.Budget
- * @load Views.ConfirmDialog
- */
-Views.RefundDialog = Views.AbstractDialogForm.extend({
-
-	_template: "refund-dialog",
-	
-	_success: function(data){
-		this._context.getModel().update(data.model);
-		Models.Budget.getInstance().update(data.budget);
-	},
-	
-	_clearAll: function(){
-		this._el.find("[name=amount]").val("");
-		this._el.find("[name=comment]").val("");
-	},
-	
-	_getLayoutLabels: function(){
-		return $.extend(this._super(), {title: i18n["/dialogs/titles/refund"]});
-	}
-});
-
-create_singleton(Views.RefundDialog);
 /**
  * @load Views.AbstractDialogForm
  * @load Models.Budget

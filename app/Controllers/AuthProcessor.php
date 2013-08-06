@@ -51,7 +51,7 @@ class Controllers_AuthProcessor extends Libs_Controllers_Processor
 
 			foreach ($missing_fields as $item)
 			{
-				$errors[$item] = _t('/auth/validator/missing_field');
+				$errors[$item] = _t('/auth/validator/missing_field', array('field' => $item));
 			}
 
 			return $this->ajaxError($errors);

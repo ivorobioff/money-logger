@@ -127,7 +127,7 @@ class Controllers_PlannerProcessor extends Libs_Controllers_Processor
 
 			foreach ($missing_fields as $item)
 			{
-				$errors[$item] = _t('/planner/validator/missing_field');
+				$errors[$item] = _t('/planner/validator/missing_field', array('field' => $item));
 			}
 
 			return $errors;
@@ -143,7 +143,7 @@ class Controllers_PlannerProcessor extends Libs_Controllers_Processor
 	{
 		if (trim(always_set($_POST, 'name', '')) == '')
 		{
-			return $this->ajaxError(array('name' => _t('/planner/validator/missing_field')));
+			return $this->ajaxError(array('name' => _t('/planner/validator/missing_field', array('field' => 'name'))));
 		}
 
 		$model = new Models_Groups();
@@ -156,7 +156,7 @@ class Controllers_PlannerProcessor extends Libs_Controllers_Processor
 	{
 		if (trim(always_set($_POST, 'name', '')) == '')
 		{
-			return $this->ajaxError(array('name' => _t('/planner/validator/missing_field')));
+			return $this->ajaxError(array('name' => _t('/planner/validator/missing_field', array('field' => 'name'))));
 		}
 
 		$model = new Models_Groups();

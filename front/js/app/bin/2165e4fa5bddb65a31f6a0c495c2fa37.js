@@ -103,6 +103,25 @@ Models.Abstract = Class.extend({
  */
 Models.Budget = Models.Abstract.extend({});
 create_singleton(Models.Budget);
+Helpers.ErrorsHandler = Class.extend({
+	show: function(data){
+		if (_.keys(data).length == 1){
+			alert(data[_.first(_.keys(data))]);
+			return ;
+		}
+		
+		var errors = "";
+		var c = 1;
+		for (var i in data){
+			errors += c + ". " + data[i] + "\n";
+			c++;
+		}
+		
+		alert(errors);
+	}
+});
+
+create_singleton(Helpers.ErrorsHandler);
 /**
  * Абстрактный класс вьюшек
  */
@@ -212,6 +231,7 @@ Views.AbstractDialog = Views.Abstract.extend({
 });
 /**
  * @load Views.AbstractDialog
+ * @load Helpers.ErrorsHandler
  */
 Views.AbstractDialogForm = Views.AbstractDialog.extend({
 	
@@ -255,12 +275,7 @@ Views.AbstractDialogForm = Views.AbstractDialog.extend({
 	},
 	
 	showError: function(data){
-		var errors = "";
-		for (var i in data){
-			errors += i + " >> " + data[i] + "\n";
-		}
-		
-		alert(errors);
+		Helpers.ErrorsHandler.getInstance().show(data);
 	},
 		
 	_disableUI: function(){

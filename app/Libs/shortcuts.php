@@ -12,12 +12,20 @@ function pred($str)
 	die();
 }
 
-function _t($alias)
+function _t($alias, $placeholders = array())
 {
 	$alias = '/'.trim($alias, '/');
 
 	include APP_DIR.'/i18n/ru.php';
-	return always_set($i18n, $alias, $alias);
+
+	$result = always_set($i18n, $alias, $alias);
+
+	foreach ($placeholders as $placeholder => $value)
+	{
+		$result = str_replace('{'.$placeholder.'}', $value, $result);
+	}
+
+	return $result;
 }
 
 function _url($path)

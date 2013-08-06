@@ -1,5 +1,7 @@
 /**
  * @load Views.Abstract
+ * @load Helpers.ErrorsHandler
+ * 
  * Абстрактный класс форм
  */
 Views.AbstractForm = Views.Abstract.extend({
@@ -61,9 +63,6 @@ Views.AbstractForm = Views.Abstract.extend({
 	},
 	
 	_showErrors: function(data){
-		
-		for (var i in data){
-			alert(i + ': ' + data[i]);
-		}
+		Helpers.ErrorsHandler.getInstance().show(data);
 	}
 });
