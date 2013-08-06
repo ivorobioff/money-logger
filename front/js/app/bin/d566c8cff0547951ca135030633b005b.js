@@ -1,108 +1,3 @@
-Libs.Event = Class.extend({
-	_events: null,
-	
-	initialize: function(){
-		this._events = {};
-	},
-	
-	add: function (event, callback){
-		if (_.isUndefined(this._events[event])){
-			this._events[event] = [];
-		}
-		
-		this._events[event].push(callback);
-	},
-	
-	trigger: function(event, params){
-		
-		if (_.isUndefined(this._events[event])) return ; 
-		if (_.isUndefined(params)) params = [];	
-		
-		var events = this._events[event];
-		
-		for (var i in events){
-			events[i].apply(this, params)
-		}
-	}
-});
-/**
- * @load Libs.Event
- */
-Models.Abstract = Class.extend({
-	
-	_data: null,
-	_event: null,
-	
-	initialize: function(data){
-		
-		if (_.isUndefined(data)) data = {};
-		
-		this._data = data;
-		this._event = new Libs.Event();
-	},
-		
-	get: function(key){
-		return this._data[key];
-	},
-	
-	set: function(key, value, silent){
-		
-		if (_.isUndefined(silent)) silent = false;
-		
-		if (!silent) this._event.trigger("set:" + key + ":before", [this]);
-		this._set(key, value);		
-		if (!silent) this._event.trigger("set:" + key + ":after", [value, this]);
-		return this;
-	},
-	
-	update: function(data, silent)
-	{
-		if (_.isUndefined(silent)) silent = false;
-		
-		if (!silent) this._event.trigger("update:before", [this]);
-	
-		for(var i in data){
-			this._set(i, data[i]);
-		}
-		
-		if (!silent) this._event.trigger("update:after", [this]);
-		return this;
-	},
-	
-	getAll: function(){
-		return this._data;
-	},
-	
-	onUpdate: function(callback){
-		if (!_.isFunction(callback)){
-			this._event.add("update:before", callback.before);
-			this._event.add("update:after", callback.after);
-		} else {
-			this._event.add("update:after", callback);
-		}
-		return this;
-	},
-	
-	onSet: function(key, callback){
-		if (!_.isFunction(callback)){
-			this._event.add("set:" + key + ":before", callback.before);
-			this._event.add("set:" + key + ":after", callback.after);
-		} else {
-			this._event.add("set:" + key + ":after", callback);
-		}
-		
-		return this;
-	},
-	
-	_set: function(key, value){
-		this._data[key] = value;
-	}
-});
-/**
- * @load Models.Abstract
- */
-Models.Budget = Models.Abstract.extend({});
-create_singleton(Models.Budget);
 /**
  * Абстрактный класс вьюшек
  */
@@ -213,6 +108,160 @@ Views.AbstractDialog = Views.Abstract.extend({
 /**
  * @load Views.AbstractDialog
  */
+Views.ConfirmDialog = Views.AbstractDialog.extend({
+	
+	_options: null,
+	_template: 'confirm-dialog',
+	
+	initialize: function(options){
+		this._options = options;
+		this._super();
+	},
+	
+	_onPositiveClick: function(){
+		if (_.isFunction(this._options.yes)){
+			this._options.yes(this);
+		}
+	},
+	
+	_onNegativeClick: function(){
+		this.hide();
+	},
+	
+	_getLayoutLabels: function(){
+		return {
+			title: i18n["/dialogs/titles/warning"],
+			submit: i18n["/dialogs/yes"],
+			cancel: i18n["/dialogs/no"]
+		};
+	},
+	
+	_getContentLabels: function(){
+		return {
+			text: this._options.text
+		};
+	},
+	
+	getContext: function(){
+		return this._context;
+	},
+	
+	disableUI: function(){
+		this._el.find(".submit-button, .cancel-button").attr("disabled", "disabled");
+	},
+	
+	enableUI: function(){
+		this._el.find(".submit-button, .cancel-button").removeAttr("disabled");
+	}
+});
+Libs.Event = Class.extend({
+	_events: null,
+	
+	initialize: function(){
+		this._events = {};
+	},
+	
+	add: function (event, callback){
+		if (_.isUndefined(this._events[event])){
+			this._events[event] = [];
+		}
+		
+		this._events[event].push(callback);
+	},
+	
+	trigger: function(event, params){
+		
+		if (_.isUndefined(this._events[event])) return ; 
+		if (_.isUndefined(params)) params = [];	
+		
+		var events = this._events[event];
+		
+		for (var i in events){
+			events[i].apply(this, params)
+		}
+	}
+});
+/**
+ * @load Libs.Event
+ */
+Models.Abstract = Class.extend({
+	
+	_data: null,
+	_event: null,
+	
+	initialize: function(data){
+		
+		if (_.isUndefined(data)) data = {};
+		
+		this._data = data;
+		this._event = new Libs.Event();
+	},
+		
+	get: function(key){
+		return this._data[key];
+	},
+	
+	set: function(key, value, silent){
+		
+		if (_.isUndefined(silent)) silent = false;
+		
+		if (!silent) this._event.trigger("set:" + key + ":before", [this]);
+		this._set(key, value);		
+		if (!silent) this._event.trigger("set:" + key + ":after", [value, this]);
+		return this;
+	},
+	
+	update: function(data, silent)
+	{
+		if (_.isUndefined(silent)) silent = false;
+		
+		if (!silent) this._event.trigger("update:before", [this]);
+	
+		for(var i in data){
+			this._set(i, data[i]);
+		}
+		
+		if (!silent) this._event.trigger("update:after", [this]);
+		return this;
+	},
+	
+	getAll: function(){
+		return this._data;
+	},
+	
+	onUpdate: function(callback){
+		if (!_.isFunction(callback)){
+			this._event.add("update:before", callback.before);
+			this._event.add("update:after", callback.after);
+		} else {
+			this._event.add("update:after", callback);
+		}
+		return this;
+	},
+	
+	onSet: function(key, callback){
+		if (!_.isFunction(callback)){
+			this._event.add("set:" + key + ":before", callback.before);
+			this._event.add("set:" + key + ":after", callback.after);
+		} else {
+			this._event.add("set:" + key + ":after", callback);
+		}
+		
+		return this;
+	},
+	
+	_set: function(key, value){
+		this._data[key] = value;
+	}
+});
+/**
+ * @load Models.Abstract
+ */
+Models.Budget = Models.Abstract.extend({});
+create_singleton(Models.Budget);
+/**
+ * @load Views.AbstractDialog
+ */
 Views.AbstractDialogForm = Views.AbstractDialog.extend({
 	
 	initialize: function(){
@@ -282,6 +331,7 @@ Views.AbstractDialogForm = Views.AbstractDialog.extend({
 /**
  * @load Views.AbstractDialogForm
  * @load Models.Budget
+ * @load Views.ConfirmDialog
  */
 Views.MoneyFlowWithdrawalDialog = Views.AbstractDialogForm.extend({
 	
@@ -414,55 +464,6 @@ Collections.Categories = Collections.Abstract.extend({
 });
 create_singleton(Collections.Categories);
 /**
- * @load Views.AbstractDialog
- */
-Views.ConfirmDialog = Views.AbstractDialog.extend({
-	
-	_options: null,
-	_template: 'confirm-dialog',
-	
-	initialize: function(options){
-		this._options = options;
-		this._super();
-	},
-	
-	_onPositiveClick: function(){
-		if (_.isFunction(this._options.yes)){
-			this._options.yes(this);
-		}
-	},
-	
-	_onNegativeClick: function(){
-		this.hide();
-	},
-	
-	_getLayoutLabels: function(){
-		return {
-			title: i18n["/dialogs/titles/warning"],
-			submit: i18n["/dialogs/yes"],
-			cancel: i18n["/dialogs/no"]
-		};
-	},
-	
-	_getContentLabels: function(){
-		return {
-			text: this._options.text
-		};
-	},
-	
-	getContext: function(){
-		return this._context;
-	},
-	
-	disableUI: function(){
-		this._el.find(".submit-button, .cancel-button").attr("disabled", "disabled");
-	},
-	
-	enableUI: function(){
-		this._el.find(".submit-button, .cancel-button").removeAttr("disabled");
-	}
-});
-/**
  * @load Models.Abstract
  */
 Models.Group = Models.Abstract.extend({});
@@ -590,7 +591,7 @@ Views.AbstractMenu = Views.Abstract.extend({
  */
 Views.AbstractContextMenu = Views.AbstractMenu.extend({
 	
-	_template: "context-menu",
+	_template: null,
 	_is_shown: false,
 	_coor: {},
 	_context: null,

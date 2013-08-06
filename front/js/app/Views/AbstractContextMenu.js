@@ -5,7 +5,7 @@
  */
 Views.AbstractContextMenu = Views.AbstractMenu.extend({
 	
-	_template: "context-menu",
+	_template: null,
 	_is_shown: false,
 	_coor: {},
 	_context: null,
