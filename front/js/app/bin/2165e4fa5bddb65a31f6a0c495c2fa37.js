@@ -224,9 +224,13 @@ Views.AbstractDialogForm = Views.AbstractDialog.extend({
 		var url = this._el.find("form").attr('action');		
 		var data = this._el.find("form").serialize();
 		
+		if (!_.isUndefined(this._context) && !_.isNull(this._context)){
+			data += "&id=" + this._context.getModel().get("id");
+		}
+		
 		this._disableUI();
 
-		post(url, this._modifyData(data), {
+		post(url, data, {
 			callback: $.proxy(function(result){
 				this._enableUI();
 			}, this),
@@ -236,14 +240,7 @@ Views.AbstractDialogForm = Views.AbstractDialog.extend({
 				this.hide();
 			}, this),
 			
-			error: $.proxy(function(data){
-				var errors = "";
-				for (var i in data){
-					errors += i + " >> " + data[i] + "\n";
-				}
-				
-				alert(errors);
-			}, this)
+			error: $.proxy(this.showError, this)
 		});
 		
 		return false;
@@ -253,12 +250,17 @@ Views.AbstractDialogForm = Views.AbstractDialog.extend({
 		this.hide();
 	},
 	
-	_modifyData: function(data){
-		return data;
-	},
-	
 	_success: function(data){
 	
+	},
+	
+	showError: function(data){
+		var errors = "";
+		for (var i in data){
+			errors += i + " >> " + data[i] + "\n";
+		}
+		
+		alert(errors);
 	},
 		
 	_disableUI: function(){
