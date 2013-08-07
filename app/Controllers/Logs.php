@@ -7,7 +7,8 @@ class Controllers_Logs extends Libs_Controllers_Page
 
 		$view = Libs_Views::create('/logs/index.phtml')
 			->assign('logs', $builder->createLogsIterator())
-			->assign('paginator', $builder->getPaginator());
+			->assign('paginator', $builder->getPaginator())
+			->assign('filter', $builder->getFilterParams());
 
 		$this->render($view);
 	}

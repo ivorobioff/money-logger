@@ -10,6 +10,8 @@ class Libs_Paginator
 	private $_on_page;
 	private $_page;
 
+	private $_prefix = '?';
+
 	public function __construct($total, $page = 1, $on_page = 10)
 	{
 		$this->_view = Libs_Views::create('/elements/paginator.phtml');
@@ -21,8 +23,9 @@ class Libs_Paginator
 	public function render()
 	{
 		$this->_view
-			->assign('total', $this->_total)
+			->assign('total', $this->_calcTotalPages())
 			->assign('page', $this->_page)
+			->assign('prefix', $this->_prefix)
 			->render();
 	}
 
@@ -36,8 +39,16 @@ class Libs_Paginator
 		return ($this->_page * $this->_on_page) - $this->_on_page;
 	}
 
-	public function getTotal()
+	private function _calcTotalPages()
 	{
-		return $this->_total;
+		if ($this->_total == 0) return 1;
+		if ($this->_total <= $this->_on_page) return 1;
+
+		return ceil($this->_total / $this->_on_page);
+	}
+
+	public function setLinkPrefix($prefix)
+	{
+		$this->_prefix = $prefix;
 	}
 }

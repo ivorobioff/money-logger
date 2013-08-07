@@ -1,3 +1,45 @@
+/**
+ * Абстрактный класс вьюшек
+ */
+Views.Abstract = Class.extend({
+	_id: null,
+	_tag: null,
+	_el: null,
+
+	_render: function(){
+		if (_.isString(this._id)){
+			this._el = $('#' + this._id);
+		}else if(_.isString(this._tag)){
+			this._el = $(this._tag);
+		}
+	},
+	
+	getElement: function(){
+		return this._el;
+	},
+	
+	remove: function(){
+		this._el.remove();
+	}
+});
+/**
+ * @load Views.Abstract
+ */
+Views.LogsFilter = Views.Abstract.extend({
+	_id: "search-bl",
+	
+	initialize: function(){
+		this._render();
+		
+		var dp_settings = {
+			dateFormat: 'yy-mm-dd',
+			duration: 0
+		};
+			
+		this._el.find('[name=from]').datepicker(dp_settings);
+		this._el.find('[name=to]').datepicker(dp_settings);
+	}
+});
 Libs.Event = Class.extend({
 	_events: null,
 	
@@ -122,30 +164,6 @@ Helpers.ErrorsHandler = Class.extend({
 });
 
 create_singleton(Helpers.ErrorsHandler);
-/**
- * Абстрактный класс вьюшек
- */
-Views.Abstract = Class.extend({
-	_id: null,
-	_tag: null,
-	_el: null,
-
-	_render: function(){
-		if (_.isString(this._id)){
-			this._el = $('#' + this._id);
-		}else if(_.isString(this._tag)){
-			this._el = $(this._tag);
-		}
-	},
-	
-	getElement: function(){
-		return this._el;
-	},
-	
-	remove: function(){
-		this._el.remove();
-	}
-});
 /**
  * @load Views.Abstract
  **/

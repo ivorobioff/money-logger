@@ -1,0 +1,41 @@
+<?php if ($this->total > 1) {?>
+<table style="margin-left: auto; margin-right: auto;">
+		<tr>
+			<td>
+				<ul class="tsc_pagination tsc_paginationA tsc_paginationA01">
+				<?php if ($this->page > 1) {?>
+				  <li><a href="<?=$this->prefix?>page=1" class="first">Начало</a></li>
+				  <li><a href="<?=$this->prefix?>page=<?=$this->page-1?>" class="previous">Назад</a></li>
+				<?php } ?>
+				  <?php
+					  if ($this->page - 2 > 0)
+					  {
+					  	echo '<li><a href="'.$this->prefix.'page='.($this->page - 2).'">'.($this->page - 2).'</a></li>';
+					  }
+
+				  	if ($this->page - 1 > 0)
+				  	{
+				  		echo '<li><a href="'.$this->prefix.'page='.($this->page - 1).'">'.($this->page - 1).'</a></li>';
+				  	}
+				  ?>
+				  <li><a class="current" href="<?=$this->prefix?>page=<?=$this->page?>"><?=$this->page?></a></li>
+				   <?php
+					  if ($this->page + 1 <= $this->total)
+					  {
+					  	echo '<li><a href="'.$this->prefix.'page='.($this->page + 1).'">'.($this->page + 1).'</a></li>';
+					  }
+
+				  	if ($this->page + 2 <=  $this->total)
+				  	{
+				  		echo '<li><a href="'.$this->prefix.'page='.($this->page + 2).'">'.($this->page + 2).'</a></li>';
+				  	}
+				  ?>
+					<?php if ($this->page < $this->total) {?>
+				  <li><a href="<?=$this->prefix?>page=<?=$this->page+1?>" class="next">Вперед</a></li>
+				  <li><a href="<?=$this->prefix?>page=<?=$this->total?>" class="last">Конец</a></li>
+					<?php } ?>
+				</ul>
+			</td>
+		</tr>
+</table>
+<?php } ?>

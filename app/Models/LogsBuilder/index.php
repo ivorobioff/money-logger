@@ -12,7 +12,8 @@ class Models_LogsBuilder
 	public function __construct(array $params)
 	{
 		$this->_params = $this->_prepareFilterParams($params);
-		$this->_page = always_set($params, 'page', 1);
+		$this->_page = intval(always_set($params, 'page', 1));
+		$this->_page = $this->_page == 0 ? 1 : $this->_page;
 	}
 
 	/**
@@ -31,6 +32,7 @@ class Models_LogsBuilder
 		if (is_null($this->_cache_paginator))
 		{
 			$this->_cache_paginator = new Libs_Paginator($this->_getTotal(), $this->_page);
+			$this->_cache_paginator->setLinkPrefix($this->_buildLinkPrefix());
 		}
 
 		return $this->_cache_paginator;
@@ -39,6 +41,20 @@ class Models_LogsBuilder
 	public function getFilterParams()
 	{
 		return $this->_params;
+	}
+
+	private function _buildLinkPrefix()
+	{
+		$data = $this->getFilterParams();
+
+		foreach ($data as $key => $value)
+		{
+			if (!$value) unset($data[$key]);
+		}
+
+		if (!$query = http_build_query($data)) return '?';
+
+		return '?'.http_build_query($data).'&';
 	}
 
 	private function _prepareFilterParams(array $data)
