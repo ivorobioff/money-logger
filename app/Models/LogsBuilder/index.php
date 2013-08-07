@@ -7,9 +7,12 @@ class Models_LogsBuilder
 
 	private $_params;
 
+	private $_page;
+
 	public function __construct(array $params)
 	{
-		$this->_params = $params;
+		$this->_params = $this->_prepareFilterParams($params);
+		$this->_page = always_set($params, 'page', 1);
 	}
 
 	/**
@@ -27,10 +30,40 @@ class Models_LogsBuilder
 	{
 		if (is_null($this->_cache_paginator))
 		{
-			$this->_cache_paginator = new Libs_Paginator($this->_getTotal());
+			$this->_cache_paginator = new Libs_Paginator($this->_getTotal(), $this->_page);
 		}
 
 		return $this->_cache_paginator;
+	}
+
+	public function getFilterParams()
+	{
+		return $this->_params;
+	}
+
+	private function _prepareFilterParams(array $data)
+	{
+		if ($from = always_set($data, 'from', ''))
+		{
+			$from = Libs_Validators::getDateFormatValidator()
+				->setDate($from)
+				->setFormat('Y-m-d')
+				->check() ? $from : '';
+		}
+
+		if ($to = always_set($data, 'to', ''))
+		{
+			$to = Libs_Validators::getDateFormatValidator()
+				->setDate($to)
+				->setFormat('Y-m-d')
+				->check() ? $to : '';
+		}
+
+		return array(
+			'from' => $from,
+			'to' => $to,
+			'keyword' => always_set($data, 'keyword', '')
+		);
 	}
 
 	/**
@@ -38,7 +71,24 @@ class Models_LogsBuilder
 	 */
 	private function _buildQuery()
 	{
-		return Db_Logs::create();
+		$table = new Db_Logs();
+
+		if ($this->_params['from'])
+		{
+			$table->where('insert_date >= ', $this->_params['from']);
+		}
+
+		if ($this->_params['to'])
+		{
+			$table->where('insert_date <= ', $this->_params['to']);
+		}
+
+		if ($this->_params['keyword'])
+		{
+			$table->match('title', $this->_params['keyword']);
+		}
+
+		return $table;
 	}
 
 	/**

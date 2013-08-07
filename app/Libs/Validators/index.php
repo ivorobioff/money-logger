@@ -24,4 +24,12 @@ class Libs_Validators
 	{
 		return new Libs_Validators_Plugins_Setness();
 	}
+
+	/**
+	 * @return Libs_Validators_Plugins_DateFormat
+	 */
+	static public function getDateFormatValidator()
+	{
+		return new Libs_Validators_Plugins_DateFormat();
+	}
 }
