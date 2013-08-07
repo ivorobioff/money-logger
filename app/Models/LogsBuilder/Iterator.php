@@ -1,5 +1,5 @@
 <?php
-class Models_Logs_Iterator implements Iterator
+class Models_LogsBuilder_Iterator implements Iterator
 {
 	private $_data;
 

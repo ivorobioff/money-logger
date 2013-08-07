@@ -3,10 +3,11 @@ class Controllers_Logs extends Libs_Controllers_Page
 {
 	public function index()
 	{
-		$model = new Models_Logs();
+		$builder = new Models_LogsBuilder($_GET);
 
 		$view = Libs_Views::create('/logs/index.phtml')
-			->assign('logs', $model->getAll());
+			->assign('logs', $builder->createLogsIterator())
+			->assign('paginator', $builder->getPaginator());
 
 		$this->render($view);
 	}
