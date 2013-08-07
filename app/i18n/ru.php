@@ -85,6 +85,11 @@ $i18n = array(
 	'/logs/actions/return_remainder' => 'Возврат остатка',
 	'/logs/actions/subtract_amount' => 'Уменьшение суммы',
 
+	'/paginator/begin' => 'Начало',
+	'/paginator/back' => 'Назад',
+	'/paginator/forward' => 'Вперед',
+	'/paginator/end' => 'Конец',
+
 	'/js/dialogs/submit' => 'Применить',
 	'/js/dialogs/cancel' => 'Отмена',
 	'/js/dialogs/yes' => 'Да',
