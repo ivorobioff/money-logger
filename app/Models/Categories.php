@@ -1,5 +1,5 @@
 <?php
-class Models_Categories
+class Models_Categories implements Models_Archive_Archivable
 {
 	private $_table;
 
@@ -105,5 +105,13 @@ class Models_Categories
 				'current_amount' => 0,
 				'amount = amount - ' => $amount
 			));
+	}
+
+	public function onCloseMonth()
+	{
+		$this->_table
+			->where('user_id', user_id())
+			->where('pin', 0)
+			->delete();
 	}
 }

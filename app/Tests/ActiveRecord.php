@@ -400,8 +400,8 @@ class Tests_ActiveRecord extends PHPUnit_Framework_TestCase
 
 		$this->_table
 			->where('id', 2)
-			->eitherQuery('id=5')
-			->either('id', 8)
+			->whereQuery('id=5', 'OR')
+			->where('id', 8, 'OR')
 			->delete();
 
 		$deleted_items = $this->_table->where('id', array(2, 5, 8))->fetchAll();
@@ -454,6 +454,70 @@ class Tests_ActiveRecord extends PHPUnit_Framework_TestCase
 
 			$this->assertTrue(count($res) == 1);
 			$this->assertTrue($res[0]['id'] == 2);
+		}
+		catch (Exception $ex)
+		{
+			die($ex->getMessage());
+		}
+	}
+
+	public function testHaving()
+	{
+		try
+		{
+			$data = array();
+
+			$data[] = array(
+				'id' => 1,
+				'first_name' => 'Igor',
+				'last_name' => 'Vorobiov',
+				'number' => 1,
+			);
+
+			$data[] = array(
+				'id' => 2,
+				'first_name' => 'Igor',
+				'last_name' => 'Vorobiov',
+				'number' => 3,
+			);
+
+			$data[] = array(
+				'id' => 3,
+				'first_name' => 'Igor',
+				'last_name' => 'Vorobiov2',
+				'number' => 10,
+			);
+
+			$data[] = array(
+				'id' => 4,
+				'first_name' => 'Igor',
+				'last_name' => 'Vorobiov2',
+				'number' => 5,
+			);
+
+			$data[] = array(
+				'id' => 5,
+				'first_name' => 'Igor',
+				'last_name' => 'Vorobiov3',
+				'number' => 5,
+			);
+
+			$data[] = array(
+				'id' => 6,
+				'first_name' => 'Igor',
+				'last_name' => 'Vorobiov3',
+				'number' => 0,
+			);
+
+			$this->_table->insertAll($data);
+			$res = $this->_table
+				->select('MAX(number) AS m, last_name')
+				->groupBy('last_name')
+				->having('m', 5)
+				->fetchAll();
+
+			$this->assertTrue(count($res) == 1);
+			$this->assertTrue($res[0]['last_name'] == 'Vorobiov3');
 		}
 		catch (Exception $ex)
 		{

@@ -1,5 +1,5 @@
 <?php
-class Models_Groups
+class Models_Groups implements Models_Archive_Archivable
 {
 	private $_table;
 
@@ -73,5 +73,12 @@ class Models_Groups
 			->where('user_id', user_id())
 			->createResultFormat()
 			->getValue('total', 0) < 2;
+	}
+
+	public function onCloseMonth()
+	{
+		$this->_table
+			->where('user_id', user_id())
+			->delete();
 	}
 }

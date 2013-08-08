@@ -29,7 +29,8 @@ abstract class Libs_ActiveRecord
 		'groupBy' => array(),
 		'duplicate' => '',
 		'limit' => '',
-		'join' => array()
+		'join' => array(),
+		'having' => array(),
 	);
 
 	private $_query_buffer = array();
@@ -93,27 +94,20 @@ abstract class Libs_ActiveRecord
 		return $this;
 	}
 
-	public function either($key, $value)
+	public function havingQuery($q, $glue = 'AND')
 	{
-		$this->_where('OR', $key, $value);
+		$this->_query_buffer['having'][] = $glue.' '.$q;
 		return $this;
 	}
 
-	public function where($key, $value)
+	/**
+	 * $table->where('col1 = 10');
+	 * @param string $type
+	 * @param string $q
+	 */
+	public function whereQuery($q, $glue = 'AND')
 	{
-		$this->_where('AND', $key, $value);
-		return $this;
-	}
-
-	public function eitherQuery($q)
-	{
-		$this->_whereQuery('OR', $q);
-		return $this;
-	}
-
-	public function whereQuery($q)
-	{
-		$this->_whereQuery('AND', $q);
+		$this->_query_buffer['where'][] = $glue.' '.$q;
 		return $this;
 	}
 
@@ -122,6 +116,13 @@ abstract class Libs_ActiveRecord
 		$q = 'MATCH ('.$match.') AGAINST(\''.$this->escape($against).'\' '.$mode.')';
 
 		return $this->whereQuery($q);
+	}
+
+
+	public function having($key, $value, $glue = 'AND')
+	{
+		$this->_query_buffer['having'][] = $glue.' '.$this->_buildWhereQuery($key, $value);
+		return $this;
 	}
 
 	/**
@@ -133,24 +134,32 @@ abstract class Libs_ActiveRecord
 	 * $table->where('col1', array(1, 2, 4));
 	 * $table->where('col1 LIKE', '%value%');
 	 */
-	private function _where($type, $key, $value)
+	public function where($key, $value, $glue = 'AND')
+	{
+		$this->_query_buffer['where'][] = $glue.' '.$this->_buildWhereQuery($key, $value);
+		return $this;
+	}
+
+	/**
+	 * Построить квери для использования в WHERE
+	 * @param mixed $key
+	 * @param mixed $value
+	 * @return string
+	 */
+	private function _buildWhereQuery($key, $value)
 	{
 		if (is_array($value))
 		{
-			$this->_query_buffer['where'][] = $type.' '.$key.' IN ('.$this->_prepareValues($value).')';
-			return $this;
+			return $key.' IN ('.$this->_prepareValues($value).')';
 		}
 
 		if (is_null($value))
 		{
-			$this->_query_buffer['where'][] = $type.' '.$key.' IS NULL';
-			return $this;
+			return $key.' IS NULL';
 		}
 
 		$eq = $this->_getSignsCond($key)  ? '' : '=';
-		$this->_query_buffer['where'][] = $type.' '.$key.$eq.'\''.$this->escape($value).'\'';
-
-		return $this;
+		return $key.$eq.'\''.$this->escape($value).'\'';
 	}
 
 	private function _getSignsCond($q)
@@ -159,17 +168,6 @@ abstract class Libs_ActiveRecord
 			|| strpos(strtolower($q), ' like')
 			|| strpos($q, '>')
 			|| strpos($q, '<');
-	}
-
-	/**
-	 * $table->where('col1 = 10');
-	 * @param string $type
-	 * @param string $q
-	 */
-	private function _whereQuery($type, $q)
-	{
-		$this->_query_buffer['where'][] = $type.' '.$q;
-		return $this;
 	}
 
 	public function clear()
@@ -399,6 +397,7 @@ abstract class Libs_ActiveRecord
 			' '.$this->_prepareJoins().
 			' '.$this->_prepareWheres().
 			' '.$this->_prepareGroupBys().
+			' '.$this->_prepareHavings().
 			' '.$this->_prepareOrderBys().
 			' '.$this->_query_buffer['limit'];
 
@@ -535,6 +534,18 @@ abstract class Libs_ActiveRecord
 		}
 
 		return 'WHERE '.$wheres;
+	}
+
+	private function _prepareHavings()
+	{
+		$havings = '1=1';
+
+		foreach ($this->_query_buffer['having'] as $value)
+		{
+			$havings .= ' '.$value;
+		}
+
+		return 'HAVING '.$havings;
 	}
 
 	private function _prepareValues(array $data)

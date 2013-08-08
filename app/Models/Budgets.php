@@ -1,5 +1,5 @@
 <?php
-class Models_Budgets
+class Models_Budgets implements Models_Archive_Archivable
 {
 	private $_table;
 
@@ -77,5 +77,10 @@ class Models_Budgets
 		$this->_table
 			->where('user_id', user_id())
 			->update('real_expenses = real_expenses - ', $amount);
+	}
+
+	public function onCloseMonth()
+	{
+
 	}
 }
