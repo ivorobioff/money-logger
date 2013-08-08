@@ -1,5 +1,5 @@
 <?php
-$default_path = array('controller' => 'MoneyFlow');
+$default_path = array('controller' => 'Planner');
 
 $is_production = false;
 
