@@ -509,11 +509,26 @@ class Tests_ActiveRecord extends PHPUnit_Framework_TestCase
 				'number' => 0,
 			);
 
+			$data[] = array(
+				'id' => 7,
+				'first_name' => 'Igor',
+				'last_name' => 'Vorobiov4',
+				'number' => 5,
+			);
+
+			$data[] = array(
+				'id' => 8,
+				'first_name' => 'Igor',
+				'last_name' => 'Vorobiov4',
+				'number' => 4,
+			);
+
 			$this->_table->insertAll($data);
 			$res = $this->_table
-				->select('MAX(number) AS m, last_name')
+				->select('MAX(number) AS `large`, MIN(number) AS `small`, last_name')
 				->groupBy('last_name')
-				->having('m', 5)
+				->having('large', 5)
+				->having('small', 0)
 				->fetchAll();
 
 			$this->assertTrue(count($res) == 1);
