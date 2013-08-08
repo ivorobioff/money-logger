@@ -77,8 +77,17 @@ class Models_Groups implements Models_Archive_Archivable
 
 	public function onCloseMonth()
 	{
-		$this->_table
+		$group_ids = $this->_table
 			->where('user_id', user_id())
-			->delete();
+			->createResultFormat()
+			->getVector('id');
+
+		foreach ($group_ids as $id)
+		{
+			if (!$this->hasCategories($id))
+			{
+				$this->_table->where('id', $id)->delete();
+			}
+		}
 	}
 }

@@ -81,6 +81,12 @@ class Models_Budgets implements Models_Archive_Archivable
 
 	public function onCloseMonth()
 	{
-
+		$summary = $this->getSummary();
+		$this->_table
+			->where('user_id', user_id())
+			->update(array(
+				'real_expenses' => 0,
+				'income' => $summary['remainder']
+			));
 	}
 }
