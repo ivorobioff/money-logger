@@ -196,24 +196,29 @@ Collections.Groups = Collections.Abstract.extend({
 });
 create_singleton(Collections.Groups);
 Helpers.ErrorsHandler = Class.extend({
-	show: function(data){
-		if (_.keys(data).length == 1){
-			alert(data[_.first(_.keys(data))]);
+
+	_data: null,
+	
+	initialize: function(data){
+		this._data = data;
+	},
+	
+	show: function(){
+		if (_.keys(this._data).length == 1){
+			alert(this._data[_.first(_.keys(this._data))]);
 			return ;
 		}
 		
 		var errors = "";
 		var c = 1;
-		for (var i in data){
-			errors += c + ". " + data[i] + "\n";
+		for (var i in this._data){
+			errors += c + ". " + this._data[i] + "\n";
 			c++;
 		}
 		
 		alert(errors);
 	}
 });
-
-create_singleton(Helpers.ErrorsHandler);
 /**
  * Абстрактный класс вьюшек
  */
@@ -245,7 +250,7 @@ Views.AbstractDialog = Views.Abstract.extend({
 	
 	_template: null,
 	_context: null,
-	
+		
 	initialize: function(){
 		this._render();
 		
@@ -281,7 +286,7 @@ Views.AbstractDialog = Views.Abstract.extend({
 		this._context = context;
 		return this;
 	},
-	
+		
 	show: function(){
 		this._onShow();
 		this._el.show();
@@ -367,7 +372,7 @@ Views.AbstractDialogForm = Views.AbstractDialog.extend({
 	},
 	
 	showError: function(data){
-		Helpers.ErrorsHandler.getInstance().show(data);
+		new Helpers.ErrorsHandler(data).show();
 	},
 		
 	_disableUI: function(){
@@ -460,6 +465,7 @@ Views.ConfirmDialog = Views.AbstractDialog.extend({
 	
 	_options: null,
 	_template: 'confirm-dialog',
+	_params: null,
 	
 	initialize: function(options){
 		this._options = options;
@@ -492,6 +498,15 @@ Views.ConfirmDialog = Views.AbstractDialog.extend({
 	
 	getContext: function(){
 		return this._context;
+	},
+		
+	getParams: function(){
+		return this._params;
+	},
+	
+	setParams: function(params){
+		this._params = params;
+		return this;
 	},
 	
 	disableUI: function(){
@@ -535,13 +550,13 @@ Views.MoneyFlowWithdrawalDialog = Views.AbstractDialogForm.extend({
 					text: i18n["/dialogs/text/request_amount"],
 					yes: $.proxy(function(dlg){
 						dlg.disableUI();
-						post("/MoneyFlowProcessor/withdrawal/", data.post_back, {
+						post("/MoneyFlowProcessor/withdrawal/", dlg.getParams().post_back, {
 							callback: $.proxy(function(){
 								dlg.enableUI();
 								dlg.hide();
 							}, this),
 							success: $.proxy(function(data){
-								this._context.getModel().update(data.model);
+								dlg.getContext().getModel().update(data.model);
 								Models.Budget.getInstance().update(data.budget);
 								this.hide();
 							}, this),
@@ -553,7 +568,10 @@ Views.MoneyFlowWithdrawalDialog = Views.AbstractDialogForm.extend({
 				});
 			}
 			
-			this._request_amount_confirm.show();
+			this._request_amount_confirm
+				.setContext(this._context)
+				.setParams({post_back: data.post_back})
+				.show();
 		} else {
 			this._super(data);
 		}
@@ -866,6 +884,24 @@ Views.AbstractCategory = Views.Abstract.extend({
 Views.PlannerCategory = Views.AbstractCategory.extend({
 	_getAmountValue: function(){
 		return this._model.get("amount");
+	},
+	
+	_render: function(){
+		this._super();
+		this._markIfPinned();
+	},
+	
+	refresh: function(){
+		this._super();
+		this._markIfPinned();
+	},
+	
+	_markIfPinned: function(){
+		if (this._model.get("pin") == 1){
+			this._el.addClass("is_pinned");
+		} else {
+			this._el.removeClass("is_pinned");
+		}
 	}
 });
 /**
@@ -1092,9 +1128,12 @@ create_singleton(Views.DepositDialog);
  * @load Views.AbstractMenu
  * @load Views.DepositDialog
  * @load Views.WithdrawalDialog
+ * @load Views.ConfirmDialog
  */
 Views.BudgetMenu = Views.AbstractMenu.extend({
 	_id: "budget-menu",
+	
+	_archive_confirm: null,
 	
 	initialize: function(){
 		this._render();
@@ -1107,6 +1146,29 @@ Views.BudgetMenu = Views.AbstractMenu.extend({
 	
 	withdrawal: function(){
 		Views.WithdrawalDialog.getInstance().show();
+	},
+	
+	archive: function(){
+		if (_.isNull(this._archive_confirm)){
+			this._archive_confirm = new Views.ConfirmDialog({
+				text: i18n["/dialogs/text/close_month"],
+				yes: $.proxy(function(dlg){
+					dlg.disableUI();
+					post("/ArchiveProcessor/closeMonth/", {}, {
+						success: function(){
+							location.assign(_url("/Planner/"));
+						},
+						error: function(data){
+							new Helpers.ErrorsHandler(data).show();
+							dlg.enableUI();
+							dlg.hide();
+						}
+					})
+				}, this)
+			});
+		}
+		
+		this._archive_confirm.show();
 	}
 });
 /**

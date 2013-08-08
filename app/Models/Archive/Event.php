@@ -2,6 +2,7 @@
 class Models_Archive_Event
 {
 	private $_models = array();
+	private $_data = array();
 
 	public function add(Models_Archive_Archivable $model)
 	{
@@ -13,7 +14,18 @@ class Models_Archive_Event
 	{
 		foreach ($this->_models as $model)
 		{
-			$model->onCloseMonth();
+			if ($model instanceof Models_Archive_Savable)
+			{
+				$this->_data[$model->getArchiveAlias()] = json_encode($model->buildArchiveData());
+			}
+
+			if ($model instanceof Models_Archive_Resetable)
+			{
+				$model->reset();
+			}
 		}
+
+		$archive = new Models_Archive();
+		$archive->save($this->_data);
 	}
 }

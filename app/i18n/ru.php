@@ -85,6 +85,8 @@ $i18n = array(
 	'/logs/actions/return_remainder' => 'Возврат остатка',
 	'/logs/actions/subtract_amount' => 'Уменьшение суммы',
 
+	'/archive/validator/has_remainders' => 'Месяц не может быть закрыт пока есть остатки в категориях',
+
 	'/paginator/begin' => 'Начало',
 	'/paginator/back' => 'Назад',
 	'/paginator/forward' => 'Вперед',
@@ -108,4 +110,5 @@ $i18n = array(
 	'/js/dialogs/text/delete_category' => 'Вы уверены что хотите удалить данную категорию?',
 	'/js/dialogs/text/request_amount' => 'У вас не хватает средств для снятия. Запросить недостающую сумму?',
 	'/js/dialogs/text/return_remainder' => 'Вы уверены, что хотите вернуть оставшуюся сумму?',
+	'/js/dialogs/text/close_month' => 'Вы уверены, что хотите закрыть месяц?',
 );

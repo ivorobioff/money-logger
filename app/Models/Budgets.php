@@ -1,5 +1,5 @@
 <?php
-class Models_Budgets implements Models_Archive_Archivable
+class Models_Budgets implements Models_Archive_Resetable, Models_Archive_Savable
 {
 	private $_table;
 
@@ -79,7 +79,17 @@ class Models_Budgets implements Models_Archive_Archivable
 			->update('real_expenses = real_expenses - ', $amount);
 	}
 
-	public function onCloseMonth()
+	public function getArchiveAlias()
+	{
+		return 'budget';
+	}
+
+	public function buildArchiveData()
+	{
+		return $this->getSummary();
+	}
+
+	public function reset()
 	{
 		$summary = $this->getSummary();
 		$this->_table

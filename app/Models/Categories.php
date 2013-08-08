@@ -1,5 +1,5 @@
 <?php
-class Models_Categories implements Models_Archive_Archivable
+class Models_Categories implements Models_Archive_Resetable, Models_Archive_Savable
 {
 	private $_table;
 
@@ -107,11 +107,33 @@ class Models_Categories implements Models_Archive_Archivable
 			));
 	}
 
-	public function onCloseMonth()
+	public function getArchiveAlias()
+	{
+		return 'categories';
+	}
+
+	public function buildArchiveData()
+	{
+		return $this->getAll();
+	}
+
+	public function reset()
 	{
 		$this->_table
 			->where('user_id', user_id())
 			->where('pin', 0)
 			->delete();
+
+		$this->_table
+			->where('user_id', user_id())
+			->update('current_amount = amount');
+	}
+
+	public function hasRemainders()
+	{
+		return $this->_table
+			->where('user_id', user_id())
+			->where('current_amount >', 0)
+			->check();
 	}
 }

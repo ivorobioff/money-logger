@@ -5,7 +5,7 @@ Views.AbstractDialog = Views.Abstract.extend({
 	
 	_template: null,
 	_context: null,
-	
+		
 	initialize: function(){
 		this._render();
 		
@@ -41,7 +41,7 @@ Views.AbstractDialog = Views.Abstract.extend({
 		this._context = context;
 		return this;
 	},
-	
+		
 	show: function(){
 		this._onShow();
 		this._el.show();

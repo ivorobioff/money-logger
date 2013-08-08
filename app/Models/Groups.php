@@ -1,5 +1,5 @@
 <?php
-class Models_Groups implements Models_Archive_Archivable
+class Models_Groups implements Models_Archive_Resetable
 {
 	private $_table;
 
@@ -12,8 +12,7 @@ class Models_Groups implements Models_Archive_Archivable
 	{
 		$data = array(
 			'user_id' => $user_id,
-			'name' => 'Default',
-			'is_default' => 1
+			'name' => 'Default'
 		);
 
 		$this->_table->insert($data);
@@ -31,8 +30,7 @@ class Models_Groups implements Models_Archive_Archivable
 	{
 		$data = array(
 			'user_id' => user_id(),
-			'name' => $data['name'],
-			'is_default' => 0
+			'name' => $data['name']
 		);
 
 		return $this->_table->insert($data);
@@ -75,7 +73,7 @@ class Models_Groups implements Models_Archive_Archivable
 			->getValue('total', 0) < 2;
 	}
 
-	public function onCloseMonth()
+	public function reset()
 	{
 		$group_ids = $this->_table
 			->where('user_id', user_id())
@@ -88,6 +86,13 @@ class Models_Groups implements Models_Archive_Archivable
 			{
 				$this->_table->where('id', $id)->delete();
 			}
+		}
+
+		$has_group = $this->_table->where('user_id', user_id())->check();
+
+		if (!$has_group)
+		{
+			$this->addDefault(user_id());
 		}
 	}
 }

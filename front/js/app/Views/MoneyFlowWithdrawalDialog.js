@@ -31,13 +31,13 @@ Views.MoneyFlowWithdrawalDialog = Views.AbstractDialogForm.extend({
 					text: i18n["/dialogs/text/request_amount"],
 					yes: $.proxy(function(dlg){
 						dlg.disableUI();
-						post("/MoneyFlowProcessor/withdrawal/", data.post_back, {
+						post("/MoneyFlowProcessor/withdrawal/", dlg.getParams().post_back, {
 							callback: $.proxy(function(){
 								dlg.enableUI();
 								dlg.hide();
 							}, this),
 							success: $.proxy(function(data){
-								this._context.getModel().update(data.model);
+								dlg.getContext().getModel().update(data.model);
 								Models.Budget.getInstance().update(data.budget);
 								this.hide();
 							}, this),
@@ -49,7 +49,10 @@ Views.MoneyFlowWithdrawalDialog = Views.AbstractDialogForm.extend({
 				});
 			}
 			
-			this._request_amount_confirm.show();
+			this._request_amount_confirm
+				.setContext(this._context)
+				.setParams({post_back: data.post_back})
+				.show();
 		} else {
 			this._super(data);
 		}

@@ -144,3 +144,11 @@
 #ui-datepicker-div{
 	font-size: 11px;
 }
+
+.ui-widget-header .ui-icon {
+  background-image: url("/front/img/ui-icons.png");
+}
+
+.ui-icon { display: block; text-indent: -99999px; overflow: hidden; background-repeat: no-repeat; }
+.ui-icon-circle-triangle-e { background-position: -48px -192px; }
+.ui-icon-circle-triangle-w { background-position: -80px -192px; }

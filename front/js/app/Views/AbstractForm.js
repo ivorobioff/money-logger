@@ -63,6 +63,6 @@ Views.AbstractForm = Views.Abstract.extend({
 	},
 	
 	_showErrors: function(data){
-		Helpers.ErrorsHandler.getInstance().show(data);
+		new Helpers.ErrorsHandler(data).show();
 	}
 });

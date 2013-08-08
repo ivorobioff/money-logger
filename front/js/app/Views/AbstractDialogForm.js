@@ -44,7 +44,7 @@ Views.AbstractDialogForm = Views.AbstractDialog.extend({
 	},
 	
 	showError: function(data){
-		Helpers.ErrorsHandler.getInstance().show(data);
+		new Helpers.ErrorsHandler(data).show();
 	},
 		
 	_disableUI: function(){

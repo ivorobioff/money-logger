@@ -5,6 +5,7 @@ Views.ConfirmDialog = Views.AbstractDialog.extend({
 	
 	_options: null,
 	_template: 'confirm-dialog',
+	_params: null,
 	
 	initialize: function(options){
 		this._options = options;
@@ -37,6 +38,15 @@ Views.ConfirmDialog = Views.AbstractDialog.extend({
 	
 	getContext: function(){
 		return this._context;
+	},
+		
+	getParams: function(){
+		return this._params;
+	},
+	
+	setParams: function(params){
+		this._params = params;
+		return this;
 	},
 	
 	disableUI: function(){

@@ -1,5 +1,2 @@
 <?php
-interface Models_Archive_Archivable
-{
-	public function onCloseMonth();
-}
+interface Models_Archive_Archivable {}
