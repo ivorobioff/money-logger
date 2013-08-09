@@ -1,5 +1,5 @@
 <?php
-class Models_Groups implements Models_Archive_Resetable
+class Models_Groups implements Models_Archive_Interfaces_Resetable
 {
 	private $_table;
 

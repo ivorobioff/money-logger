@@ -1,5 +1,5 @@
 <?php
-class Models_Logs implements Models_Archive_Resetable
+class Models_Logs implements Models_Archive_Interfaces_Resetable
 {
 	public function reset()
 	{

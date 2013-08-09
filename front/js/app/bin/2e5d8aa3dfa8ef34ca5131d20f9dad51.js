@@ -29,7 +29,7 @@ Views.AbstractDialog = Views.Abstract.extend({
 	
 	_template: null,
 	_context: null,
-	
+		
 	initialize: function(){
 		this._render();
 		
@@ -65,7 +65,7 @@ Views.AbstractDialog = Views.Abstract.extend({
 		this._context = context;
 		return this;
 	},
-	
+		
 	show: function(){
 		this._onShow();
 		this._el.show();
@@ -112,6 +112,7 @@ Views.ConfirmDialog = Views.AbstractDialog.extend({
 	
 	_options: null,
 	_template: 'confirm-dialog',
+	_params: null,
 	
 	initialize: function(options){
 		this._options = options;
@@ -144,6 +145,15 @@ Views.ConfirmDialog = Views.AbstractDialog.extend({
 	
 	getContext: function(){
 		return this._context;
+	},
+		
+	getParams: function(){
+		return this._params;
+	},
+	
+	setParams: function(params){
+		this._params = params;
+		return this;
 	},
 	
 	disableUI: function(){

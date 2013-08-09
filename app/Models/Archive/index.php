@@ -15,4 +15,27 @@ class Models_Archive
 
 		$this->_table->insert($data);
 	}
+
+	public function getDates()
+	{
+		return $this->_table
+			->where('user_id', user_id())
+			->orderBy('id', 'DESC')
+			->createResultFormat()
+			->getHash('id', 'insert_date');
+	}
+
+	/**
+	 * @param int $id
+	 * @return Models_Archive_Item
+	 */
+	public function getById($id)
+	{
+		$data = $this->_table
+			->where('user_id', user_id())
+			->where('id', $id)
+			->fetchOne();
+
+		return new Models_Archive_Item($data);
+	}
 }

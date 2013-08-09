@@ -1,0 +1,81 @@
+<div id="search-bl">
+	<div id="search-arcv-inf">
+	<form action="<?=_url('/Archive/')?>" method="get">
+		<table class="mf-7">
+			<tr>
+				<td><?=_t('/archive/close_date')?>:</td>
+				<td>
+					<select name="archive_id">
+						<option value="0"><?=_t('/archive/choose')?></option>
+						<?php
+							foreach ($this->archive_dates as $id => $date){
+							?>
+								<option value="<?=$id?>" <?=$this->archive_id == $id ? 'selected="selected"' : ''?>>
+									<?=$date?>
+								</option>
+							<?php }
+						?>
+					</select>
+				</td>
+			</tr>
+		</table>
+	</form>
+	</div>
+	<div id="arch-info">
+		<table>
+			<tr>
+				<td>
+					<?=_t('/archive/budget')?>:
+				</td>
+				<td class="tdrg cell-right">
+					<b><?=$this->budget?></b>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<?=_t('/archive/expenses')?>:
+				</td>
+				<td class="tdrg cell-right">
+					<b><?=$this->expenses?></b>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<?=_t('/archive/remainder')?>:
+				</td>
+				<td class="tdrg cell-right">
+					<b><?=$this->remainder?></b>
+				</td>
+			</tr>
+		</table>
+	</div>
+	<br class="clr" />
+</div>
+<div id="count-arch">
+<table class="count_tb count_tb_ex">
+<tr class="group-title">
+	<th>
+		<?=_t('/archive/categories')?>
+	</th>
+	<th><?=_t('/archive/sum')?></th>
+</tr>
+<?php
+foreach ($this->categories as $item){
+?>
+<tr class="group-categories">
+<td>
+	 <span class="cat-item"><?=$this->escape($item['title'])?></span>
+</td>
+<td class="tdrg"><?=$item['amount']?></td>
+</tr>
+<?php }?>
+<tr>
+	<td colspan="2" class="tdbg"></td>
+</tr>
+</table>
+</div>
+<script>
+$(function(){
+	new Views.ArchiveFilter();
+});
+</script>

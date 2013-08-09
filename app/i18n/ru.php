@@ -85,6 +85,13 @@ $i18n = array(
 	'/logs/actions/return_remainder' => 'Возврат остатка',
 	'/logs/actions/subtract_amount' => 'Уменьшение суммы',
 
+	'/archive/close_date' => 'Дата закрытия<br/>месяца',
+	'/archive/choose' => 'Выбрать',
+	'/archive/budget' => 'Бюджет',
+	'/archive/expenses' => 'Расходы',
+	'/archive/remainder' => 'Остаток',
+	'/archive/categories' => 'Категории',
+	'/archive/sum' => 'Сумма',
 	'/archive/validator/has_remainders' => 'Месяц не может быть закрыт пока есть остатки в категориях',
 
 	'/paginator/begin' => 'Начало',

@@ -92,6 +92,7 @@
     font-size: 12px;
     color: #333333;
     width: 207px;
+    height: 1px;
 }
 
 #left ul
@@ -159,6 +160,12 @@
     font-size: 11px;
     margin-left: 100px;
     font-family: Arial, Helvetica, sans-serif;
+}
+
+#count-arch
+{
+	font-size: 11px;
+	font-family: Arial, Helvetica, sans-serif;
 }
 
 .count_tb
@@ -276,9 +283,15 @@ body {
 
 #search-arcv-inf
 {
-	padding: 20px 0 20px 15px;
+	padding: 20px 20px 20px 20px;
 	float:left;
 }
+
+#search-arcv-inf select
+{
+	width: 180px;
+}
+
 .form-text
 {
 	padding-left:30px;
@@ -292,12 +305,9 @@ select
 #arch-info
 {
 	border-left: 1px solid #999999;
-    float: right;
-    margin-right: 265px;
-    margin-top: 10px;
-    padding-bottom: 5px;
-    padding-left: 30px;
-    padding-top: 5px;
+    float: left;
+    margin: 10px 0 10px 50px;
+    padding: 10px 0 10px 20px;
 }
 
 .cell-right

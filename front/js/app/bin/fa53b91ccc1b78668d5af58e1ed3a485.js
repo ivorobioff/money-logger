@@ -1,22 +1,27 @@
 Helpers.ErrorsHandler = Class.extend({
-	show: function(data){
-		if (_.keys(data).length == 1){
-			alert(data[_.first(_.keys(data))]);
+
+	_data: null,
+	
+	initialize: function(data){
+		this._data = data;
+	},
+	
+	show: function(){
+		if (_.keys(this._data).length == 1){
+			alert(this._data[_.first(_.keys(this._data))]);
 			return ;
 		}
 		
 		var errors = "";
 		var c = 1;
-		for (var i in data){
-			errors += c + ". " + data[i] + "\n";
+		for (var i in this._data){
+			errors += c + ". " + this._data[i] + "\n";
 			c++;
 		}
 		
 		alert(errors);
 	}
 });
-
-create_singleton(Helpers.ErrorsHandler);
 /**
  * Абстрактный класс вьюшек
  */
@@ -106,7 +111,7 @@ Views.AbstractForm = Views.Abstract.extend({
 	},
 	
 	_showErrors: function(data){
-		Helpers.ErrorsHandler.getInstance().show(data);
+		new Helpers.ErrorsHandler(data).show();
 	}
 });
 /**
@@ -140,6 +145,148 @@ Views.SigninForm = Views.AutoRedirectForm.extend({
  */
 Views.SignupForm = Views.AutoRedirectForm.extend({
 	_id: 'signup-form'
+});
+/**
+ * @load Views.Abstract
+ **/
+Views.AbstractDialog = Views.Abstract.extend({
+	
+	_template: null,
+	_context: null,
+		
+	initialize: function(){
+		this._render();
+		
+		this._el.find('.dlg-close').click($.proxy(function(){
+			this.hide();
+			return false;
+		}, this));
+		
+		this._el.find('.submit-button').click($.proxy(this._onPositiveClick, this));
+		this._el.find('.cancel-button').click($.proxy(this._onNegativeClick, this));
+	},
+	
+	_render: function(){
+		var layout = $('#dialog-layout').html().render(this._getLayoutLabels());		
+		var content = $('#' + this._template).html().render(this._getContentLabels());
+		
+		this._el = $(layout);
+		this._el.find('#dialog-content').html(content);
+		
+		$('body').append(this._el);
+	},
+	
+	_adjustWindow: function(){
+		
+		var dlg = this._el.find('.dlg');
+		
+		var top = Math.round(dlg.height() / 2);
+		
+		dlg.css('margin-top', '-'+top+'px');
+	},
+	
+	setContext: function(context){
+		this._context = context;
+		return this;
+	},
+		
+	show: function(){
+		this._onShow();
+		this._el.show();
+		this._adjustWindow();
+	},
+	
+	hide: function(){
+		this._onHide();
+		this._el.hide();
+	},
+	
+	_onShow: function(){
+		
+	},
+	
+	_onHide: function(){
+		
+	},
+	
+	_onPositiveClick: function(){
+		
+	},
+	
+	_onNegativeClick: function(){
+		
+	},
+	
+	_getLayoutLabels: function(){
+		return {
+			title: "",
+			submit: i18n["/dialogs/submit"],
+			cancel: i18n["/dialogs/cancel"],
+		};
+	},
+	
+	_getContentLabels: function(){
+		return {};
+	}
+});
+/**
+ * @load Views.AbstractDialog
+ */
+Views.ConfirmDialog = Views.AbstractDialog.extend({
+	
+	_options: null,
+	_template: 'confirm-dialog',
+	_params: null,
+	
+	initialize: function(options){
+		this._options = options;
+		this._super();
+	},
+	
+	_onPositiveClick: function(){
+		if (_.isFunction(this._options.yes)){
+			this._options.yes(this);
+		}
+	},
+	
+	_onNegativeClick: function(){
+		this.hide();
+	},
+	
+	_getLayoutLabels: function(){
+		return {
+			title: i18n["/dialogs/titles/warning"],
+			submit: i18n["/dialogs/yes"],
+			cancel: i18n["/dialogs/no"]
+		};
+	},
+	
+	_getContentLabels: function(){
+		return {
+			text: this._options.text
+		};
+	},
+	
+	getContext: function(){
+		return this._context;
+	},
+		
+	getParams: function(){
+		return this._params;
+	},
+	
+	setParams: function(params){
+		this._params = params;
+		return this;
+	},
+	
+	disableUI: function(){
+		this._el.find(".submit-button, .cancel-button").attr("disabled", "disabled");
+	},
+	
+	enableUI: function(){
+		this._el.find(".submit-button, .cancel-button").removeAttr("disabled");
+	}
 });
 Libs.Event = Class.extend({
 	_events: null,
@@ -247,89 +394,6 @@ Models.Abstract = Class.extend({
 Models.Budget = Models.Abstract.extend({});
 create_singleton(Models.Budget);
 /**
- * @load Views.Abstract
- **/
-Views.AbstractDialog = Views.Abstract.extend({
-	
-	_template: null,
-	_context: null,
-	
-	initialize: function(){
-		this._render();
-		
-		this._el.find('.dlg-close').click($.proxy(function(){
-			this.hide();
-			return false;
-		}, this));
-		
-		this._el.find('.submit-button').click($.proxy(this._onPositiveClick, this));
-		this._el.find('.cancel-button').click($.proxy(this._onNegativeClick, this));
-	},
-	
-	_render: function(){
-		var layout = $('#dialog-layout').html().render(this._getLayoutLabels());		
-		var content = $('#' + this._template).html().render(this._getContentLabels());
-		
-		this._el = $(layout);
-		this._el.find('#dialog-content').html(content);
-		
-		$('body').append(this._el);
-	},
-	
-	_adjustWindow: function(){
-		
-		var dlg = this._el.find('.dlg');
-		
-		var top = Math.round(dlg.height() / 2);
-		
-		dlg.css('margin-top', '-'+top+'px');
-	},
-	
-	setContext: function(context){
-		this._context = context;
-		return this;
-	},
-	
-	show: function(){
-		this._onShow();
-		this._el.show();
-		this._adjustWindow();
-	},
-	
-	hide: function(){
-		this._onHide();
-		this._el.hide();
-	},
-	
-	_onShow: function(){
-		
-	},
-	
-	_onHide: function(){
-		
-	},
-	
-	_onPositiveClick: function(){
-		
-	},
-	
-	_onNegativeClick: function(){
-		
-	},
-	
-	_getLayoutLabels: function(){
-		return {
-			title: "",
-			submit: i18n["/dialogs/submit"],
-			cancel: i18n["/dialogs/cancel"],
-		};
-	},
-	
-	_getContentLabels: function(){
-		return {};
-	}
-});
-/**
  * @load Views.AbstractDialog
  * @load Helpers.ErrorsHandler
  */
@@ -375,7 +439,7 @@ Views.AbstractDialogForm = Views.AbstractDialog.extend({
 	},
 	
 	showError: function(data){
-		Helpers.ErrorsHandler.getInstance().show(data);
+		new Helpers.ErrorsHandler(data).show();
 	},
 		
 	_disableUI: function(){
@@ -464,9 +528,12 @@ Views.AbstractMenu = Views.Abstract.extend({
  * @load Views.AbstractMenu
  * @load Views.DepositDialog
  * @load Views.WithdrawalDialog
+ * @load Views.ConfirmDialog
  */
 Views.BudgetMenu = Views.AbstractMenu.extend({
 	_id: "budget-menu",
+	
+	_archive_confirm: null,
 	
 	initialize: function(){
 		this._render();
@@ -479,6 +546,29 @@ Views.BudgetMenu = Views.AbstractMenu.extend({
 	
 	withdrawal: function(){
 		Views.WithdrawalDialog.getInstance().show();
+	},
+	
+	archive: function(){
+		if (_.isNull(this._archive_confirm)){
+			this._archive_confirm = new Views.ConfirmDialog({
+				text: i18n["/dialogs/text/close_month"],
+				yes: $.proxy(function(dlg){
+					dlg.disableUI();
+					post("/ArchiveProcessor/closeMonth/", {}, {
+						success: function(){
+							location.assign(_url("/Planner/"));
+						},
+						error: function(data){
+							new Helpers.ErrorsHandler(data).show();
+							dlg.enableUI();
+							dlg.hide();
+						}
+					})
+				}, this)
+			});
+		}
+		
+		this._archive_confirm.show();
 	}
 });
 /**

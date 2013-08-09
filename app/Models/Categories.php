@@ -1,5 +1,5 @@
 <?php
-class Models_Categories implements Models_Archive_Resetable, Models_Archive_Savable
+class Models_Categories implements Models_Archive_Interfaces_Resetable, Models_Archive_Interfaces_Savable
 {
 	private $_table;
 
