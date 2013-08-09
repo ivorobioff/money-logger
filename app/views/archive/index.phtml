@@ -8,10 +8,12 @@
 					<select name="archive_id">
 						<option value="0"><?=_t('/archive/choose')?></option>
 						<?php
+							$c = 0;
 							foreach ($this->archive_dates as $id => $date){
+								$c ++;
 							?>
 								<option value="<?=$id?>" <?=$this->archive_id == $id ? 'selected="selected"' : ''?>>
-									<?=$date?>
+									<?=$c.' - '.$date?>
 								</option>
 							<?php }
 						?>
