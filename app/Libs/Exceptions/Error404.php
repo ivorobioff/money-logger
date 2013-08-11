@@ -15,8 +15,8 @@ class Libs_Exceptions_Error404 extends Libs_Exceptions
 	/**
 	 * @return Controllers_Error404
 	 */
-	public function getController()
+	public function show()
 	{
-		return $this->_controller;
+		return $this->_controller->show();
 	}
 };

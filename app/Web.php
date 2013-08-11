@@ -18,7 +18,7 @@ class App_Web
 		}
 		catch (Libs_Exceptions_Error404 $ex)
 		{
-			return $ex->getController()->show();
+			return $ex->show();
 		}
 	}
 
