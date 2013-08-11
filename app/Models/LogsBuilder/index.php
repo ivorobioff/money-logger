@@ -91,12 +91,12 @@ class Models_LogsBuilder
 
 		if ($this->_params['from'])
 		{
-			$table->where('insert_date >= ', $this->_params['from']);
+			$table->where('insert_date >= ', $this->_params['from'].' 00:00:00');
 		}
 
 		if ($this->_params['to'])
 		{
-			$table->where('insert_date <= ', $this->_params['to']);
+			$table->where('insert_date <= ', $this->_params['to'].' 23:59:59');
 		}
 
 		if ($this->_params['keyword'])
