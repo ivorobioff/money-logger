@@ -12,4 +12,9 @@ class Libs_Config
 
 		return $default;
 	}
+
+	static public function isProduction()
+	{
+		return static::getCustom('is_production');
+	}
 }

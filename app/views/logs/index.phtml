@@ -7,7 +7,7 @@
 					<?=_t('/logs/filter/from')?>:
 				</td>
 				<td>
-				  <input type="text" name="from" value="<?=$this->filter['from']?>" />
+				  <input autocomplete="off" type="text" name="from" value="<?=$this->filter['from']?>" />
 				</td>
 				<td rowspan="2" />
 					<input type="submit" value="<?=_t('/logs/filter/search')?>" />
@@ -18,7 +18,7 @@
 					<?=_t('/logs/filter/to')?>:
 				</td>
 				<td class="mf-8">
-				   <input type="text" name="to" value="<?=$this->filter['to']?>" />
+				   <input autocomplete="off" type="text" name="to" value="<?=$this->filter['to']?>" />
 				</td>
 			</tr>
 		</table>

@@ -27,6 +27,7 @@ abstract class Libs_Controllers_Page extends Libs_Controllers
 			->assign('view', $view)
 			->assign('title', $this->_title)
 			->assign('budget_summary', $budget->getSummary())
+			->assign('year', date('Y'))
 			->render();
 	}
 }

@@ -72,7 +72,7 @@ function load_js($controller, $action)
 
 	$bin = md5($bootstrap_name);
 
-	if (Libs_Config::getCustom('is_production'))
+	if (Libs_Config::isProduction())
 	{
 		return '<script src="/front/js/app/bin/'.$bin.'.js"></script>';
 	}

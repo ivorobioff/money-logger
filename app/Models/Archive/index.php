@@ -36,6 +36,8 @@ class Models_Archive
 			->where('id', $id)
 			->fetchOne();
 
+		if (!$data) return false;
+
 		return new Models_Archive_Item($data);
 	}
 }

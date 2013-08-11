@@ -11,16 +11,21 @@ class Controllers_Archive extends Libs_Controllers_Page
 		$remainder = '-';
 		$categories_item = array();
 
-		if ($archive_id = always_set($_GET, 'archive_id', 0))
+		if ($archive_id = intval(always_set($_GET, 'archive_id', 0)))
 		{
-			$archive = $model->getById($archive_id);
+			if ($archive = $model->getById($archive_id))
+			{
+				$budget_item = $archive->getBudget();
+				$categories_item = $archive->getCategories();
 
-			$budget_item = $archive->getBudget();
-			$categories_item = $archive->getCategories();
-
-			$budget = $budget_item['budget'];
-			$expenses = $budget_item['expenses'];
-			$remainder = $budget_item['remainder'];
+				$budget = $budget_item['budget'];
+				$expenses = $budget_item['expenses'];
+				$remainder = $budget_item['remainder'];
+			}
+			else
+			{
+				$archive_id = 0;
+			}
 		}
 
 		$view

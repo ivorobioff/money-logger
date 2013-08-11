@@ -28,6 +28,11 @@ class Libs_Router
 
 		if (strtolower(always_set($url_array, 0, '')) == 'test')
 		{
+			if (Libs_Config::isProduction())
+			{
+				$this->_throw404();
+			}
+
 			$this->_controller_class = 'Controllers_Test';
 			$this->_action_method = 'run';
 			$this->_params = 'Tests_'.always_set($url_array, 1);
@@ -58,31 +63,31 @@ class Libs_Router
 
 		if (!file_exists(APP_DIR.'/Controllers/'.$controller_name.'.php'))
 		{
-			throw new Libs_Exceptions_Error404();
+			$this->_throw404();
 		}
 
 		$this->_controller_class = 'Controllers_'.$controller_name;
 
 		if (!class_exists($this->_controller_class))
 		{
-			throw new Libs_Exceptions_Error404();
+			$this->_throw404();
 		}
 
 		$reflection = new ReflectionClass($this->_controller_class);
 
 		if (!$reflection->isInstantiable())
 		{
-			throw new Libs_Exceptions_Error404();
+			$this->_throw404();
 		}
 
 		if (!$reflection->hasMethod($this->_action_method))
 		{
-			throw new Libs_Exceptions_Error404();
+			$this->_throw404();
 		}
 
 		if (!$reflection->getMethod($this->_action_method)->isPublic())
 		{
-			throw new Libs_Exceptions_Error404();
+			$this->_throw404();
 		}
 	}
 
@@ -99,5 +104,13 @@ class Libs_Router
 	public function getParams()
 	{
 		return $this->_params;
+	}
+
+	private function _throw404()
+	{
+		$_GET['controller'] = 'Error404';
+		$_GET['action'] = 'show';
+
+		throw new Libs_Exceptions_Error404(new Controllers_Error404());
 	}
 }

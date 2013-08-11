@@ -77,9 +77,6 @@
                     <li <?=is_location('/Archive/*/')? 'class="select"' : ''?>>
                         <a href="<?=_url('/Archive/');?>"><?=_t('/sections/archive');?></a>
                     </li>
-                    <li <?=is_location('/Settings/*/')? 'class="select"' : ''?>>
-                        <a href="<?=_url('/Settings/');?>"><?=_t('/sections/settings');?></a>
-                    </li>
                 </ul>
                <?php if (is_location('/Planner/index/')){?>
                 <div id="new-gr">
@@ -91,7 +88,7 @@
             	<?=$this->view->render()?>
             </div>
             <div id="footer">
-                Kisya &amp; Solnyshko Co. All rights reserved. 2012
+                Nica &amp; Igor Co. All rights reserved. <?=$this->year?>
             </div>
         </div>
 <script>
