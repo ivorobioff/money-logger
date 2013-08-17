@@ -12,7 +12,7 @@ class Libs_Paginator
 
 	private $_prefix = '?';
 
-	public function __construct($total, $page = 1, $on_page = 10)
+	public function __construct($total, $page = 1, $on_page = 20)
 	{
 		$this->_view = Libs_Views::create('/elements/paginator.phtml');
 		$this->_total = $total;
