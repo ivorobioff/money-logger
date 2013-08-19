@@ -1,4 +1,7 @@
 <?php
+/**
+ * @author Igor Vorobioff<igor.vorobioff@gmail.com>
+ */
 class Models_Archive_Event
 {
 	private $_models = array();
